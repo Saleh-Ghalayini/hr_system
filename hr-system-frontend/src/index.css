@@ -32,8 +32,8 @@ body {
   background-color: #27416E;
 }
 
-.border-rad-eight {
-  border-radius: 8px;
+.border-rad-six {
+  border-radius: 6px;
 }
 
 .flex {
@@ -127,7 +127,7 @@ body {
 .title {
   font-family: 'Lato';
   font-size: 2.5rem; /*40px*/
-  letter-spacing: -2%;
+  letter-spacing: 1px;
   font-weight: bold;
   color: #FFFFFF;
 }
