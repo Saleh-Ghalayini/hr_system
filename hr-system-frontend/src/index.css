@@ -14,14 +14,12 @@
   src: url(assets/fonts/Poppins/Poppins-Regular.ttf);
 }
 
-
 @font-face {
   font-family: Montserrat;
   src: url(assets/fonts/Montserrat/static/Montserrat-Regular.ttf);
 }
 
 body {
-
   background-color: #E4E9EF;
   min-height: 100vh;
 }
@@ -34,8 +32,8 @@ body {
   background-color: #27416E;
 }
 
-.border-rad-eight {
-  border-radius: 8px;
+.border-rad-six {
+  border-radius: 6px;
 }
 
 .flex {
@@ -80,11 +78,10 @@ body {
 
 .input {
   font-family: 'Montserrat';
-  font-size: 12px;
+  font-size: 0.75rem; /*12px*/
   color: #7b7b7b;
   letter-spacing: -2%;
 }
-
 
 .primary-btn {
   border: none;
@@ -94,13 +91,13 @@ body {
   background-color: #069855;
   font-family: 'Poppins';
   font-weight: bold;
-  font-size: 10px;
+  font-size: 0.625rem; /*10px*/
   letter-spacing: 3%;
   cursor: pointer;
+  padding: 6px 8px;
 }
 
 .primary-btn:hover {
-
   background-color: #089151;
 }
 
@@ -114,35 +111,46 @@ body {
 
 .status-green {
   background-color: #E6F5EE;
-  border: 1px solid #069855;
+  border: 0.5px solid #069855;
 }
 
 .status-red {
   background-color: #FDF4F4;
-  border: 1px solid #D62525;
+  border: 0.5px solid #D62525;
 }
 
 .status-yellow {
   background-color: #FBF5E8;
-  border: 1px solid #D39C1D;
+  border: 0.5px solid #D39C1D;
 }
 
 .title {
-  font-family: 'lato';
-  font-size: 40px;
-  letter-spacing: -2%;
+  font-family: 'Lato';
+  font-size: 2.5rem; /*40px*/
+  letter-spacing: 1px;
   font-weight: bold;
   color: #FFFFFF;
 }
 
 .subtitle {
-  font-family: 'Poppins';
-  font-size: 20px;
+  font-family: 'Poppins'; 
+  font-size: 1.25rem; /*20px*/
   color: #000000;
 }
 
-
 .small-text {
   font-family: 'Lato';
-  font-size: 16px;
+  font-size: 1rem;
+}
+
+.text-center { 
+  text-align: center; 
+}
+
+.text-right  { 
+  text-align: right; 
+}
+
+.text-left   { 
+  text-align: left; 
 }

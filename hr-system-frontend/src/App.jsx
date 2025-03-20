@@ -7,7 +7,9 @@ function App() {
   return(   
   <NavBar />
  )
- 
 
 }
-export default App;
+
+
+export default App
+
