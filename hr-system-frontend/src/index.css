@@ -4,14 +4,141 @@
   box-sizing: border-box;
 }
 
-.body-bg {
-  background-color: #E4E9EF;
+@font-face {
+  font-family: Lato;
+  src: url(assets/fonts/Lato/Lato-Regular.ttf);
 }
 
-.sidebar-bg {
+@font-face {
+  font-family: Poppins;
+  src: url(assets/fonts/Poppins/Poppins-Regular.ttf);
+}
+
+@font-face {
+  font-family: Montserrat;
+  src: url(assets/fonts/Montserrat/static/Montserrat-Regular.ttf);
+}
+
+body {
+  background-color: #E4E9EF;
+  min-height: 100vh;
+}
+
+.primary-bg {
   background-color: #142F5A;
 }
 
-.header-bg {
+.secondary-bg {
   background-color: #27416E;
+}
+
+.border-rad-eight {
+  border-radius: 8px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-dir-col {
+  flex-direction: column;
+}
+
+.flex-dir-row {
+  flex-direction: row;
+}
+
+.justify-center{
+  justify-content: center;
+}
+
+.align-center{
+  align-items: center;
+}
+
+.lato {
+  font-family: 'Lato';
+}
+
+.poppins {
+  font-family: 'Poppins';
+}
+
+.m-1 {
+  margin: 1rem;
+}
+
+.p-1 {
+  padding: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.input {
+  font-family: 'Montserrat';
+  font-size: 12px;
+  color: #7b7b7b;
+  letter-spacing: -2%;
+}
+
+.primary-btn {
+  border: none;
+  color: #FFFFFF;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #069855;
+  font-family: 'Poppins';
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 3%;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background-color: #089151;
+}
+
+.green {
+  color: #069855;
+}
+
+.red {
+  color: #BA5143;
+}
+
+.status-green {
+  background-color: #E6F5EE;
+  border: 1px solid #069855;
+}
+
+.status-red {
+  background-color: #FDF4F4;
+  border: 1px solid #D62525;
+}
+
+.status-yellow {
+  background-color: #FBF5E8;
+  border: 1px solid #D39C1D;
+}
+
+.title {
+  font-family: 'lato';
+  font-size: 40px;
+  letter-spacing: -2%;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.subtitle {
+  font-family: 'Poppins';
+  font-size: 20px;
+  color: #000000;
+}
+
+
+.small-text {
+  font-family: 'Lato';
+  font-size: 16px;
 }
