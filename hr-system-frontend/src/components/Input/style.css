@@ -1,0 +1,23 @@
+
+.input-label{
+    gap:3px;
+    padding: 6px;
+    }
+    
+    .input-label label , input{
+        align-self: flex-start;
+    }
+    
+    .input-label input{
+    
+       padding: 5px;
+       border: 2px solid rgb(181, 181, 181);
+        }
+    .border-rad-eight{
+        border-radius: 6px;
+    }
+    
+    .input:focus{
+        outline: none;
+        border: 2px solid #142F5A;
+    }
