@@ -1,4 +1,0 @@
-1. To run the server we can  use this command:
-   php -d variables_order=GPCS artisan serve
-
-2. To Run The Migration FIles : php artisan migrate
