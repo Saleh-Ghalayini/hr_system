@@ -1,0 +1,33 @@
+nav{
+    height: 60px;
+    background-color: #27416E;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+}
+
+nav .title{
+    color: rgb(237, 237, 237);
+    font-size: 28px;
+    font-weight: bold;
+
+}
+
+nav img{
+    height: 50px;
+    width: 50px;
+    border-radius: 30px;
+    border: 3px solid #28EEA7;
+    cursor: pointer;
+}
+.icons{
+    color: white;
+}
+
+.profile-section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
