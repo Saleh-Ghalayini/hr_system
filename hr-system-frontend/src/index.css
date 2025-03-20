@@ -14,12 +14,14 @@
   src: url(assets/fonts/Poppins/Poppins-Regular.ttf);
 }
 
+
 @font-face {
   font-family: Montserrat;
   src: url(assets/fonts/Montserrat/static/Montserrat-Regular.ttf);
 }
 
 body {
+
   background-color: #E4E9EF;
   min-height: 100vh;
 }
@@ -83,6 +85,7 @@ body {
   letter-spacing: -2%;
 }
 
+
 .primary-btn {
   border: none;
   color: #FFFFFF;
@@ -97,6 +100,7 @@ body {
 }
 
 .primary-btn:hover {
+
   background-color: #089151;
 }
 
