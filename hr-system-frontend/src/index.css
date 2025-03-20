@@ -14,8 +14,14 @@
   src: url(assets/fonts/Poppins/Poppins-Regular.ttf);
 }
 
-.body-bg {
+@font-face {
+  font-family: Montserrat;
+  src: url(assets/fonts/Montserrat/static/Montserrat-Regular.ttf);
+}
+
+body {
   background-color: #E4E9EF;
+  min-height: 100vh;
 }
 
 .primary-bg {
@@ -58,6 +64,25 @@
   font-family: 'Poppins';
 }
 
+.m-1 {
+  margin: 1rem;
+}
+
+.p-1 {
+  padding: 1rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.input {
+  font-family: 'Montserrat';
+  font-size: 12px;
+  color: #7b7b7b;
+  letter-spacing: -2%;
+}
+
 .primary-btn {
   border: none;
   color: #FFFFFF;
@@ -71,7 +96,7 @@
   cursor: pointer;
 }
 
-.primary-bg:hover {
+.primary-btn:hover {
   background-color: #089151;
 }
 
