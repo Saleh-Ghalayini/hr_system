@@ -6,7 +6,7 @@ const NavBar = () => {
     return (
         <nav>
         
-            <div className="title">Title</div>
+            <div className="title poppins">Title</div>
 
             <div className='profile-section'>
             <Icon className='icons' icon="bi:bell-fill" width="20" height="20" />
