@@ -1,0 +1,6 @@
+To use it : 
+<StatusField
+    text={row[header.key]}
+    status={row[header.key]}
+/>
+if color remains red go to /common/buttuns_status and add your status to green ,yellow fields 

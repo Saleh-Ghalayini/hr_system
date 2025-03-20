@@ -1,0 +1,40 @@
+import Table from "./components/Table";
+
+const tableHeaders = [
+    { key: 'date', label: 'Date' },
+    { key: 'employee', label: 'Employee' },
+    { key: 'role', label: 'Role' },
+    { key: 'employmentType', label: 'Employment Type' },
+    { key: 'status', label: 'Status' },
+    { key: 'checkIn', label: 'Check In' },
+    { key: 'checkOut', label: 'Check Out' },
+    { key: 'overTime', label: 'Over Time' },
+  ];
+  
+const tableData = [
+    {
+      date: '19/03',
+      employee: 'Ali Ali',
+      role: ' FrontEnd',
+      employmentType: 'Full-Time',
+      status: 'Present',
+      checkIn: '09:00 AM',
+      checkOut: '05:00 PM',
+      overTime: 'Oh',
+    },
+    {
+      date: '19/03',
+      employee: 'Ali Ali',
+      role: ' FrontEnd',
+      employmentType: 'Full-Time',
+      status: 'Present',
+      checkIn: '09:00 AM',
+      checkOut: '05:00 PM',
+      overTime: 'Oh',
+    },
+
+  ];
+
+
+<Table headers={tableHeaders} data={tableData} />
+
