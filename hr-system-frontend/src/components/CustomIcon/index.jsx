@@ -62,6 +62,11 @@ const icons = [
     // path: "/logout",
     icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
   },
+  {
+    id: "Logout",
+    // path: "/logout",
+    icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
+  },
 ];
 
 const CustomIcon = () => {
