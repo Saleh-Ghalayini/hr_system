@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 // import { Navigate } from "react-router-dom";
 import { useAuthContext } from "../../../context/AuthContext";
+// import Table from "../../../components/Table";
 
 const Login = () => {
+   
+   
   const { login } = useAuthContext();
 
   const [email, setEmail] = useState("");
