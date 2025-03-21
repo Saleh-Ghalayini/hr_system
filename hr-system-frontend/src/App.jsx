@@ -27,7 +27,7 @@ function App() {
             <Route path="onboarding" element={<Onboarding />} />
             <Route path="training" element={<Training />} />
             <Route path="performance" element={<Performance />} />
-            <Route path="payroll" element={<Payroll />} />
+            <Route path="payroll/*" element={<Payroll />} />
             <Route path="reports" element={<Reports />} />
           </Route>
           {/* </Route> */}
