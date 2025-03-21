@@ -48,6 +48,7 @@ class UserController extends Controller
     Storage::disk('public')->put('profile_photos/' . $fileName, $imageData);
 
     // Save the file path to the database
+    /** @var \App\Models\User $user */
     $user = Auth::user();
     if ($user) {
         $user->profile_url = 'profile_photos/' . $fileName;
