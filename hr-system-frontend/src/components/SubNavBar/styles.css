@@ -1,0 +1,27 @@
+ul {
+  list-style: none;
+}
+
+li.activate {
+  border-bottom-style: solid;
+  border-color: #43ba6e;
+}
+
+a {
+  padding: 0 1em;
+  color: black;
+  text-decoration: none;
+}
+
+.subnavbar {
+  width: 100%;
+  background-color: #e4e9ef;
+  height: 35px;
+  justify-content: start;
+}
+
+li {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
