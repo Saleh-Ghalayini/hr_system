@@ -1,27 +1,32 @@
-nav{
-    height: 60px;
-    background-color: #27416E;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px;
+nav {
+  height: 80px;
+  background-color: #27416e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  width: 100%;
 }
 
-
-nav img{
-    height: 50px;
-    width: 50px;
-    border-radius: 30px;
-    border: 3px solid #28EEA7;
-    cursor: pointer;
+nav img {
+  height: 50px;
+  width: 50px;
+  border-radius: 30px;
+  border: 3px solid #28eea7;
+  cursor: pointer;
 }
-.icons{
-    color: white;
+.icons {
+  color: white;
 }
 
-.profile-section{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+.profile-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.col {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
