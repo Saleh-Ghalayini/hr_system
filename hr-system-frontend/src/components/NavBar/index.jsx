@@ -1,7 +1,10 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import './style.css';
-const NavBar = ({ title }) => {
+import { useLocation } from 'react-router-dom';
+const NavBar = () => {
+    const location = useLocation();
+    const title = location.pathname.split("/")[1] || "Dashboard";
     return (
         <nav>
             <div className="title poppins">{title}</div>

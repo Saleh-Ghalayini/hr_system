@@ -10,7 +10,7 @@ const SideBar = ({ activePage, setActivePage }) => {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <img width={100} height={100} src={logo} alt="logo" />
+        <img width={100} height={80} src={logo} alt="logo" />
       </div>
       <div className="sidebar-body">
         <CustomIcon activeIconId={activePage} onIconClick={handleIconClick} />

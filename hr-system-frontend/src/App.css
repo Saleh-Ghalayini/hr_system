@@ -9,11 +9,7 @@
 .grow {
   flex-grow: 1;
 }
-.col{
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
+
 .subnav{
   width: 100%;
   background-color: #2f538f;

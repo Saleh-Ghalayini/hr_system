@@ -1,45 +1,30 @@
-import { useState } from "react";
-import NavBar from "./components/NavBar";
-import SideBar from "./components/SideBar";
-import "./index.css";
-import "./App.css";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Layout from "./Layout";
+import Dashboard from "./components/Dashboard";
+import Attendance from "./pages/Attendance";
+import Onboarding from "./pages/Onboarding";
+import Training from "./pages/Training";
+import Performance from "./pages/Performance";
+import Payroll from "./pages/Payroll";
+import Reports from "./pages/Reports";
 
 function App() {
-  const [activePage, setActivePage] = useState("Dashboard");
   return (
-    <>
-      <div className="flex">
-        <SideBar
-          className="sidebar"
-          activePage={activePage}
-          setActivePage={setActivePage}
-        />
-        <div className="col">
-          <NavBar title={activePage} className="grow" />
-          <div className="main-content">
-            {activePage === "Dashboard" ? (
-              <div className="subnav" ></div>
-            ) : activePage === "Attendance" ?   (
-              <h1>Welcome to the HR Attendance</h1>
-            ) : activePage === "Onboarding" ? (
-              <h1>Welcome to the HR Onboarding</h1>
-            ) : activePage === "Training" ? (
-              <Training />
-            ) : activePage === "Performance" ? (
-              <h1>Welcome to the HR Performance</h1>
-            ) : activePage === "Payroll" ? (
-              <h1>Welcome to the HR Payroll</h1>
-            ) : activePage === "Reports" ? (
-              <h1>Welcome to the HR Reports</h1>
-            ) : (
-              <h1>Welcome to the HR System</h1>
-            )}
-          </div>
-        </div>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="onboarding" element={<Onboarding />} />
+          <Route path="training" element={<Training />} />
+          <Route path="performance" element={<Performance />} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="payroll" element={<Payroll />} />
+          <Route path="reports" element={<Reports />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 export default App;
