@@ -1,0 +1,293 @@
+# **Laravel & React Project Setup with JWT Authentication**
+
+## **1. Project Initialization**
+
+### **1.1 Creating the Laravel Project**
+
+1. Install Laravel (if not installed):
+   ```sh
+   composer create-project --prefer-dist laravel/laravel project_name
+   ```
+2. Navigate to the project directory:
+   ```sh
+   cd project_name
+   ```
+3. Configure the `.env` file to connect Laravel with MySQL:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database_name
+   DB_USERNAME=your_db_user
+   DB_PASSWORD=your_db_password
+   ```
+4. Run database migrations to verify Laravel is set up correctly:
+   ```sh
+   php artisan migrate
+   ```
+5. Install API routes (optional but useful for API development):
+
+   ```sh
+   php artisan install:api
+   ```
+
+   - This creates an `api` folder inside the `routes` directory.
+
+6. Start the Laravel development server:
+   ```sh
+   php artisan serve
+   ```
+
+### **1.2 Creating the React Project**
+
+1. Create a React project using Vite:
+   ```sh
+   npm create vite@latest project_name
+   ```
+2. Navigate to the project directory:
+   ```sh
+   cd project_name
+   ```
+3. Install dependencies:
+   ```sh
+   npm install
+   ```
+4. Start the frontend development server:
+   ```sh
+   npm run dev
+   ```
+
+### **1.3 Verifying Project Setup**
+
+- Check if both frontend and backend are running successfully.
+- Push the project to GitHub using the following commands:
+  ```sh
+  git init
+  git add .
+  git commit -m "Initial commit"
+  git branch -M main
+  git remote add origin your_github_repo_url
+  git push -u origin main
+  ```
+
+---
+
+## **2. Setting Up JWT Authentication in Laravel**
+
+### **2.1 Installing JWT Package**
+
+- Run the following command inside the Laravel project:
+  ```sh
+  composer require php-open-source-saver/jwt-auth
+  ```
+- If installation is successful, publish the configuration file:
+  ```sh
+  php artisan vendor:publish --provider="PHPOpenSourceSaver\JWTAuth\Providers\LaravelServiceProvider"
+  ```
+- Generate a secret key for JWT:
+  ```sh
+  php artisan jwt:secret
+  ```
+
+### **2.2 Configuring Authentication Guard**
+
+- Open `config/auth.php` and modify the `guards` section as follows:
+
+  ```php
+  'defaults' => [
+      'guard' => 'api',
+      'passwords' => 'users',
+  ],
+
+  'guards' => [
+      'web' => [
+          'driver' => 'session',
+          'provider' => 'users',
+      ],
+
+      'api' => [
+          'driver' => 'jwt',
+          'provider' => 'users',
+      ],
+  ],
+  ```
+
+### **2.3 Updating the User Model**
+
+- Modify `app/Models/User.php` to implement `JWTSubject`:
+
+  ```php
+  namespace App\Models;
+
+  use Illuminate\Database\Eloquent\Factories\HasFactory;
+  use Illuminate\Foundation\Auth\User as Authenticatable;
+  use Illuminate\Notifications\Notifiable;
+  use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+
+  class User extends Authenticatable implements JWTSubject {
+      use HasFactory, Notifiable;
+
+      protected $fillable = [
+          'name',
+          'email',
+          'password',
+      ];
+
+      protected $hidden = [
+          'password',
+          'remember_token',
+      ];
+
+      protected $casts = [
+          'email_verified_at' => 'datetime',
+      ];
+
+      public function getJWTIdentifier() {
+          return $this->getKey();
+      }
+
+      public function getJWTCustomClaims() {
+          return [];
+      }
+  }
+  ```
+
+---
+
+## **3. Creating Authentication Controller (`AuthController.php`)**
+
+### **3.1 Generating the Controller**
+
+- Run the following command to create `AuthController`:
+  ```sh
+  php artisan make:controller AuthController
+  ```
+- Open `app/Http/Controllers/AuthController.php` and add the following code:
+
+### **3.2 Implementing Authentication Logic**
+
+```php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
+class AuthController extends Controller {
+    public function __construct() {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+    }
+
+    public function login(Request $request) {
+        $request->validate([
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        $credentials = $request->only('email', 'password');
+        $token = Auth::attempt($credentials);
+
+        if (!$token) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+            ], 401);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'user' => Auth::user(),
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
+    public function register(Request $request) {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $token = Auth::login($user);
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User created successfully',
+            'user' => $user,
+            'authorisation' => [
+                'token' => $token,
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+
+    public function logout() {
+        Auth::logout();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Successfully logged out',
+        ]);
+    }
+
+    public function refresh() {
+        return response()->json([
+            'status' => 'success',
+            'user' => Auth::user(),
+            'authorisation' => [
+                'token' => Auth::refresh(),
+                'type' => 'bearer',
+            ]
+        ]);
+    }
+}
+```
+
+---
+
+## **4. Setting Up API Routes (`api.php`)**
+
+- Open `routes/api.php` and define routes:
+
+  ```php
+  use App\Http\Controllers\AuthController;
+
+  Route::group(["prefix" => "v0.1"], function() {
+      Route::post("/login", [AuthController::class, "login"]);
+      Route::post("/register", [AuthController::class, "register"]);
+      Route::post("/logout", [AuthController::class, "logout"]);
+      Route::post("/refresh", [AuthController::class, "refresh"]);
+  });
+  ```
+
+---
+
+## **5. Creating Models, Controllers, and Migrations**
+
+- Create a model:
+  ```sh
+  php artisan make:model ModelName
+  ```
+- Create a controller inside a folder:
+  ```sh
+  php artisan make:controller User/TagController
+  ```
+- Create a new migration:
+  ```sh
+  php artisan make:migration create_table_name
+  ```
+
+---
+
+## **6. Pivot Table Guide**
+
+- **Read More**: [Laravel Pivot Tables Guide](https://cosme.dev/post/using-pivot-tables-in-laravel-the-complete-guide-to-custom-intermediary-tables-in-manytomany-relationships#:~:text=One%20other%20feature%20that%20we,behaviors%20to%20the%20pivot%20table)
+- **Watch Tutorial**: [YouTube](https://youtu.be/x1UCiE0hZiw?si=2mYyPEituJ0bEcu4)
