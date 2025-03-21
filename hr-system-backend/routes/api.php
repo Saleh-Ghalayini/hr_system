@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "v1"], function () {
@@ -17,7 +18,10 @@ Route::group(["prefix" => "v1"], function () {
         Route::get('/validate-token', [AuthController::class, "validateToken"]);
         // login users only
         //Admin Routes
-
+        // get job details for a users
+        Route::get("/getuserjobdetails", [UserController::class, "getUserJobDetails"]);
+        //upload user phoot
+        Route::post("/uploadphoto", [UserController::class, "uploadProfilePhoto"]);
     });
 });
 //php artisan make:middleware AdminMiddleware

@@ -19,13 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Throwable $exceptions, Request $request) {
-            dd("hey");
-            if ($request->is("api/*")) {
-                return response()->json([
-                    "success" => false,
-                    "error" => "Unauthorized"
-                ], 401);
-            }
-        });
+        // $exceptions->render(function (Throwable $exceptions, Request $request) {
+        //     // dd("hey");
+        //     if ($request->is("api/*")) {
+        //         return response()->json([
+        //             "success" => false,
+        //             "error" => "Unauthorized"
+        //         ], 401);
+        //     }
+        // });
     })->create();
