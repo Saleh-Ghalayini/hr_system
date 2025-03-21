@@ -1,9 +1,13 @@
-import React from 'react'
-
+import React from "react";
+import { Outlet } from "react-router-dom";
 const Training = () => {
-  return (
-    <div>Training</div>
-  )
-}
+  // <Route path="/enrollment" element={<Enrollment />} />
 
-export default Training
+  return (
+    <>
+      <Outlet />
+    </>
+  );
+};
+
+export default Training;

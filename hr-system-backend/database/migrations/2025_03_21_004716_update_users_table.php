@@ -44,14 +44,13 @@ return new class extends Migration
             $table->dropColumn('last_name');
             $table->dropColumn('date-of-birth');
             $table->dropColumn('nationality');
-            $table->dropColumn('phone_number'); 
+            $table->dropColumn('phone_number');
             $table->dropColumn('address');
             $table->dropColumn('profile_url');
             $table->dropColumn('position');
             $table->dropColumn('gender');
             $table->dropColumn('insurance_id');
             $table->dropColumn('role');
-            $table->dropColumn('manager_id');
         });
     }
 };

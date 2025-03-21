@@ -1,9 +1,12 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom';
 
 const Onboarding = () => {
   return (
-    <div>Onboarding</div>
-  )
-}
+    <>
+      <Outlet />
+    </>
+  );
+};
 
 export default Onboarding;
