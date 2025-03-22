@@ -3,6 +3,7 @@ import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
+import Select from "../../../components/Select";
 const JobInfo = () => {
 
 const [jobDetails , setJobDetails] =  useState({
@@ -62,6 +63,12 @@ useEffect(()=>{
   getJobDetails();
 
 },[])
+const options = [
+  {value:"junior", label: "Junior"},
+  {value:"mid-senior", label:"Mid Junior"},
+  {value:"senior", label:"Senior"}
+]
+
   return (
     <div className="flex align-center justify-center mt-1">
       <div className="containerP">
@@ -131,17 +138,18 @@ useEffect(()=>{
                   });
                 }}
               />
-              <Input
-                type={"text"}
-                label={"Employe Level"}
-                placeholder={"Senior"}
-                value={jobDetails.employee_level}
-                onChange={(e) => {
-                  setJobDetails({
-                    ...jobDetails,
-                    employee_level:e.target.value
-                  });
-                }}
+              
+              <Select 
+              options={options}
+              label="Employment level"
+              className={"input select"}
+              value={jobDetails.employee_level}
+              onChange={(e) => {
+                setJobDetails({
+                  ...jobDetails,
+                  employee_level:e.target.value
+                });
+              }}
               />
             </div>
           </div>
