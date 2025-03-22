@@ -22,6 +22,11 @@ Route::group(["prefix" => "v1"], function () {
         Route::get("/getuserjobdetails", [UserController::class, "getUserJobDetails"]);
         //upload user phoot
         Route::post("/uploadphoto", [UserController::class, "uploadProfilePhoto"]);
+        // update user info
+        Route::post("/updatebasicinfo", [UserController::class, "updateUserBasicInfo"]);
+        //update user job details
+        Route::post("/updatejobdetails", [UserController::class, "updateJobDetails"]);
+
     });
 });
 //php artisan make:middleware AdminMiddleware
