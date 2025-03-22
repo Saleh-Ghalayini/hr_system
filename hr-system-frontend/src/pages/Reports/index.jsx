@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Outlet } from "react-router-dom";
 
 const Reports = () => {
   return (
-    <div>Reports</div>
-  )
-}
+    <>
+      <Outlet />
+    </>
+  );
+};
 
-export default Reports
+export default Reports;
