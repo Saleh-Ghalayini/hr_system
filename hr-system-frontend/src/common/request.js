@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const baseApi = "http://127.0.0.1:8000/api/v1/";
+export const baseApi =import.meta.env.VITE_Base_API;;
 
 export const request = async ({method,path,data,headers})=>{
 
