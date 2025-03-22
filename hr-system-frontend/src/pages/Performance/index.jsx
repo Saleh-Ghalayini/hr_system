@@ -1,9 +1,12 @@
 import React from 'react'
+import { Outlet } from 'react-router-dom';
 
 const Performance = () => {
   return (
-    <div>Performance</div>
-  )
-}
+    <>
+      <Outlet />
+    </>
+  );
+};
 
 export default Performance

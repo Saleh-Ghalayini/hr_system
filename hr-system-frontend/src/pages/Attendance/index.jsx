@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import { Outlet } from "react-router-dom";
 
 const Attendance = () => {
   return (
-    <div>Attendance</div>
-  )
-}
+    <>
+      <Outlet />
+    </>
+  );
+};
 
 export default Attendance;

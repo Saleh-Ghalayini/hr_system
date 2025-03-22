@@ -62,20 +62,23 @@ const icons = [
     // path: "/logout",
     icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
   },
-  {
-    id: "Logout",
-    // path: "/logout",
-    icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
-  },
+ 
 ];
 
-const CustomIcon = () => {
+const CustomIcon = ({ activeIconId }) => {
   const location = useLocation();
   const navigate = useNavigate();
+
   const handleLogout = () => {
-    alert("Kefak feha?");
+    alert("Logout functionality here!");
     navigate("/dashboard");
   };
+
+  // Check if current path starts with icon path
+  const isActive = (path) => {
+    return location.pathname.startsWith(path) || activeIconId === path;
+  };
+
   return (
     <div className="sidebar-icon">
       {icons.map((iconData) => (
@@ -83,9 +86,7 @@ const CustomIcon = () => {
           {iconData.path ? (
             <Link
               to={iconData.path}
-              className={`icon ${
-                location.pathname === iconData.path ? "active" : ""
-              }`}
+              className={`icon ${isActive(iconData.path) ? "active" : ""}`}
             >
               {iconData.icon}
             </Link>
