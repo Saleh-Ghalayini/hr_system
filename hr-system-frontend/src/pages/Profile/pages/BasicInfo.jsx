@@ -4,9 +4,19 @@ import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
 const BasicInfo = () => {
-  const [name, setName] = useState("");
  
   const [base64Image, setBase64Image] = useState("");
+  const [basicInfo , setBasicInfo] =  useState({
+    firstName:"",
+    lastName:"",
+    dob:"",
+    email:"",
+    nationality:"",
+    contactNumber:"",
+    gender:"",
+    Address:""
+  }) 
+
   // Function to Convert Image to Base64
   const handleImageChange = (event) => {
     const file = event.target.files[0]; // Get the selected file
@@ -16,7 +26,7 @@ const BasicInfo = () => {
     reader.readAsDataURL(file); // Convert to Base64
     reader.onload = () => setBase64Image(reader.result); // Store Base64 string
     reader.onerror = (error) => console.log("Error:", error);
-  //  console.log(reader)
+  
   };
   const uploadImg = async()=>{
     const token = localStorage.getItem("token");
@@ -34,7 +44,6 @@ const BasicInfo = () => {
     console.log(response)
    if(response.success){
     setBase64Image("")
-    
    }
 
   }
@@ -63,36 +72,48 @@ const BasicInfo = () => {
                 type={"text"}
                 label={"First Name"}
                 placeholder={"Hasan"}
-                value={name}
+                value={basicInfo.firstName}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    firstName:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Last Name"}
                 placeholder={"Mawassi"}
-                value={name}
+                value={basicInfo.lastName}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    lastName:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"date"}
                 label={"Date of Birth"}
                 placeholder={""}
-                value={name}
+                value={basicInfo.dob}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    dob:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Email"}
                 placeholder={"Example@gmail.com"}
-                value={name}
+                value={basicInfo.email}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    email:e.target.value
+                  });
                 }}
               />
             </div>
@@ -101,36 +122,48 @@ const BasicInfo = () => {
                 type={"text"}
                 label={"Nationality"}
                 placeholder={"Lebanese"}
-                value={name}
+                value={basicInfo.nationality}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    nationality:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Contact Number"}
                 placeholder={"70111111"}
-                value={name}
+                value={basicInfo.contactNumber}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    contactNumber:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Gender"}
                 placeholder={"Male"}
-                value={name}
+                value={basicInfo.gender}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    gender:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Address"}
                 placeholder={"Beruit"}
-                value={name}
+                value={basicInfo.Address}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setBasicInfo({
+                    ...basicInfo,
+                    Address:e.target.value
+                  });
                 }}
               />
             </div>

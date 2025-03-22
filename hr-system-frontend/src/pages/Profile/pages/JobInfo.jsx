@@ -1,11 +1,67 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
-
+import { request } from "../../../common/request";
 const JobInfo = () => {
-  const [name, setName] = useState("");
 
+const [jobDetails , setJobDetails] =  useState({
+    title:"",
+    employment_type:"",
+    hiring_date:"",
+    employment_status:"",
+    work_location:"",
+    employee_level:"",
+  });
+  
+  
+const updateJobDetails = async()=>{
+    const token = localStorage.getItem("token");
+    console.log(token)
+    const response = await request({
+        method:"POST",
+        path:"updatejobdetails",
+        data:{
+            ...jobDetails
+        },
+        headers:{
+          Authorization : `Bearer ${token}`
+        }
+    })
+    console.log(response)
+   if(response.success){
+   console.log(response.success)
+   }
+
+  }
+
+  const getJobDetails = async()=>{
+    const token = localStorage.getItem("token");
+    console.log(token)
+    const response = await request({
+        method:"GET",
+        path:"getuserjobdetails",
+        headers:{
+          Authorization : `Bearer ${token}`
+        }
+    })
+    console.log(response)
+   if(response.success){
+   setJobDetails({
+    title:response.jobdetails.title,
+    employment_type:response.jobdetails.employment_type,
+    hiring_date:response.jobdetails.hiring_date,
+    employment_status:response.jobdetails.employment_status,
+    work_location:response.jobdetails.work_location,
+    employee_level:response.jobdetails.employee_level,
+   })
+   }
+
+  }
+useEffect(()=>{
+  getJobDetails();
+
+},[])
   return (
     <div className="flex align-center justify-center mt-1">
       <div className="containerP">
@@ -17,36 +73,48 @@ const JobInfo = () => {
                 type={"text"}
                 label={"Job Title"}
                 placeholder={"Developer"}
-                value={name}
+                value={jobDetails.title}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    title:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Employment type"}
                 placeholder={"full time"}
-                value={name}
+                value={jobDetails.employment_type}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    employment_type:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"date"}
                 label={"Date of Hiring"}
                 placeholder={""}
-                value={name}
+                value={jobDetails.hiring_date}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    hiring_date:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Employment Status"}
-                placeholder={"Example@gmail.com"}
-                value={name}
+                placeholder={"Employee"}
+                value={jobDetails.employment_status}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    employment_status:e.target.value
+                  });
                 }}
               />
             </div>
@@ -55,23 +123,29 @@ const JobInfo = () => {
                 type={"text"}
                 label={"Work Location"}
                 placeholder={"on Site"}
-                value={name}
+                value={jobDetails.work_location}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    work_location:e.target.value
+                  });
                 }}
               />
               <Input
                 type={"text"}
                 label={"Employe Level"}
                 placeholder={"Senior"}
-                value={name}
+                value={jobDetails.employee_level}
                 onChange={(e) => {
-                  setName(e.target.value);
+                  setJobDetails({
+                    ...jobDetails,
+                    employee_level:e.target.value
+                  });
                 }}
               />
             </div>
           </div>
-          <Button className="btn-width btn  align-self-end" text={"update"} />
+          <Button className="btn-width btn  align-self-end" text={"update"} onClick={updateJobDetails} />
         </div>
       </div>
     </div>
