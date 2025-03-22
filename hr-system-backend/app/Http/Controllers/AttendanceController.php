@@ -21,9 +21,6 @@ class AttendanceController extends Controller
         )
             return "Invalid location";
 
-        $allowed_distance = 100; // In meters
-        $earth_radius = 6371000;
-
         $user_lat = deg2rad($latitude);
         $user_long = deg2rad($longitude);
         $company_lon = deg2rad(env('COMPANY_LON'));
@@ -35,9 +32,11 @@ class AttendanceController extends Controller
         $angle = 2 * asin(sqrt(pow(sin($lat_delta / 2), 2) +
             cos($user_lat) * cos($company_lat) * pow(sin($lon_delta / 2), 2)));
 
-        $distance = $angle * $earth_radius;
+        //6371000 is the earth's radius in meters
+        $distance = $angle * 6371000;
 
-        return $distance > $allowed_distance ? "Review needed" : "Approved";
+        //100 is the allowed range of distance for distance between company and user's location
+        return $distance > 100 ? "Review needed" : "Approved";
     }
 
     public function validateTime($time, $type)
@@ -63,19 +62,19 @@ class AttendanceController extends Controller
 
         if ($type === "in") {
             if ($attendance)
-                return response()->json(['message' => 'Already checked in today.']);
+                return response()->json(['success' => false, 'message' => 'Already checked in today.'], 400);
 
             if (!$request->has(['check_in_lon', 'check_in_lat']))
-                return response()->json(['message' => 'Location is required.']);
+                return response()->json(['success' => false, 'message' => 'Location is required.'], 400);
         } else if ($type === "out") {
             if (!$attendance)
-                return response()->json(['message' => 'You need to check in first.'], 400);
+                return response()->json(['success' => false, 'message' => 'You need to check in first.'], 400);
 
             if ($attendance->check_out)
-                return response()->json(['message' => 'You have already checked out today.'], 400);
+                return response()->json(['success' => false, 'message' => 'You have already checked out today.'], 400);
 
             if (!$request->has(['check_out_lon', 'check_out_lat']))
-                return response()->json(['message' => 'Location data is required.'], 400);
+                return response()->json(['success' => false, 'message' => 'Location data is required.'], 400);
         }
 
         return null;
@@ -106,6 +105,7 @@ class AttendanceController extends Controller
         $attendance->save();
 
         return response()->json([
+            'success' => true,
             'message' => 'Check-in successful.',
             'attendance' => $attendance
         ]);
@@ -132,10 +132,43 @@ class AttendanceController extends Controller
             'loc_out_status' => $this->validateLocation($request->check_out_lon, $request->check_out_lat)
         ]);
 
-        $attendance->save();
-
         return response()->json([
+            'success' => true,
             'message' => 'Check-out successful.',
+            'attendance' => $attendance
+        ]);
+    }
+
+    public function getMyAttendance(Request $request)
+    {
+        $user = Auth::user();
+
+        // Fetching all attendance records for the logged-in user
+        $attendanceQuery = Attendance::Where('user_id', $user->id);
+
+        // Fetching records having a date range
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start_date = Carbon::createFromFormat('Y-m-d', $request->start_date);
+            $end_date = Carbon::createFromFormat('Y-m-d', $request->end_date);
+
+            if ($start_date->greaterThan($end_date)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid date range: start_date must be before or equal to end_date.'
+                ], 400);
+            }
+            $attendanceQuery->whereBetween('date', [$start_date, $end_date]);
+        } else if ($request->filled('date')) {
+            $date = Carbon::createFromFormat('Y-m-d', $request->date);
+            $attendanceQuery->whereDate('date', $date);
+        }
+
+        // Fetching the records after applying the conditions
+        $attendance = $attendanceQuery->orderBy('date', 'desc')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'records for user retrieved successfully.',
+            'user' => $user,
             'attendance' => $attendance
         ]);
     }
