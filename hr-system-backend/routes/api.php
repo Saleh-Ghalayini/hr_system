@@ -1,23 +1,39 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "v1"], function () {
-    //unauthenticated routes
+    // Unauthenticated routes
     Route::group(["prefix" => "guest"], function () {
         Route::post("/login", [AuthController::class, "login"]);
-        // Route::post('/add-user', [AuthController::class, "addUser"]);
-        Route::group(["prefix" => "admin", "middleware" => "AdminMiddleware"], function () {
-            Route::post('/add-user', [AuthController::class, "addUser"]);
-        });
     });
-    //authenticated routes via JWTtoken
+
+    // Authenticated routes
     Route::group(["middleware" => "auth:api"], function () {
         Route::get('/validate-token', [AuthController::class, "validateToken"]);
-        // login users only
-        //Admin Routes
 
+        // Admin routes
+        Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
+            //courses routes
+            Route::get('/courses', [CourseController::class, "index"]);
+            Route::post('/courses', [CourseController::class, "store"]);
+            Route::put('/courses/{course}', [CourseController::class, "update"]);
+            Route::delete('/courses/{course}', [CourseController::class, "destroy"]);
+
+            //enrollments routes
+            Route::get('/enrollments', [AdminEnrollmentController::class, "index"]);
+            Route::post('/enrollments', [AdminEnrollmentController::class, "store"]);
+            Route::put('/enrollments/{enrollment}', [AdminEnrollmentController::class, "updateEnrollment"]);
+            Route::delete('/enrollments/{enrollment}', [AdminEnrollmentController::class, "destroy"]);
+        });
+        Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
+            Route::get('/enrollments', [UserController::class, 'enrollments']);
+        });
+      
     });
 });
-//php artisan make:middleware AdminMiddleware
