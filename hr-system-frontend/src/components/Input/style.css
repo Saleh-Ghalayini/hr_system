@@ -19,5 +19,5 @@
     
     .input:focus{
         outline: none;
-        border: 2px solid #142F5A;
+        border: 5px solid #142F5A;
     }
