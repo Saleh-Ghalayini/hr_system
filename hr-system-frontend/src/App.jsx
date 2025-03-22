@@ -4,13 +4,14 @@ import { AuthProvider } from "./context/AuthContext";
 import Layout from "./Layout";
 import Dashboard from "./components/Dashboard";
 import Attendance from "./pages/Attendance";
-import Training from "./pages/Training";
+import TrainingLayout from "./pages/Training/Layout";
 import Payroll from "./pages/Payroll";
 import Performance from "./pages/Performance";
 import Onboarding from "./pages/Onboarding";
 import Reports from "./pages/Reports";
 
 import Login from "./pages/Auth/Login";
+import Enrollments from "./pages/Training/Enrollments";
 
 function App() {
   return (
@@ -24,9 +25,9 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
 
             {/* Training Section */}
-            <Route path="training/*" element={<Training />}>
+            <Route path="training/*" element={<TrainingLayout />}>
               <Route index element={<Navigate to="enrollments" replace />} />
-              <Route path="enrollments" element={<h1>Enrollments</h1>} />
+              <Route path="enrollments" element={<Enrollments />} />
               <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
               <Route path="catalog" element={<h1>catalog</h1>} />
             </Route>

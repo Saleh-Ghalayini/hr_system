@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-const Training = () => {
+const TrainingLayout = () => {
 
   return (
     <>
@@ -9,4 +9,4 @@ const Training = () => {
   );
 };
 
-export default Training;
+export default TrainingLayout;
