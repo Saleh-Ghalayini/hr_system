@@ -40,6 +40,11 @@ class AuthController extends Controller
 
         return Validator::make($request->all(), $rules);
     }
+    public function getAllUsers()
+    {
+        $users = User::all();
+        return response()->json($users);
+    }
 
     public function login(Request $request)
     {

@@ -12,6 +12,7 @@ import Reports from "./pages/Reports";
 
 import Login from "./pages/Auth/Login";
 import Enrollments from "./pages/Training/Enrollments";
+import CourseCatalog from "./pages/Training/CourseCatalog";
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
               <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
-              <Route path="catalog" element={<h1>catalog</h1>} />
+              <Route path="catalog" element={<CourseCatalog />} />
             </Route>
 
             {/* Payroll Section */}

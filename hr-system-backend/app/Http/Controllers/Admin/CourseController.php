@@ -21,6 +21,7 @@ class CourseController extends Controller
     {
      try{
      $course = new Course();
+     //sample json data for creating new course is 
      $course->course_name = $request->course_name;
      $course->description = $request->description;
      $course->skills = $request->skills;

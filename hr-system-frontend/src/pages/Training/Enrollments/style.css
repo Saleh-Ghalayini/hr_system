@@ -15,17 +15,20 @@
 }
 .search-contianer {
   display: flex;
+
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
   gap: 10px;
 }
 .search-contianer input {
-  width: 250px;
-  padding: 5px;
-  height: 30px;
+  flex: 1;
+  padding: 10px 15px;
+  border: 1px solid #e1e1e1;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.3s ease;
 }
 .enroll-modal {
   width: 100%;
@@ -97,18 +100,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: all 0.3s ease;
+}
+.modal-close:hover {
+  background-color: #357abd;
 }
 .enroll-btn {
-  width: 100px;
-  height: 30px;
+  background-color: #4a90e2;
+  color: white;
+  padding: 10px 20px;
   border-radius: 5px;
-  border: 1px solid #ccc;
-  background-color: #43ba6e;
-  color: #fff;
   cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
 }
 .search-contianer input:focus {
   outline: none;

@@ -1,7 +1,7 @@
 export const SUBNAV_CONFIG = {
   "/training": [
     { text: "Enrollments", link: "enrollments" },
-    { text: "New Enrollment", link: "new-enrollment" },
+
     { text: "Course Catalog", link: "catalog" },
   ],
   "/payroll": [

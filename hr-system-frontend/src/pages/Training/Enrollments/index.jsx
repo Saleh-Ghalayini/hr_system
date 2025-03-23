@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import "./style.css";
 import Table from "../../../components/Table";
 import axios from "axios";
+import baseApi from "../../../services/baseApi";
 // import { useAuth } from "../../../context/AuthContext";
 
 const debounce = (func, wait) => {
@@ -20,12 +21,15 @@ const Enrollments = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
     user_id: "",
     course_id: "",
     status: "enrolled",
     start_date: "",
     end_date: "",
+    due_date: "",
+    created_at: new Date().toISOString().split("T")[0],
   });
   const token = localStorage.getItem("token");
   console.log(localStorage.getItem("token"));
@@ -49,6 +53,27 @@ const Enrollments = () => {
     };
 
     fetchCourses();
+  }, [token]);
+
+  // Fetch users from API
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(
+          "http://127.0.0.1:8000/api/v1/admin/getallusers",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setUsers(response.data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
   }, [token]);
 
   // Fetch enrollments from API
@@ -147,33 +172,21 @@ const Enrollments = () => {
 
   // Create enrollment
   const enrollNewEmployee = async (e) => {
+    e.preventDefault();
     setLoading(true);
+    console.log("formData", formData);
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/admin/enrollments",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
+      await baseApi.post("/admin/enrollments", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
 
-        }
-
-
-      );
-
-      // Refresh enrollments list
-      const enrollmentsResponse = await axios.get(
-        "http://127.0.0.1:8000/api/v1/admin/enrollments",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setEnrollments(enrollmentsResponse.data);
-      setFilteredData(enrollmentsResponse.data);
+      // // Refresh enrollments list
+      // const enrollmentsResponse = await baseApi.get("/admin/enrollments");
+      // setEnrollments(enrollmentsResponse.data);
+      // setFilteredData(enrollmentsResponse.data);
 
       // Reset form and close modal
       setFormData({
@@ -182,6 +195,8 @@ const Enrollments = () => {
         status: "enrolled",
         start_date: "",
         end_date: "",
+        due_date: "",
+        created_at: new Date().toISOString().split("T")[0],
       });
       setModal(false);
     } catch (error) {
@@ -204,7 +219,7 @@ const Enrollments = () => {
               </div>
             </div>
             <div className="modal-body">
-              <form  className="modal-body-input">
+              <form className="modal-body-input">
                 <span>Select Employee</span>{" "}
                 <select
                   name="user_id"
@@ -215,9 +230,9 @@ const Enrollments = () => {
                   required
                 >
                   <option value="">Select Employee</option>
-                  {enrollments.map((enrollment) => (
-                    <option key={enrollment.id} value={enrollment.user?.id}>
-                      {enrollment.user?.first_name} {enrollment.user?.last_name}
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.first_name} {user.last_name}
                     </option>
                   ))}
                 </select>
@@ -242,6 +257,14 @@ const Enrollments = () => {
                   type="date"
                   name="start_date"
                   value={formData.start_date}
+                  onChange={handleInputChange}
+                  required
+                />
+                <span>Due Date</span>{" "}
+                <input
+                  type="date"
+                  name="due_date"
+                  value={formData.due_date}
                   onChange={handleInputChange}
                   required
                 />
