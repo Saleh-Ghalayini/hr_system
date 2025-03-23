@@ -5,7 +5,6 @@
   justify-content: center;
   align-items: center;
   margin-top: 15px;
- 
 }
 .enrollments-main-container {
   width: 90%;
@@ -16,7 +15,7 @@
 }
 .search-contianer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
   gap: 10px;
@@ -28,6 +27,89 @@
   border-radius: 5px;
   border: 1px solid #ccc;
 }
+.enroll-modal {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  width: 500px;
+  height: 500px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.modal-body {
+  padding: 10px;
+}
+.modal-body-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* align-items: center; */
+  padding: 10px;
+}
+.modal-body-input input {
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+.modal-body-input span {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-family: "Lato", "sans-serif";
+}
+.modal-body-input-select {
+  width: 100%;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.modal-body-input-select option {
+  font-family: "Lato", sans-serif;
+  font-size: 16px;
+  color: #000;
+  font-weight: 500;
+}
+.modal-close {
+  width: 30px;
+  height: 30px;
+  background-color: #43ba6e;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.enroll-btn {
+  width: 100px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #43ba6e;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .search-contianer input:focus {
   outline: none;
 }
@@ -37,5 +119,3 @@
   border-radius: 5px;
   border: 1px solid #ccc;
 }
-
-
