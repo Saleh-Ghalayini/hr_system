@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\User\UserController;
 
 use App\Http\Controllers\UserController;
 
