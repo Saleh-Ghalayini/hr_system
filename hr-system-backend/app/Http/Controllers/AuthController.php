@@ -131,10 +131,11 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function validateToken(Request $request){
+    public function validateToken(Request $request)
+    {
         // dd("validate token");
         $token = $request->bearerToken();
-        if(!$token){
+        if (!$token) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized'
