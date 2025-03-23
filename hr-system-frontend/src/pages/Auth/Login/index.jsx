@@ -23,7 +23,7 @@ const Login = () => {
           type="text"
           value={email}
           label="Email"
-          className= "input label"
+          className= "input-login label"
           placeholder="Example@gmail.com"
           onChange={(e) => setEmail(e.target.value)}
         />
@@ -32,7 +32,7 @@ const Login = () => {
           type="password"
           value={password}
           label="Password"
-          className= "input label"
+          className= "input-login label"
           placeholder="User@134"
           onChange={(e) => setPassword(e.target.value)}
         />
