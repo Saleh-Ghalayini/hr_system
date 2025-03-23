@@ -11,8 +11,13 @@ class AdminMiddleware
   
     public function handle(Request $request, Closure $next): Response
     {
-        
-        // dd("admin middleware");
+        // if (!auth()->check() || auth()->user()->role !== 'admin') {
+        //     return response()->json([
+        //         'status' => 'error',
+        //         'message' => 'Unauthorized'
+        //     ], 403);
+        // }
+
         return $next($request);
     }
 }

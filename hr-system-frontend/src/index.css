@@ -154,3 +154,6 @@ body {
 .text-left   { 
   text-align: left; 
 }
+.main-content{
+  overflow-y: hidden;
+}
