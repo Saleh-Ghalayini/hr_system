@@ -1,16 +1,15 @@
-
 .input-label{
     gap:3px;
     padding: 6px;
     }
     
-    .input-label label , input{
+    .input-label label , select{
         align-self: flex-start;
     }
     
-    .input-label input{
+    .input-label select{
         height: 45px;
-       max-width: 330px;
+        max-width: 330px;
         border: 1px solid #0F4C75 ;
         background-color: #E8E9EB;
         opacity: 0.5;
@@ -23,7 +22,7 @@
         border-radius: 6px;
     }
     
-    .input:focus{
+    .select:focus{
         outline: none;
         border: 3px solid #0F4C75;
     }

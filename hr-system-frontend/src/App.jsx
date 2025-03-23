@@ -11,6 +11,9 @@ import Onboarding from "./pages/Onboarding";
 import Reports from "./pages/Reports";
 
 import Login from "./pages/Auth/Login";
+import JobInfo from "./pages/Profile/pages/JobInfo";
+import BasicInfo from "./pages/Profile/pages/BasicInfo";
+import Profile from "./pages/profile";
 
 function App() {
   return (
@@ -30,7 +33,13 @@ function App() {
               <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
               <Route path="catalog" element={<h1>catalog</h1>} />
             </Route>
-
+            {/* Profile section */}
+            <Route path="profile/*" element={<Profile />}>
+              <Route index element={<Navigate to="basicinfo" replace />} />
+              <Route path="basicinfo" element={<BasicInfo />} />
+              <Route path="jobdetails" element={<JobInfo />} />
+              <Route path="salary" element={<h1>salary</h1>} />
+            </Route>
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>
               <Route index element={<Navigate to="reports" replace />} />
