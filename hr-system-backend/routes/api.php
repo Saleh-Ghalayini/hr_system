@@ -4,7 +4,11 @@ use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\User\UserController;
+
+use App\Http\Controllers\UserController;
+
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "v1"], function () {
@@ -16,6 +20,18 @@ Route::group(["prefix" => "v1"], function () {
     // Authenticated routes
     Route::group(["middleware" => "auth:api"], function () {
         Route::get('/validate-token', [AuthController::class, "validateToken"]);
+
+        // login users only
+        //Admin Routes
+        // get job details for a users
+        Route::get("/getuserjobdetails", [UserController::class, "getUserJobDetails"]);
+        //upload user phoot
+        Route::post("/uploadphoto", [UserController::class, "uploadProfilePhoto"]);
+        // update user info
+        Route::post("/updatebasicinfo", [UserController::class, "updateUserBasicInfo"]);
+        //update user job details
+        Route::post("/updatejobdetails", [UserController::class, "updateJobDetails"]);
+
 
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
@@ -37,3 +53,4 @@ Route::group(["prefix" => "v1"], function () {
       
     });
 });
+

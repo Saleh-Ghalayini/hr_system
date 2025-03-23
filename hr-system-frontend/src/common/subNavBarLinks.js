@@ -30,9 +30,16 @@ export const SUBNAV_CONFIG = {
     { text: "Payment History", link: "payment-history" },
     { text: "Tax Settings", link: "tax-settings" },
   ],
+
   "/AI": [
     { text: "Salary Reports", link: "salary-reports" },
     { text: "Payment History", link: "payment-history" },
     { text: "Tax Settings", link: "tax-settings" },
+
+  "/profile": [
+    { text: "Basic Info", link: "basicinfo" },
+    { text: "Job Details", link: "jobdetails" },
+    { text: "Salary", link: "salary" },
+
   ],
 };
