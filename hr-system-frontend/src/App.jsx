@@ -13,6 +13,7 @@ import Reports from "./pages/Reports";
 import Login from "./pages/Auth/Login";
 
 import Enrollments from "./pages/Training/Enrollments";
+import CourseCatalog from "./pages/Training/CourseCatalog";
 
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
@@ -35,7 +36,7 @@ function App() {
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
               <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
-              <Route path="catalog" element={<h1>catalog</h1>} />
+              <Route path="catalog" element={<CourseCatalog />} />
             </Route>
             {/* Profile section */}
             <Route path="profile/*" element={<Profile />}>

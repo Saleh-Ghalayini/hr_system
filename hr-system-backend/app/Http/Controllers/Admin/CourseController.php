@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use App\Models\Enrollment;
 use Exception;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
@@ -20,33 +19,22 @@ class CourseController extends Controller
 
     public function store(Request $request)
     {
-     try {
-        // Check if user is already enrolled in this course
-        $existingEnrollment = Enrollment::where('user_id', Auth::user()->id)
-            ->where('course_id', $request->course_id)
-            ->first();
+     try{
+     $course = new Course();
+     //sample json data for creating new course is 
+     $course->course_name = $request->course_name;
+     $course->description = $request->description;
+     $course->skills = $request->skills;
+     $course->duration_hours = $request->duration_hours;
+     $course->certificate_text = $request->certificate_text;
+     $course->save();
+     return response()->json([
+        'status' => 'success',
+        'message' => 'Course created successfully',
+        'course' => $course
+    ], 201);
 
-        if ($existingEnrollment) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are already enrolled in this course'
-            ], 400);
-        }
-
-        $course = new Course();
-        $course->course_name = $request->course_name;
-        $course->description = $request->description;
-        $course->skills = $request->skills;
-        $course->duration_hours = $request->duration_hours;
-        $course->certificate_text = $request->certificate_text;
-        $course->save();
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Course created successfully',
-            'course' => $course
-        ], 201);
-
-     } catch(ValidationException $e) {
+    }catch(ValidationException $e){
         return response()->json([
             'status' => 'error',
             'message' => $e->getMessage()

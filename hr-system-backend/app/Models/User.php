@@ -33,17 +33,15 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     public function enrollments(): HasMany
-{
-    return $this->hasMany(Enrollment::class);
-}
+    {
+        return $this->hasMany(Enrollment::class);
+    }
 
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-
     protected function casts(): array
     {
         return [
@@ -60,10 +58,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
-    public function userJobDetail(): HasOne
+      public function userJobDetail(): HasOne
     {
         return $this->hasOne(JobDetail::class,'user_id');
     }
-
+  
 }
