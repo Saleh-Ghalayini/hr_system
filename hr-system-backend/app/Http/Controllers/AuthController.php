@@ -35,7 +35,7 @@ class AuthController extends Controller
             $rules['position'] = ['required', 'string', 'max:255'];
             $rules['gender'] = ['required', 'in:male,female,other'];
             $rules['insurance_id'] = ['required', 'numeric'];
-            $rules['role'] = ['required', 'in:admin,user,manager'];
+            // $rules['role'] = ['required', 'in:admin,user,manager'];
         }
 
         return Validator::make($request->all(), $rules);
@@ -86,15 +86,16 @@ class AuthController extends Controller
 
     public function addUser(Request $request)
     {
-        $validator = $this->validateAuthRequest($request, false);
+        // $validator = $this->validateAuthRequest($request, false);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Validation failed',
+        //         'errors' => $validator->errors()
+        //     ], 422);
+        // }
+        // dd($request->all());
 
         try {
             $user = User::create([
@@ -102,17 +103,17 @@ class AuthController extends Controller
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
-                'date-of-birth' => $request->{'date-of-birth'},
+                'date_of_birth' => $request->{'date_of_birth'},
                 'nationality' => $request->nationality,
                 'phone_number' => $request->phone_number,
                 'address' => $request->address,
                 'position' => $request->position,
                 'gender' => $request->gender,
                 'insurance_id' => $request->insurance_id,
-                'role' => $request->role,
+                // 'role' => $request->role,
                 // Optional fields
-                'profile_url' => $request->profile_url ?? null,
-                'manager_id' => $request->manager_id ?? null,
+                // 'profile_url' => $request->profile_url ?? null,
+                // 'manager_id' => $request->manager_id ?? null,
             ]);
 
             $token = Auth::login($user);
@@ -132,7 +133,8 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Registration failed',
-                'errors' => ['server' => ['An error occurred during registration.']]
+                'errors' => ['server' => ['An error occurred during registration.']],
+                'error' => $e->getMessage()
             ], 500);
         }
     }

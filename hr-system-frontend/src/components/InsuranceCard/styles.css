@@ -1,0 +1,11 @@
+.insurance-card {
+  background-color: #ffffff;
+  width: 25vw;
+  height: 35vh;
+  justify-content: space-around;
+}
+
+.insurance-btn {
+  width: 50%;
+  height: 3em;
+}
