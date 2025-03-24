@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('insurances', function (Blueprint $table) {
             $table->id();
+            $table->string("type");
+            $table->float("cost");
             $table->timestamps();
         });
     }

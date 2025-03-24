@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('payrolls', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger("user_id");
+            $table->bigInteger("base_salary_id");
+            $table->bigInteger("insurance_id");
+            $table->integer("extra_leaves");
+            $table->string("month");
+            $table->float("total");
             $table->timestamps();
         });
     }
