@@ -5,7 +5,6 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\User\UserController;
 
 use App\Http\Controllers\UserController;
 
@@ -36,6 +35,7 @@ Route::group(["prefix" => "v1"], function () {
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
             //courses routes
+            Route::get("/getallusers", [AuthController::class, "getAllUsers"]);
             Route::get('/courses', [CourseController::class, "index"]);
             Route::post('/courses', [CourseController::class, "store"]);
             Route::put('/courses/{course}', [CourseController::class, "update"]);

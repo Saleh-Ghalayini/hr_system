@@ -1,7 +1,7 @@
 export const SUBNAV_CONFIG = {
   "/training": [
     { text: "Enrollments", link: "enrollments" },
-    { text: "New Enrollment", link: "new-enrollment" },
+
     { text: "Course Catalog", link: "catalog" },
   ],
   "/payroll": [
@@ -35,6 +35,7 @@ export const SUBNAV_CONFIG = {
     { text: "Salary Reports", link: "salary-reports" },
     { text: "Payment History", link: "payment-history" },
     { text: "Tax Settings", link: "tax-settings" },
+  ],
 
   "/profile": [
     { text: "Basic Info", link: "basicinfo" },
