@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_dependencies', function (Blueprint $table) {
+        Schema::create('employees_performance', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('depends_on_task_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('manager_id');
+            $table->unsignedBigInteger('type_id');
+            $table->integer('rate');
+            $table->text('comment');
+            $table->date('create_at');
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_dependencies');
+        Schema::dropIfExists('employees_performance');
     }
 };

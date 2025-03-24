@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
 
-use App\Http\Controllers\User\UserController;
+// use App\Http\Controllers\User\UserController;
 
 use App\Http\Controllers\UserController;
 
@@ -50,7 +50,7 @@ Route::group(["prefix" => "v1"], function () {
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
             Route::get('/enrollments', [UserController::class, 'enrollments']);
         });
-      
+
     });
 });
 
