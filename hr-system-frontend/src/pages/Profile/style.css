@@ -1,3 +1,9 @@
+.profilebody{
+    overflow-y: scroll;
+    height: 80vh;
+}
+
+
 .containerP {
     display: flex;
     flex-direction: column;
