@@ -18,7 +18,7 @@ const [jobDetails , setJobDetails] =  useState({
   
 const updateJobDetails = async()=>{
     const token = localStorage.getItem("token");
-    console.log(token)
+    // console.log(token)
     const response = await request({
         method:"POST",
         path:"updatejobdetails",

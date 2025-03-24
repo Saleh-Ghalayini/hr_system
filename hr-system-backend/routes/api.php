@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
 
 
+
 use App\Http\Controllers\UserController;
 
 use Illuminate\Support\Facades\Route;
@@ -50,7 +51,7 @@ Route::group(["prefix" => "v1"], function () {
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
             Route::get('/enrollments', [UserController::class, 'enrollments']);
         });
-      
+
     });
 });
 

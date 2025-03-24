@@ -291,3 +291,8 @@ class AuthController extends Controller {
 
 - **Read More**: [Laravel Pivot Tables Guide](https://cosme.dev/post/using-pivot-tables-in-laravel-the-complete-guide-to-custom-intermediary-tables-in-manytomany-relationships#:~:text=One%20other%20feature%20that%20we,behaviors%20to%20the%20pivot%20table)
 - **Watch Tutorial**: [YouTube](https://youtu.be/x1UCiE0hZiw?si=2mYyPEituJ0bEcu4)
+
+###################
+add to you .env 
+VITE_Image_Base_URL=http://127.0.0.1:8000/storage/
+to make sure when update profile picture it will appear in your web
