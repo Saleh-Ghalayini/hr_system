@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Http\Controllers\User;
+
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Enrollment;
@@ -28,7 +30,7 @@ class UserController extends Controller
     {
         dd(Auth::user());
         $enrollments = Auth::user()->enrollments()
-        ->with('course')
+            ->with('course')
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function (Enrollment $enrollment) {

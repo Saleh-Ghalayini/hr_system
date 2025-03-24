@@ -19,9 +19,11 @@ import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
 
+
 import Salaries from "./pages/Payroll/Salaries";
 
 import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
+
 
 function App() {
   return (
@@ -109,6 +111,7 @@ function App() {
             </Route>
           </Route>
         </Routes>
+
       </AuthProvider>
     </BrowserRouter>
   );
