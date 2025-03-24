@@ -4,8 +4,10 @@ use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
+
 use App\Http\Controllers\UserController;
 
 use Illuminate\Support\Facades\Route;
@@ -72,5 +74,6 @@ Route::group(["prefix" => "v1"], function () {
             //get leave balance
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
         });
+
     });
 });

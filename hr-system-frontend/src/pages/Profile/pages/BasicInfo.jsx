@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
 const BasicInfo = () => {
- 
+  const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
   const [base64Image, setBase64Image] = useState("");
   const [basicInfo , setBasicInfo] =  useState({
     firstName:"",
@@ -14,7 +14,8 @@ const BasicInfo = () => {
     nationality:"",
     contactNumber:"",
     gender:"",
-    Address:""
+    Address:"",
+    profile_url:"/logo.png"
   }) 
 
   // Function to Convert Image to Base64
@@ -47,11 +48,65 @@ const BasicInfo = () => {
    }
 
   }
+  const getBasicInfo = async ()=>{
+    const token = localStorage.getItem("token");
+        console.log(token)
+        const response = await request({
+            method:"GET",
+            path:"getuserjobdetails",
+            headers:{
+              Authorization : `Bearer ${token}`
+            }
+        })
+        console.log(response)
+        if(response.success){
+          const {address,date_of_birth,email,first_name,last_name,profile_url,nationality,phone_number,gender}= response.user;
+          setBasicInfo({
+            firstName:first_name,
+            lastName:last_name,
+            dob:date_of_birth,
+            email:email,
+            nationality:nationality,
+            contactNumber:phone_number,
+            gender:gender,
+            Address:address,
+            profile_url:ImageBaseUrl+profile_url,
+          })
+        }
+  }
+  const updateBasicInfo =async ()=>{
+     const token = localStorage.getItem("token");
+        // console.log(token)
+        const response = await request({
+            method:"POST",
+            path:"updatebasicinfo",
+            data:{
+              first_name: basicInfo.firstName,
+              last_name: basicInfo.lastName,
+              date_of_birth: basicInfo.dob,
+              email: basicInfo.email,
+              nationality: basicInfo.nationality,
+              phone_number: basicInfo.contactNumber,
+              gender: basicInfo.gender,
+              address: basicInfo.Address
+            },
+            headers:{
+              Authorization : `Bearer ${token}`
+            }
+        })
+        console.log(response)
+       if(response.success){
+       console.log(response.success)
+       }
+  }
+  useEffect(()=>{
+    getBasicInfo()
+  },[])
   return (
     <div className="flex align-center justify-center mt-1">
       <div className="containerP">
         <div className="photo-container flex felx-dir-row  align-center flex-wrap border-rad-eight p-1">
-          <img src="/logo.png" alt="picture photo" id="profImg" />
+          <img src={basicInfo.profile_url} alt="picture photo" id="profImg" />
           <Input
             type={"file"}
             label={"Photo"}
@@ -168,7 +223,7 @@ const BasicInfo = () => {
               />
             </div>
           </div>
-          <Button className="btn-width btn  align-self-end" text={"update"} />
+          <Button className="btn-width btn  align-self-end" onClick={updateBasicInfo} text={"update"} />
         </div>
       </div>
     </div>
