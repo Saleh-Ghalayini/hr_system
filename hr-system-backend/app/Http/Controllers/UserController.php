@@ -46,21 +46,6 @@ class UserController extends Controller
     public function getUserJobDetails(){
         $user = Auth::user();
         $jobDetails = $user->userJobDetail;
-        // if($request->has('update') && $request->input('update') === "update"){
-        //   $jobDetails->title = $request["title"] ?$request['title'] : $jobDetails->title;
-        //   $jobDetails->employment_type = $request["employment_type"] ?$request['employment_type'] : $jobDetails->employment_type;
-        //   $jobDetails->employment_status = $request["employment_status"] ?$request['employment_status'] : $jobDetails->employment_status;
-        //   $jobDetails->employee_level = $request["employee_level"] ?$request['employee_level'] : $jobDetails->employee_level;
-        //   $jobDetails->work_location = $request["work_location"] ?$request['work_location'] : $jobDetails->work_location;
-        //   $jobDetails->hiring_date = $request["hiring_date"] ?$request['hiring_date'] : $jobDetails->hiring_date;
-        //   $jobDetails->save();
-        //   return response()->
-        //   json([
-        //       "success"=>true,
-        //       "message"=> "updated succesfully",
-        //       "jobs"=> $jobDetails,
-        //   ]);
-        // }
 
         // check for the user job details if exist
         if(!$jobDetails){
@@ -74,11 +59,12 @@ class UserController extends Controller
         return response()->
             json([
                 "success"=>true,
-                "jobdetails"=> $jobDetails
+                "jobdetails"=> $jobDetails,
+                "user"=> $user
             ]);
 
     }
-
+ 
     public function uploadProfilePhoto(Request $request){
 
     $request->validate([

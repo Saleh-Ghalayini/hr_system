@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('task_dependencies', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('task_id');
-            $table->unsignedBigInteger('depends_on_task_id');
-            $table->timestamps();
+            $table->string('role');
+
         });
     }
 
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_dependencies');
+        Schema::dropIfExists('roles');
     }
 };
