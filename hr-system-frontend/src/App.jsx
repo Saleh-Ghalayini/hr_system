@@ -13,11 +13,15 @@ import Reports from "./pages/Reports";
 import Login from "./pages/Auth/Login";
 
 import Enrollments from "./pages/Training/Enrollments";
+import CourseCatalog from "./pages/Training/CourseCatalog";
 
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
 
+import Salaries from "./pages/Payroll/Salaries";
+
+import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
 
 function App() {
   return (
@@ -35,7 +39,7 @@ function App() {
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
               <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
-              <Route path="catalog" element={<h1>catalog</h1>} />
+              <Route path="catalog" element={<CourseCatalog />} />
             </Route>
             {/* Profile section */}
             <Route path="profile/*" element={<Profile />}>
@@ -46,10 +50,10 @@ function App() {
             </Route>
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>
-              <Route index element={<Navigate to="reports" replace />} />
-              <Route path="reports" element={<h1>reports</h1>} />
-              <Route path="history" element={<h1>history</h1>} />
-              <Route path="tax-settings" element={<h1>tax-settings</h1>} />
+              <Route index element={<Navigate to="salaries" replace />} />
+              <Route path="salaries" element={<Salaries />} />
+              <Route path="insandtax" element={<InsuranceAndTax />} />
+              <Route path="bonuses" element={<h1>Bonuses</h1>} />
             </Route>
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />
