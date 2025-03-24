@@ -13,7 +13,6 @@ class AttendanceController extends Controller
 
     private function validateLocation($longitude, $latitude)
     {
-
         if (
             is_null($longitude) || is_null($latitude) ||
             !is_numeric($longitude) || !is_numeric($latitude) ||
@@ -88,6 +87,8 @@ class AttendanceController extends Controller
                 'success' => false,
                 'message' => 'User not found'
             ], 400);
+
+        return $user;
     }
 
     private function getUserByName($first_name, $last_name)
@@ -116,32 +117,21 @@ class AttendanceController extends Controller
     public function checkIn(Request $request)
     {
         $user = Auth::user();
-
-        // Checking if the user already checked in
         $validationResponse = $this->validateAttendance($user, $request, "in");
 
-        // Stops execution if validation fails
-        if ($validationResponse)
-            return $validationResponse;
+        if ($validationResponse) return $validationResponse;
 
-        $attendance = new Attendance();
-
-        $attendance->user_id = $user->id;
-        $attendance->date = date('Y-m-d');
-        $attendance->check_in = now()->toTimeString();
-        $attendance->check_in_lon = $request->check_in_lon;
-        $attendance->check_in_lat = $request->check_in_lat;
-
-        $attendance->time_in_status = $this->validateTime($attendance->check_in, "in");
-        $attendance->loc_in_status = $this->validateLocation($request->check_in_lon, $request->check_in_lat);
-
-        $attendance->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Check-in successful.',
-            'attendance' => $attendance
+        $attendance = Attendance::create([
+            'user_id' => $user->id,
+            'date' => now()->toDateString(),
+            'check_in' => now()->toTimeString(),
+            'check_in_lon' => $request->check_in_lon,
+            'check_in_lat' => $request->check_in_lat,
+            'time_in_status' => $this->validateTime(now()->toTimeString(), "in"),
+            'loc_in_status' => $this->validateLocation($request->check_in_lon, $request->check_in_lat),
         ]);
+
+        return response()->json(['success' => true, 'message' => 'Check-in successful.', 'attendance' => $attendance]);
     }
 
     public function checkOut(Request $request)
@@ -209,77 +199,46 @@ class AttendanceController extends Controller
     {
         $first_name = $request->first_name;
         $last_name = $request->last_name;
-        $date = Carbon::createFromFormat('Y-m-d', $request->date);
-        $start_date = Carbon::createFromFormat('Y-m-d', $request->start_date);
-        $end_date = Carbon::createFromFormat('Y-m-d', $request->end_date);
 
-        if ((filled($first_name) && filled($last_name)) && (filled($start_date) && filled($end_date))) {
-
-            $user = $this->getUserByName($first_name, $last_name);
-
-            $this->checkUser($user);
-
-            if ($start_date->greaterThan($end_date))
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid date range: start_date must be before or equal to end_date.'
-                ], 400);
-
-            $attendanceQuery = Attendance::Where('user_id', $user->id);
-            $attendanceQuery->whereBetween('date', [$start_date, $end_date]);
-            $attendance = $attendanceQuery->orderBy('date', 'desc')->get();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'records for user retrieved successfully.',
-                'attendance' => $attendance
-            ]);
-        } else if (filled($first_name) && filled($last_name)) {
-
-            $user = $this->getUserByName($first_name, $last_name);
-
-            $this->checkUser($user);
-
-            // Query attendance for a specific date
-            if (filled($date)) {
-                $attendance = $this->getAttendanceForUser($user, $date);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Attendance for the user on the specific date retrieved successfully.',
-                    'attendance' => $attendance
-                ]);
-            }
-
-            $attendance = Attendance::where('user_id', $user->id)->get();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'All attendance for the user retrieved successfully.',
-                'attendance' => $attendance
-            ]);
-        } else if (filled($first_name)) {
-            $user = User::where('first_name', $first_name)->first();
-
-            $this->checkUser($user);
-
-            if (filled($date)) {
-                $attendance = $this->getAttendanceForUser($user, $date);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Attendance for the user on the specific date retrieved successfully.',
-                    'attendance' => $attendance
-                ]);
-            }
-
-            $attendance = $this->getAttendanceForUser($user, null, $start_date, $end_date);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'All attendance for the user retrieved successfully.',
-                'attendance' => $attendance
-            ]);
+        if (!$first_name || !$last_name) {
+            return response()->json(['success' => false, 'message' => 'First name and last name are required.'], 400);
         }
+
+        $user = $this->getUserByName($first_name, $last_name);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User attendance records retrieved successfully.',
+            'attendance' => $this->getAttendanceForUser($user, $request->date, $request->start_date, $request->end_date)
+        ]);
+    }
+
+    public function getAllUsersAttendance(Request $request)
+    {
+        if (Auth::user()->role !== 'HR') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        $attendanceQuery = Attendance::query();
+
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $start_date = Carbon::parse($request->start_date);
+            $end_date = Carbon::parse($request->end_date);
+
+            if ($start_date->greaterThan($end_date)) {
+                return response()->json(['success' => false, 'message' => 'Invalid date range.'], 400);
+            }
+
+            $attendanceQuery->whereBetween('date', [$start_date, $end_date]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'All users’ attendance records retrieved successfully.',
+            'attendance' => $attendanceQuery->orderBy('date', 'desc')->get()
+        ]);
     }
 }
