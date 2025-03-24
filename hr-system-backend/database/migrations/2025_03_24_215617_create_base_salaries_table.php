@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('base_salaries', function (Blueprint $table) {
             $table->id();
+            $table->string("position");
+            $table->double("salary");
             $table->timestamps();
         });
     }
