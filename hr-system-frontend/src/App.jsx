@@ -19,7 +19,6 @@ import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
 
-
 function App() {
   return (
     <BrowserRouter>
@@ -106,6 +105,7 @@ function App() {
             </Route>
           </Route>
         </Routes>
+
       </AuthProvider>
     </BrowserRouter>
   );
