@@ -4,10 +4,10 @@ use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\AttendanceController;
 
 use App\Http\Controllers\UserController;
-
+use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
 
 Route::group(["prefix" => "v1"], function () {
@@ -46,11 +46,18 @@ Route::group(["prefix" => "v1"], function () {
             Route::post('/enrollments', [AdminEnrollmentController::class, "store"]);
             Route::put('/enrollments/{enrollment}', [AdminEnrollmentController::class, "updateEnrollment"]);
             Route::delete('/enrollments/{enrollment}', [AdminEnrollmentController::class, "destroy"]);
+
+            //attendance routes
+            Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
+            Route::get('/attendance/all', [AttendanceController::class, "getAllUsersAttendance"]);
         });
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
             Route::get('/enrollments', [UserController::class, 'enrollments']);
+
+            //attendance routes
+            Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
+            Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
+            Route::get('/attendance/my', [AttendanceController::class, 'getMyAttendance']);
         });
-      
     });
 });
-
