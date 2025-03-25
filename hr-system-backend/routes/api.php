@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\UserController;
@@ -69,6 +70,8 @@ Route::group(["prefix" => "v1"], function () {
 
             //get all salaries
             Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
+            Route::get('/getinsurances', [InsuranceController::class, 'getInsurances']);
+            Route::post('/updateinsurance', [InsuranceController::class, 'updatePlan']);
 
 
         });
