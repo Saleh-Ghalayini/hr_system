@@ -1,6 +1,8 @@
 // App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Layout from "./Layout";
 import Dashboard from "./components/Dashboard";
 import Attendance from "./pages/Attendance";
@@ -18,12 +20,13 @@ import CourseCatalog from "./pages/Training/CourseCatalog";
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
-
+import EmpPerfo from "./pages/Performance/pages/EmpPerfo";
+import EmpRate from "./pages/Performance/pages/EmpRate";
 
 import Salaries from "./pages/Payroll/Salaries";
 
 import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
-
+import LeaveRequests from "./pages/Attendance/LeaveRequests";
 
 function App() {
   return (
@@ -40,7 +43,6 @@ function App() {
             <Route path="training/*" element={<TrainingLayout />}>
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
-              <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
               <Route path="catalog" element={<CourseCatalog />} />
             </Route>
             {/* Profile section */}
@@ -70,7 +72,7 @@ function App() {
               />
               <Route
                 path="performance-reviews"
-                element={<h1>performance-reviews</h1>}
+                element={<EmpPerfo />}
               />
               <Route
                 path="testing-4-navs"
@@ -78,7 +80,7 @@ function App() {
               />
               <Route
                 path="employee-ratings"
-                element={<h1>employee-ratings</h1>}
+                element={<EmpRate />}
               />
               <Route
                 path="training-needs"
@@ -94,7 +96,7 @@ function App() {
                 path="attendance-records"
                 element={<h1>attendance-records</h1>}
               />
-              <Route path="leave-requests" element={<h1>leave-requests</h1>} />
+              <Route path="leave-requests" element={<LeaveRequests />} />
               <Route
                 path="attendance-reports"
                 element={<h1>attendance-reports</h1>}
@@ -111,7 +113,6 @@ function App() {
             </Route>
           </Route>
         </Routes>
-
       </AuthProvider>
     </BrowserRouter>
   );
