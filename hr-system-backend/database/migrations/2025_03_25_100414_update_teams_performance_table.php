@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('emails', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('sender_email');
-            $table->string('recipient_email');
-            $table->string('subject');
-            $table->text('body')->nullable();
+        Schema::table('teams_performance', function (Blueprint $table) {
+
+            if (Schema::hasColumn('teams_performance', 'create_at')) {
+                $table->dropColumn('create_at');
+            }
+
         });
     }
 

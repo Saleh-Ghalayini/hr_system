@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('performance_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('create_at');
             $table->timestamps();
         });
     }

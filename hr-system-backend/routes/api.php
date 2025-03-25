@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\UserController;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,11 @@ Route::group(["prefix" => "v1"], function () {
         Route::post("/updatebasicinfo", [UserController::class, "updateUserBasicInfo"]);
         //update user job details
         Route::post("/updatejobdetails", [UserController::class, "updateJobDetails"]);
-        
+
+        Route::post("/rateteam",[PerformanceController::class,"rateTeam"]);
+
+        Route::get("/getratetypes",[PerformanceController::class,"getTypes"]);
+        Route::get("/latestteamrate",[PerformanceController::class,"getLastTeamRate"]);
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
             //courses routes
@@ -52,11 +57,11 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
             Route::get('/attendance/all', [AttendanceController::class, "getAllUsersAttendance"]);
 
-            
+
             //leave requests routes
             Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequests"]);
             Route::put('/leave-requests/{leaveRequest}', [LeaveRequestController::class, "updateLeaveRequest"]);
-            
+
             //leave balance routes
             //get leave balance for all users
             Route::get('/leave-balances', [LeaveBalanceController::class, "getLeaveBalances"]);
@@ -85,7 +90,7 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
         });
 
-           
+
     });
 
 
