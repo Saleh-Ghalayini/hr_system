@@ -1,6 +1,8 @@
 // App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Layout from "./Layout";
 import Dashboard from "./components/Dashboard";
 import Attendance from "./pages/Attendance";
@@ -19,11 +21,10 @@ import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
 
-
 import Salaries from "./pages/Payroll/Salaries";
 
 import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
-
+import LeaveRequests from "./pages/Attendance/LeaveRequests";
 
 function App() {
   return (
@@ -40,7 +41,6 @@ function App() {
             <Route path="training/*" element={<TrainingLayout />}>
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
-              <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
               <Route path="catalog" element={<CourseCatalog />} />
             </Route>
             {/* Profile section */}
@@ -94,7 +94,7 @@ function App() {
                 path="attendance-records"
                 element={<h1>attendance-records</h1>}
               />
-              <Route path="leave-requests" element={<h1>leave-requests</h1>} />
+              <Route path="leave-requests" element={<LeaveRequests />} />
               <Route
                 path="attendance-reports"
                 element={<h1>attendance-reports</h1>}
@@ -111,7 +111,18 @@ function App() {
             </Route>
           </Route>
         </Routes>
-
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </AuthProvider>
     </BrowserRouter>
   );
