@@ -9,8 +9,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use App\Models\Enrollment;
+use App\Models\LeaveBalance;
+use App\Models\LeaveRequest;
+use App\Observers\UserObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+#[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -33,17 +37,15 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     public function enrollments(): HasMany
-{
-    return $this->hasMany(Enrollment::class);
-}
+    {
+        return $this->hasMany(Enrollment::class);
+    }
 
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
-
-
     protected function casts(): array
     {
         return [
@@ -60,10 +62,18 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-
-    public function userJobDetail(): HasOne
+      public function userJobDetail(): HasOne
     {
         return $this->hasOne(JobDetail::class,'user_id');
     }
+    public function leaveBalance(): HasOne
+    {
+        return $this->hasOne(LeaveBalance::class);
+    }
 
+    public function leaveRequests(): HasMany
+    {
+        return $this->hasMany(LeaveRequest::class);
+    }
+  
 }

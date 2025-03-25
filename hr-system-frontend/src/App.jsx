@@ -1,6 +1,8 @@
 // App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Layout from "./Layout";
 import Dashboard from "./components/Dashboard";
 import Attendance from "./pages/Attendance";
@@ -13,6 +15,7 @@ import Reports from "./pages/Reports";
 import Login from "./pages/Auth/Login";
 
 import Enrollments from "./pages/Training/Enrollments";
+import CourseCatalog from "./pages/Training/CourseCatalog";
 
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
@@ -20,6 +23,10 @@ import Profile from "./pages/profile";
 import EmpPerfo from "./pages/Performance/pages/EmpPerfo";
 import EmpRate from "./pages/Performance/pages/EmpRate";
 
+import Salaries from "./pages/Payroll/Salaries";
+
+import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
+import LeaveRequests from "./pages/Attendance/LeaveRequests";
 
 function App() {
   return (
@@ -36,8 +43,7 @@ function App() {
             <Route path="training/*" element={<TrainingLayout />}>
               <Route index element={<Navigate to="enrollments" replace />} />
               <Route path="enrollments" element={<Enrollments />} />
-              <Route path="new-enrollment" element={<h1>New Enrollment</h1>} />
-              <Route path="catalog" element={<h1>catalog</h1>} />
+              <Route path="catalog" element={<CourseCatalog />} />
             </Route>
             {/* Profile section */}
             <Route path="profile/*" element={<Profile />}>
@@ -48,10 +54,10 @@ function App() {
             </Route>
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>
-              <Route index element={<Navigate to="reports" replace />} />
-              <Route path="reports" element={<h1>reports</h1>} />
-              <Route path="history" element={<h1>history</h1>} />
-              <Route path="tax-settings" element={<h1>tax-settings</h1>} />
+              <Route index element={<Navigate to="salaries" replace />} />
+              <Route path="salaries" element={<Salaries />} />
+              <Route path="insandtax" element={<InsuranceAndTax />} />
+              <Route path="bonuses" element={<h1>Bonuses</h1>} />
             </Route>
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />
@@ -90,7 +96,7 @@ function App() {
                 path="attendance-records"
                 element={<h1>attendance-records</h1>}
               />
-              <Route path="leave-requests" element={<h1>leave-requests</h1>} />
+              <Route path="leave-requests" element={<LeaveRequests />} />
               <Route
                 path="attendance-reports"
                 element={<h1>attendance-reports</h1>}
@@ -107,6 +113,18 @@ function App() {
             </Route>
           </Route>
         </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+        />
       </AuthProvider>
     </BrowserRouter>
   );

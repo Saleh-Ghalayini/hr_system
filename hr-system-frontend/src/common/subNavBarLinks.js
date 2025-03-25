@@ -1,13 +1,13 @@
 export const SUBNAV_CONFIG = {
   "/training": [
     { text: "Enrollments", link: "enrollments" },
-    { text: "New Enrollment", link: "new-enrollment" },
+
     { text: "Course Catalog", link: "catalog" },
   ],
   "/payroll": [
-    { text: "Salary Reports", link: "reports" },
-    { text: "Payment History", link: "history" },
-    { text: "Tax Settings", link: "tax-settings" },
+    { text: "Salaries", link: "salaries" },
+    { text: "Insurance & Tax", link: "insandtax" },
+    { text: "Bonuses", link: "bonuses" },
   ],
   "/onboarding": [
     { text: "New Hires", link: "new-hires" },
@@ -36,10 +36,10 @@ export const SUBNAV_CONFIG = {
     { text: "Payment History", link: "payment-history" },
     { text: "Tax Settings", link: "tax-settings" },
   ],
+
   "/profile": [
     { text: "Basic Info", link: "basicinfo" },
     { text: "Job Details", link: "jobdetails" },
     { text: "Salary", link: "salary" },
-
   ],
 };

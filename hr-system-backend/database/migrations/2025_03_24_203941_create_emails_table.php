@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('insurances', function (Blueprint $table) {
+        Schema::create('emails', function (Blueprint $table) {
             $table->id();
-            $table->string("type");
-            $table->float("cost");
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('sender_email');
+            $table->string('recipient_email');
+            $table->string('subject');
+            $table->text('body')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('insurances');
+        Schema::dropIfExists('emails');
     }
 };

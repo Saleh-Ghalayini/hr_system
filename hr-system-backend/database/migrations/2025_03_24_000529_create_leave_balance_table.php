@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('insurances', function (Blueprint $table) {
+        Schema::create('leave_balance', function (Blueprint $table) {
             $table->id();
-            $table->string("type");
-            $table->float("cost");
+            $table->integer('user_id');
+            $table->integer('leave_type_id');
+            $table->integer('remaining_days');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('insurances');
+        Schema::dropIfExists('leave_balance');
     }
 };

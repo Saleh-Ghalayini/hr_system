@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('base_salaries', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('date_of_birth')->nullable()->change();
         });
     }
 
@@ -22,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('base_salaries');
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('date_of_birth')->nullable(false)->change();
+        });
     }
 };

@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('insurances', function (Blueprint $table) {
+        Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
-            $table->string("type");
-            $table->float("cost");
+            $table->enum('type', ['annual', 'sick', 'casual', 'other']);
+            $table->integer('max_absence')->default(15);
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('insurances');
+        Schema::dropIfExists('leave_types');
     }
 };

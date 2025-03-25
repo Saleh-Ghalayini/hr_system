@@ -11,10 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('insurances', function (Blueprint $table) {
+        Schema::create('leave_requests', function (Blueprint $table) {
             $table->id();
-            $table->string("type");
-            $table->float("cost");
+            $table->integer('user_id');
+            $table->integer('leave_type_id');
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->string('reason')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('insurances');
+        Schema::dropIfExists('leave_requests');
     }
 };
