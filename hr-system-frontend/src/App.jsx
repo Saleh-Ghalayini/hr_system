@@ -17,6 +17,8 @@ import Enrollments from "./pages/Training/Enrollments";
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
 import Profile from "./pages/profile";
+import EmpPerfo from "./pages/Performance/pages/EmpPerfo";
+import EmpRate from "./pages/Performance/pages/EmpRate";
 
 
 function App() {
@@ -64,7 +66,7 @@ function App() {
               />
               <Route
                 path="performance-reviews"
-                element={<h1>performance-reviews</h1>}
+                element={<EmpPerfo />}
               />
               <Route
                 path="testing-4-navs"
@@ -72,7 +74,7 @@ function App() {
               />
               <Route
                 path="employee-ratings"
-                element={<h1>employee-ratings</h1>}
+                element={<EmpRate />}
               />
               <Route
                 path="training-needs"

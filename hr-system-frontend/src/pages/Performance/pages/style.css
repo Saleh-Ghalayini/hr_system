@@ -1,0 +1,69 @@
+.perfobody{
+    overflow-y: scroll;
+    height: 80vh;
+}
+/* .mychart{
+    width: 100%;
+} */
+ .performnce-container{
+    gap: 10px;
+    width: 100%;
+    flex-wrap: wrap;
+ }
+.chart{
+    background-color: white;
+    border-radius: 7px;
+    width: 55%;
+    min-width: 500px;
+    flex-grow: 1;
+     height: 400px ;
+}
+.rate-comment{
+    background-color: white;
+    border-radius: 7px;
+    width: 40%;
+    height: 400px ;
+    gap: 10px;
+    flex-grow: 1;
+    overflow-y: scroll;
+}
+.comment{
+    border-radius: 7px;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    gap: 10px;
+    padding: 10px;
+}
+.comment-text{
+    padding: 5px;
+}
+
+.inputs-container{
+    width: 50%;
+    flex-wrap: wrap;
+}
+.mt{
+    margin-top: 25px;
+}
+.btn{
+    width: 100px;
+    padding: 7px;
+    margin: 10px 0;
+}
+.flex-wrap{
+    flex-wrap: wrap;
+}
+.flex-grow-1{
+    flex-grow: 1;
+}
+.flex-start{
+    align-self: flex-start;
+}
+/* ===== */
+.rate-container{
+ background-color: white;
+ border-radius: 7px;
+ padding: 10px;
+ width: fit-content;
+ flex-grow: 1;
+
+}
