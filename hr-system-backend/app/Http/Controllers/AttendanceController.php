@@ -34,16 +34,17 @@ class AttendanceController extends Controller
 
         //6371000 is the earth's radius in meters
         $distance = $angle * 6371000;
+        ("Calculated distance: " . $distance . " meters");
 
         //100 is the allowed range of distance for distance between company and user's location
-        return $distance > 100 ? "Review needed" : "Approved";
+        return $distance >= 100 ? "Review needed" : "Approved";
     }
 
     private function validateTime($time, $type)
     {
         $time = Carbon::parse($time);
         $end_time = Carbon::parse(env('COMPANY_END_TIME'));
-        $start_time = Carbon::parse(env('COMPANY_START_TIME'));
+        $start_time = Carbon::parse(env('COMPANY_START_TIME', '15:55:00'));
 
         if ($type === "in")
             return $time->greaterThan($start_time) ? "Late" : "On-time";
@@ -116,6 +117,8 @@ class AttendanceController extends Controller
 
     public function checkIn(Request $request)
     {
+        //Log::info("This is a test log message.");
+
         $user = Auth::user();
         $validationResponse = $this->validateAttendance($user, $request, "in");
 
