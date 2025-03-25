@@ -16,6 +16,8 @@ use App\Http\Controllers\UserController;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\PayrollController;
+
 Route::group(["prefix" => "v1"], function () {
     // Unauthenticated routes
     Route::group(["prefix" => "guest"], function () {
@@ -71,6 +73,9 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/leave-balance/{user}', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
             //get leave balance for a user by id
             Route::get('/leave-balance-user/{id}', [LeaveBalanceController::class, "getLeaveBalanceForUserById"]);
+
+            //get all salaries
+            Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
 
         });
 
