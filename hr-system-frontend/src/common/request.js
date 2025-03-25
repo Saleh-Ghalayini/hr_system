@@ -1,6 +1,7 @@
 import axios from "axios";
 
 export const baseApi =import.meta.env.VITE_Base_API;
+const token = localStorage.getItem('token');
 
 export const request = async ({method,path,data,headers})=>{
 
@@ -9,7 +10,10 @@ try {
         method,
         url: baseApi+path,
         data,
-        headers,
+        headers: {
+            ...headers,
+            Authorization: `Bearer ${token}`
+        },
     })
     return response.data;
 } catch (error) {

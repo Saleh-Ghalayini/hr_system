@@ -6,6 +6,9 @@ nav {
   align-items: center;
   padding: 8px;
   width: 100%;
+  position: sticky;
+  z-index: 9999999;
+  top: 0;
 }
 
 nav img {
