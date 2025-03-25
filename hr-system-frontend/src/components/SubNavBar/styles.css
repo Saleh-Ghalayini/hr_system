@@ -15,9 +15,12 @@ a {
 
 .subnavbar {
   width: 100%;
-  background-color: #e4e9ef;
+  background-color: #fff;
   height: 35px;
   justify-content: start;
+  position: sticky;
+  top: 80px;
+  z-index: 9999999;
 }
 
 li {
