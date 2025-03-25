@@ -28,7 +28,7 @@ class UserObserver
         $payroll->total = BaseSalary::where('position',$user->position)->value('salary') - 
                             Insurance::where('id', $user->insurance_id)->value('cost');
                             
-        $payroll->total = $payroll->total - (($payroll->total * Tax::where('id', 1)->value('rate')) / 100);
+        
         $payroll->save();
 
         $leaveBalance = new LeaveBalance();
