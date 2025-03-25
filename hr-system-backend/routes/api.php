@@ -4,14 +4,9 @@ use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\EnrollmentController;
 use App\Http\Controllers\AuthController;
-
 use App\Http\Controllers\AttendanceController;
-
-
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
-
-
 use App\Http\Controllers\UserController;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
@@ -27,9 +22,6 @@ Route::group(["prefix" => "v1"], function () {
     // Authenticated routes
     Route::group(["middleware" => "auth:api"], function () {
         Route::get('/validate-token', [AuthController::class, "validateToken"]);
-
-        // login users only
-        //Admin Routes
         // get job details for a users
         Route::get("/getuserjobdetails", [UserController::class, "getUserJobDetails"]);
         //upload user phoot
@@ -82,9 +74,8 @@ Route::group(["prefix" => "v1"], function () {
             Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
             Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
             Route::get('/attendance/my', [AttendanceController::class, 'getMyAttendance']);
-        });
 
-            //leave requests routes
+             //leave requests routes
             //get leave requests by user
             Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequestsByUser"]);
             //create leave request
@@ -93,6 +84,9 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
         });
 
-
+           
     });
+
+
+});
 

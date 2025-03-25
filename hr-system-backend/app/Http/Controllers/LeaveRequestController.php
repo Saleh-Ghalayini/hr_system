@@ -42,6 +42,7 @@ class LeaveRequestController extends Controller
     }
     public function getLeaveRequests()
     {
+        // dd("hello");
         $leaveRequests = LeaveRequest::all();
         return response()->json([
             'success' => true,
