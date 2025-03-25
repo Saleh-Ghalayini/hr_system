@@ -35,6 +35,7 @@ Route::group(["prefix" => "v1"], function () {
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
             //courses routes
             Route::get("/getallusers", [AuthController::class, "getAllUsers"]);
+            Route::get("/getuserbyid/{id}", [AuthController::class, "getUserById"]);
             Route::get('/courses', [CourseController::class, "index"]);
             Route::post('/courses', [CourseController::class, "store"]);
             Route::put('/courses/{course}', [CourseController::class, "update"]);

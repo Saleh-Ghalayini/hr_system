@@ -45,6 +45,17 @@ class AuthController extends Controller
         $users = User::all();
         return response()->json($users);
     }
+    public function getUserById($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found'
+            ], 404);
+        }
+        return response()->json($user);
+    }
 
     public function login(Request $request)
     {

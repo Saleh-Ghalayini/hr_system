@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Throwable;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -21,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Throwable $exceptions, Request $request) {
+        $exceptions->render(function ( Request $request) {
             if ($request->is("api/*")) {
                 return response()->json([
                     "success" => false,
