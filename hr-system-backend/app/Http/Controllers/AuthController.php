@@ -20,7 +20,7 @@ class AuthController extends Controller
                     ->letters()
                     ->mixedCase()
                     ->numbers()
-                    ->symbols()
+                    // ->symbols()
             ],
         ];
 
@@ -97,36 +97,20 @@ class AuthController extends Controller
 
     public function addUser(Request $request)
     {
-        // $validator = $this->validateAuthRequest($request, false);
-
-        // if ($validator->fails()) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Validation failed',
-        //         'errors' => $validator->errors()
-        //     ], 422);
-        // }
-        // dd($request->all());
-
         try {
-            $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => bcrypt($request->password),
-                'date_of_birth' => $request->{'date_of_birth'},
-                'nationality' => $request->nationality,
-                'phone_number' => $request->phone_number,
-                'address' => $request->address,
-                'position' => $request->position,
-                'gender' => $request->gender,
-                'insurance_id' => $request->insurance_id,
-                // 'role' => $request->role,
-                // Optional fields
-                // 'profile_url' => $request->profile_url ?? null,
-                // 'manager_id' => $request->manager_id ?? null,
-            ]);
-
+            $user = new User();
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email;
+            $user->password = bcrypt($request->password);
+            $user->date_of_birth = $request->date_of_birth;
+            $user->nationality = $request->nationality;
+            $user->phone_number = $request->phone_number;
+            $user->address = $request->address;
+            $user->position = $request->position;
+            $user->gender = $request->gender;
+            $user->insurance_id = $request->insurance_id;
+            $user->save();
             $token = Auth::login($user);
 
             return response()->json([
