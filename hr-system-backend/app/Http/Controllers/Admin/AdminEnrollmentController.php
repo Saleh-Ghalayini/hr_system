@@ -13,12 +13,6 @@ class AdminEnrollmentController extends Controller
 {
     public function index()
     {
-        // if(Auth::user()->role != "admin"){
-        //     return response()->json([
-        //         'status' => 'error',
-        //         'message' => 'Unauthorized'
-        //     ], 401);
-        // }
         return Enrollment::with(['user', 'course'])->get();
     }
 
@@ -64,7 +58,7 @@ class AdminEnrollmentController extends Controller
         }
     }
 
-    public function updateEnrollment(Request $request, Enrollment $enrollment)      
+    public function updateEnrollment(Request $request, Enrollment $enrollment)
     {
         try {
             // Check if enrollment exists
@@ -111,7 +105,7 @@ class AdminEnrollmentController extends Controller
                     ], 400);
                 }
             }
-            
+
             $enrollment->update($request->all());
             return response()->json([
                 'status' => 'success',

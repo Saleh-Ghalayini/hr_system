@@ -109,7 +109,8 @@ class AuthController extends Controller
             $user->address = $request->address;
             $user->position = $request->position;
             $user->gender = $request->gender;
-            $user->insurance_id = $request->insurance_id;
+            $user->insurance_id = 1;
+            // $user->base_salary = $request->base_salary;
             $user->save();
             $token = Auth::login($user);
 
@@ -129,7 +130,7 @@ class AuthController extends Controller
                 'success' => false,
                 'message' => 'Registration failed',
                 'errors' => ['server' => ['An error occurred during registration.']],
-                'error' => $e->getMessage()
+                'error-Message' => $e->getMessage()
             ], 500);
         }
     }
