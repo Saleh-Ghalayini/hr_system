@@ -37,7 +37,8 @@ class AttendanceController extends Controller
         //6371000 is the earth's radius in meters
         $distance = $angle * 6371000;
         ("Calculated distance: " . $distance . " meters");
-
+        Log::info(" company lon " . env('COMPANY_LON') . " company lat "
+            . env('COMPANY_LAT') . "user lon " . $user_long . " user lat " . $user_lat .  " distance " . $distance);
         //100 is the allowed range of distance for distance between company and user's location
         return $distance >= 100 ? "Review needed" : "Approved";
     }
@@ -150,6 +151,7 @@ class AttendanceController extends Controller
             'check_in_lat' => $request->check_in_lat,
             'time_in_status' => $this->validateTime(now()->toTimeString(), "in"),
             'loc_in_status' => $this->validateLocation($request->check_in_lon, $request->check_in_lat),
+            "full_name" => $user->first_name . " " . $user->last_name
         ]);
 
         return response()->json(['success' => true, 'message' => 'Check-in successful.', 'attendance' => $attendance]);
@@ -241,6 +243,11 @@ class AttendanceController extends Controller
 
     public function getAllUsersAttendance(Request $request)
     {
+
+        if (Auth::user()->role !== 'admin') {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
 
         $attendanceQuery = Attendance::query();
 

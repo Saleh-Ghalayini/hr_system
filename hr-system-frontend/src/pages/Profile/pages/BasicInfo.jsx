@@ -3,6 +3,7 @@ import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
+import { toast, ToastContainer } from "react-toastify";
 const BasicInfo = () => {
   const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
   const [base64Image, setBase64Image] = useState("");
@@ -45,6 +46,7 @@ const BasicInfo = () => {
     console.log(response)
    if(response.success){
     setBase64Image("")
+    getBasicInfo()
    }
 
   }
@@ -96,6 +98,9 @@ const BasicInfo = () => {
         })
         console.log(response)
        if(response.success){
+        toast.success("Basic Info Updated Successfully")
+        getBasicInfo()
+
        console.log(response.success)
        }
   }
@@ -104,6 +109,7 @@ const BasicInfo = () => {
   },[])
   return (
     <div className="flex align-center justify-center mt-1">
+    
       <div className="containerP">
         <div className="photo-container flex felx-dir-row  align-center flex-wrap border-rad-eight p-1">
           <img src={basicInfo.profile_url} alt="picture photo" id="profImg" />
@@ -224,6 +230,7 @@ const BasicInfo = () => {
             </div>
           </div>
           <Button className="btn-width btn  align-self-end" onClick={updateBasicInfo} text={"update"} />
+          <ToastContainer />
         </div>
       </div>
     </div>
