@@ -90,6 +90,7 @@ Route::group(["prefix" => "v1"], function () {
 
             //get all salaries
             Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
+            Route::get('/gettotals', [PayrollController::class, "getTotal"]);
 
             Route::get('/getinsurances', [InsuranceController::class, 'getInsurances']);
             Route::post('/updateinsurance', [InsuranceController::class, 'updatePlan']);

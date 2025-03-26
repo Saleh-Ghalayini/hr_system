@@ -20,8 +20,11 @@ class InsuranceObserver
      * Handle the Insurance "updated" event.
      */
     public function updated(Insurance $insurance): void{
-        
-        
+        $payroll = Payroll::all();
+        foreach($payroll as $p){
+            $p->total = $p->total +$insurance->old_cost - $insurance->cost;
+            $p->save();
+        }
 
     }
 
