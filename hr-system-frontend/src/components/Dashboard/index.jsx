@@ -37,6 +37,8 @@ import {
   getLineChartOptions,
   getRadarChartOptions,
 } from "./utils/chartData";
+import Loading from "../../assets/loader/loading";
+import { toast } from "react-toastify";
 
 // Register ChartJS components
 ChartJS.register(
@@ -67,25 +69,13 @@ const Dashboard = () => {
 
   if (isLoading) {
     return (
-      <Box className="loading">
-        <CircularProgress size={40} />
-        <Typography variant="body1" style={{ marginTop: 16, marginLeft: 16 }}>
-          Loading dashboard...
-        </Typography>
-      </Box>
+    <Loading />
     );
   }
 
   if (hasError) {
     return (
-      <Box className="loading">
-        <Typography variant="h6" color="error" style={{ marginBottom: 16 }}>
-          Error loading dashboard data
-        </Typography>
-        <Typography variant="body1" color="textSecondary">
-          Please try refreshing the page
-        </Typography>
-      </Box>
+     toast.error("Error loading dashboard data")
     );
   }
 
