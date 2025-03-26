@@ -25,8 +25,7 @@ class UserObserver
         $payroll->extra_leaves = 0;
         $payroll->position = $user->position;
         $payroll->month = date_format($user->created_at, "M");
-        $payroll->total = BaseSalary::where('position',$user->position)->value('salary') - 
-                            Insurance::where('id', $user->insurance_id)->value('cost');
+        $payroll->total = BaseSalary::where('position',$user->position)->value('salary');
                             
         
         $payroll->save();

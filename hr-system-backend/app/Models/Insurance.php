@@ -10,6 +10,7 @@ class Insurance extends Model{
     protected $fillable = [
         'type',
         'cost',
+        "old_cost"
     ];
 
     public function payroll(){
