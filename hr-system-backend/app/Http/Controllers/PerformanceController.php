@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Carbon\Carbon;
 use App\Models\EmployeePerformance;
 use App\Models\PerformanceType;
 use App\Models\TeamPerformance;
@@ -91,10 +91,17 @@ class PerformanceController extends Controller
     'rates' => $EmployeerateArray
 ]);
 }
- public function getEmployeRate(){
-    $user = Auth::user();
+ public function getEmployeRate(Request $request){
 
-    $latestRatings = EmployeePerformance::where('user_id', $user->id)
+    $request['user_id'] ?
+
+        $user_id  = $request['user_id']
+    :
+        $user_id = Auth::user()->id;
+
+
+
+    $latestRatings = EmployeePerformance::where('user_id',$user_id)
         ->orderBy('type_id')
         ->orderByDesc('created_at')
         ->get()
@@ -103,7 +110,7 @@ class PerformanceController extends Controller
         ->values();
 
     $ratesArray = $latestRatings->pluck('rate')->toArray();
-    $comment = $latestRatings->first()->comment ?? null; 
+    $comment = $latestRatings->first()->comment ?? null;
 
     return response()->json([
         'success' => true,
@@ -111,6 +118,17 @@ class PerformanceController extends Controller
         'comment' => $comment
     ]);
  }
+    public function getAverageRate(){
+        $Employeesrating =  EmployeePerformance::selectRaw('type_id, AVG(rate) as average_rate')
+        ->whereYear('created_at', Carbon::now()->year) 
+        ->groupBy('type_id')
+        ->orderBy('type_id')
+        ->get();
+        return response()->json([
+            'success' => true,
+            'average_ratings' => $Employeesrating
+        ]);
+    }
 
 
 }

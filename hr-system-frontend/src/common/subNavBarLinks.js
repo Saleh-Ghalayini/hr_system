@@ -18,7 +18,8 @@ export const SUBNAV_CONFIG = {
     { text: "Performance Reviews", link: "performance-reviews" },
     { text: "Employee Ratings", link: "employee-ratings" },
     { text: "Training Needs", link: "training-needs" },
-    { text: "testing 4 navs", link: "testing-4-navs" },
+    { text: "Average Rating", link: "average-rate" },
+   
   ],
   "/attendance": [
     { text: "Attendance Records", link: "attendance-records" },

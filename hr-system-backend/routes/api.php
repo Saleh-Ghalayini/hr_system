@@ -97,6 +97,8 @@ Route::group(["prefix" => "v1"], function () {
 
 
 
+            // get the average rate for each type
+            Route::get("/averagerate", [PerformanceController::class,"getAverageRate"]);
         });
 
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
