@@ -44,7 +44,8 @@ Route::group(["prefix" => "v1"], function () {
         Route::get("/latestteamrate",[PerformanceController::class,"getLastTeamRate"]);
         // rate for employe from his manager
         Route::get("/getemplyeerate",[PerformanceController::class,"getEmployeRate"]);
-
+        // get profile picture
+        Route::get("/getphotourl",[UserController::class,"getImageUrl"]);
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
 
