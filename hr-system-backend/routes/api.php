@@ -35,7 +35,10 @@ Route::group(["prefix" => "v1"], function () {
         Route::post("/rateteam",[PerformanceController::class,"rateTeam"]);
 
         Route::get("/getratetypes",[PerformanceController::class,"getTypes"]);
+        // rate done by employe for his team
         Route::get("/latestteamrate",[PerformanceController::class,"getLastTeamRate"]);
+        // rate for employe from his manager
+        Route::get("/getemplyeerate",[PerformanceController::class,"getEmployeRate"]);
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
             //courses routes
@@ -69,7 +72,8 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/leave-balance/{user}', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
             //get leave balance for a user by id
             Route::get('/leave-balance-user/{id}', [LeaveBalanceController::class, "getLeaveBalanceForUserById"]);
-
+            // performance Routes for rates an employee
+            Route::post("/rateemployee",[PerformanceController::class,"rateEmployee"]);
         });
 
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
