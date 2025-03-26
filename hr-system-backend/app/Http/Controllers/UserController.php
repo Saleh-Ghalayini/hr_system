@@ -64,7 +64,7 @@ class UserController extends Controller
             ]);
 
     }
- 
+
     public function uploadProfilePhoto(Request $request){
 
     $request->validate([
@@ -96,5 +96,14 @@ class UserController extends Controller
         'photo_url' => url('storage/profile_photos/' . $fileName)
     ]);
    }
+   public function getImageUrl(){
+    $user = Auth::user();
+    $profileImg = $user->profile_url;
 
+    return response()->json([
+        'success' => true,
+        'photo_url' => $profileImg
+    ]);
+    
+   }
 }

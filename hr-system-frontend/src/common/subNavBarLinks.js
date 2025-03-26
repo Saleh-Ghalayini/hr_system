@@ -17,7 +17,7 @@ export const SUBNAV_CONFIG = {
   "/performance": [
     { text: "Performance Reviews", link: "performance-reviews" },
     { text: "Employee Ratings", link: "employee-ratings" },
-    { text: "Training Needs", link: "training-needs" },
+    { text: "Rate Empolyee", link: "rate-empolyee" },
     { text: "Average Rating", link: "average-rate" },
    
   ],
