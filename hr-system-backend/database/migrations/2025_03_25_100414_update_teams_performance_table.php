@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('performance_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('teams_performance', function (Blueprint $table) {
+
+            if (Schema::hasColumn('teams_performance', 'create_at')) {
+                $table->dropColumn('create_at');
+            }
+
         });
     }
 
@@ -23,7 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('performance_types');
-
+        //
     }
 };

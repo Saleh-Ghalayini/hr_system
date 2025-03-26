@@ -8,6 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,15 @@ Route::group(["prefix" => "v1"], function () {
         //update user job details
         Route::post("/updatejobdetails", [UserController::class, "updateJobDetails"]);
 
+
+        Route::post("/rateteam",[PerformanceController::class,"rateTeam"]);
+
+        Route::get("/getratetypes",[PerformanceController::class,"getTypes"]);
+        // rate done by employe for his team
+        Route::get("/latestteamrate",[PerformanceController::class,"getLastTeamRate"]);
+        // rate for employe from his manager
+        Route::get("/getemplyeerate",[PerformanceController::class,"getEmployeRate"]);
+
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
 
@@ -60,6 +70,7 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
 
 
+
             //leave requests routes
             Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequests"]);
             Route::put('/leave-requests/{leaveRequest}', [LeaveRequestController::class, "updateLeaveRequest"]);
@@ -72,12 +83,17 @@ Route::group(["prefix" => "v1"], function () {
             //get leave balance for a user by id
             Route::get('/leave-balance-user/{id}', [LeaveBalanceController::class, "getLeaveBalanceForUserById"]);
 
+            // performance Routes for rates an employee
+            Route::post("/rateemployee",[PerformanceController::class,"rateEmployee"]);
+
+
 
             //get all salaries
             Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
 
             Route::get('/getinsurances', [InsuranceController::class, 'getInsurances']);
             Route::post('/updateinsurance', [InsuranceController::class, 'updatePlan']);
+
 
 
 
@@ -98,6 +114,7 @@ Route::group(["prefix" => "v1"], function () {
             //get leave balance
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
 
+
             //leave requests routes
             //get leave requests by user
             Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequestsByUser"]);
@@ -106,5 +123,6 @@ Route::group(["prefix" => "v1"], function () {
             //get leave balance
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
         });
+
     });
 });
