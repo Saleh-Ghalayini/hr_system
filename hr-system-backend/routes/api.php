@@ -8,7 +8,6 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\UserController;
-use App\Models\Attendance;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PayrollController;
@@ -22,6 +21,10 @@ Route::group(["prefix" => "v1"], function () {
 
     // Authenticated routes
     Route::group(["middleware" => "auth:api"], function () {
+        // check-in/out for admin and user
+        Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
+        Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
+
         Route::get('/validate-token', [AuthController::class, "validateToken"]);
         // get job details for a users
         Route::get("/getuserjobdetails", [UserController::class, "getUserJobDetails"]);
@@ -34,6 +37,7 @@ Route::group(["prefix" => "v1"], function () {
 
         // Admin routes
         Route::prefix('admin')->middleware(['AdminMiddleware'])->group(function () {
+
             //courses routes
             Route::get("/getallusers", [AuthController::class, "getAllUsers"]);
             Route::get("/getuserbyid/{id}", [AuthController::class, "getUserById"]);
@@ -50,8 +54,9 @@ Route::group(["prefix" => "v1"], function () {
 
 
             //attendance routes
-            Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
+            Route::get('/attendance/user', [AttendanceController::class, "getUserByName"]);
             Route::get('/attendance/all', [AttendanceController::class, "getAllUsersAttendance"]);
+            Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
 
 
             //leave requests routes
@@ -69,29 +74,24 @@ Route::group(["prefix" => "v1"], function () {
 
             //get all salaries
             Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
-
-
         });
 
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
             Route::get('/enrollments', [UserController::class, 'enrollments']);
 
-
             //attendance routes
-            Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
-            Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
             Route::get('/attendance/my', [AttendanceController::class, 'getMyAttendance']);
 
 
-        //leave requests routes
-        //get leave requests by user
-        Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequestsByUser"]);
-        //create leave request
-        Route::post('/leave-request', [LeaveRequestController::class, "leaveRequest"]);
-        //get leave balance
-        Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
+            //leave requests routes
+            //get leave requests by user
+            Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequestsByUser"]);
+            //create leave request
+            Route::post('/leave-request', [LeaveRequestController::class, "leaveRequest"]);
+            //get leave balance
+            Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
 
-             //leave requests routes
+            //leave requests routes
             //get leave requests by user
             Route::get('/leave-requests', [LeaveRequestController::class, "getLeaveRequestsByUser"]);
             //create leave request
@@ -99,11 +99,5 @@ Route::group(["prefix" => "v1"], function () {
             //get leave balance
             Route::get('/leave-balance-user', [LeaveBalanceController::class, "getLeaveBalanceForUser"]);
         });
-
-           
-
     });
-
-
 });
-
