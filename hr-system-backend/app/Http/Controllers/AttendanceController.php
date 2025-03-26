@@ -84,6 +84,8 @@ class AttendanceController extends Controller
         return null;
     }
 
+
+
     public function getUserByName(Request $request)
     {
         $first_name = $request->first_name;
@@ -126,7 +128,6 @@ class AttendanceController extends Controller
 
     public function checkIn(Request $request)
     {
-        // dd("hello");
         $user = Auth::user();
         $validationResponse = $this->validateAttendance($user, $request, "in");
 
