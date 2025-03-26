@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\BaseSalary;
 use App\Models\Insurance;
+use App\Models\Tax;
 
 class Payroll extends Model{
     
@@ -22,5 +23,9 @@ class Payroll extends Model{
 
     public function baseSalary(){
         return $this->belongsTo(BaseSalary::class);
+    }
+
+    public function tax(){
+        return $this->belongsTo(Tax::class);
     }
 }
