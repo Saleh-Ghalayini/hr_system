@@ -4,6 +4,7 @@ import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
 import Select from "../../../components/Select";
+import { toast, ToastContainer } from "react-toastify";
 const JobInfo = () => {
 
 const [jobDetails , setJobDetails] =  useState({
@@ -31,7 +32,9 @@ const updateJobDetails = async()=>{
     })
     console.log(response)
    if(response.success){
-   console.log(response.success)
+    toast.success("Job Details Updated Successfully")
+    getJobDetails()
+   console.log("qqqqqqqqqqqqqqqqqqqqqqq",response.success)
    }
 
   }
@@ -71,9 +74,11 @@ const options = [
 
   return (
     <div className="flex align-center justify-center mt-1">
+     
       <div className="containerP">
         <div className="bg-white p-1 border-rad-eight full-width flex flex-dir-col">
           <h1 className="subtitle">Job Information</h1>
+          <ToastContainer />
           <div className="input-container flex justify-center align-center flex-wrap ">
             <div className="flex-grow-1">
               <Input

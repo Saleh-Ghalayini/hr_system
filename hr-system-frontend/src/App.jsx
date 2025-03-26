@@ -32,6 +32,7 @@ import AttendanceRecords from "./pages/Attendance/AttendanceRecords";
 
 import AdminRate from "./pages/Performance/pages/AdminRate";
 import AdminAverage from "./pages/Performance/pages/AdminAverage";
+import NewHire from "./pages/Onboarding/NewHire";
 
 
 function App() {
@@ -67,7 +68,7 @@ function App() {
             </Route>
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />
-              <Route path="new-hires" element={<h1>new-hires</h1>} />
+              <Route path="new-hires" element={<NewHire />} />
               <Route path="documents" element={<h1>documents</h1>} />
               <Route path="checklist" element={<h1>checklist</h1>} />
             </Route>
@@ -76,23 +77,11 @@ function App() {
                 index
                 element={<Navigate to="performance-reviews" replace />}
               />
-              <Route
-                path="performance-reviews"
-                element={<EmpPerfo />}
-              />
-              
-              <Route
-                path="employee-ratings"
-                element={<EmpRate />}
-              />
-              <Route
-                path="training-needs"
-                element={<AdminRate />}
-              />
-               <Route
-                path="average-rate"
-                element={<AdminAverage />}
-              />
+              <Route path="performance-reviews" element={<EmpPerfo />} />
+
+              <Route path="employee-ratings" element={<EmpRate />} />
+              <Route path="training-needs" element={<AdminRate />} />
+              <Route path="average-rate" element={<AdminAverage />} />
             </Route>
             <Route path="attendance/*" element={<Attendance />}>
               <Route

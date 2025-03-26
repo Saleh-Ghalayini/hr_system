@@ -15,17 +15,17 @@ class UserSeeder extends Seeder
         DB::table("users")->insert(
         
         [
-            "email" => "halim@email.com",
-            "first_name" => "Halim",
-            "last_name" => "Njeim",
+            "email" => "hassan@email.com",
+            "first_name" => "Hassan",
+            "last_name" => "Mwassi",
             "date_of_birth" => date("Y/m/d"),
-            "address" => "Bekaa",
+            "address" => "Tyre",
             "password" => bcrypt("SecurePass123"),
-            "insurance_id" => 3,
-            "phone_number" => "1616",
+            "insurance_id" => 2,
+            "phone_number" => "76123123",
             "nationality" => "Lebanese",
-            "position" => "Intern",
-            "role" => "admin"
+            "position" => "Junior",
+            "role" => "user"
         ]
     );
     }
