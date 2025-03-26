@@ -16,7 +16,7 @@ The **HR-System** is an integrated Human Resource Management and Onboarding plat
 - **Compliance and Reporting**: Regulatory compliance tracking and automated reporting.
 - **Task Assignment and Project Tracking**: Internal task management for HR-related projects.
 - **Dashboard Analytics**: Interactive dashboards for visualizing key HR metrics and KPIs.
-- **AI Agent System**: AI-powered assistant for HR queries, onboarding guidance, and document automation.
+
 
 ## Installation
 ### Prerequisites
