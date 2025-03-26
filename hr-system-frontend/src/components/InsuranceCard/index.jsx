@@ -2,7 +2,7 @@ import React from "react";
 import "./styles.css";
 import Button from "../Button";
 
-const InsuranceCard = ({ insuranceType, deduction }) => {
+const InsuranceCard = ({ insuranceType, deduction, onClick }) => {
   return (
     <div className="insurance-card flex flex-dir-col align-center m-1 border-rad-six">
       <header>
@@ -11,7 +11,7 @@ const InsuranceCard = ({ insuranceType, deduction }) => {
 
       <h3 className="lato">Deduction Amount:</h3>
       <h3 className="lato">{deduction}$</h3>
-      <Button className="insurance-btn" text="UPDATE" />
+      <Button className="insurance-btn" text="UPDATE" onClick={onClick} />
     </div>
   );
 };

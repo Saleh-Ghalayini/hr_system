@@ -16,8 +16,8 @@ class DatabaseSeeder extends Seeder
         
 
 
-        // $this->call(BaseSalarySeeder::class);
-        // $this->call(InsuranceSeeder::class);
+        $this->call(BaseSalarySeeder::class);
+        $this->call(InsuranceSeeder::class);
         $this->call(UserSeeder::class);
     }
 }

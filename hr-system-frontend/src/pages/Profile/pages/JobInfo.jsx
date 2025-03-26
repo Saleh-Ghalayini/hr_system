@@ -14,7 +14,7 @@ const [jobDetails , setJobDetails] =  useState({
     work_location:"",
     employee_level:"",
   });
-  
+
   
 const updateJobDetails = async()=>{
     const token = localStorage.getItem("token");

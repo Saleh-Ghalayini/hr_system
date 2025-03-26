@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('emails', function (Blueprint $table) {
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('sender_email');
-            $table->string('recipient_email');
-            $table->string('subject');
-            $table->text('body')->nullable();
+        Schema::create('taxes', function (Blueprint $table) {
+            $table->id();
+            $table->integer("rate");
+            $table->timestamps();
         });
     }
 
@@ -25,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('taxes');
     }
 };

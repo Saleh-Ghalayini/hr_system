@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('performance_types', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->timestamps();
+        Schema::table('insurances', function (Blueprint $table) {
+            $table->integer("old_cost")->after("id");
         });
     }
 
@@ -23,7 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('performance_types');
-
+        //
     }
 };

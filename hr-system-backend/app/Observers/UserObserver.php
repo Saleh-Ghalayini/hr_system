@@ -7,6 +7,7 @@ use App\Models\Insurance;
 use App\Models\LeaveBalance;
 use App\Models\User;
 use App\Models\Payroll;
+use App\Models\Tax;
 
 class UserObserver
 {
@@ -22,9 +23,11 @@ class UserObserver
         $payroll->base_salary_id = BaseSalary::where('position', $user->position)->value('id');
         $payroll->insurance= Insurance::where('id', $user->insurance_id)->value('type');
         $payroll->extra_leaves = 0;
+        $payroll->position = $user->position;
         $payroll->month = date_format($user->created_at, "M");
-        $payroll->total = BaseSalary::where('position',$user->position)->value('salary') - 
-                            Insurance::where('id', $user->insurance_id)->value('cost'); 
+        $payroll->total = BaseSalary::where('position',$user->position)->value('salary');
+                            
+        
         $payroll->save();
 
         $leaveBalance = new LeaveBalance();
