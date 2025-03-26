@@ -76,8 +76,51 @@ If you'd like to contribute to this project, please follow the standard GitHub w
 
 ## 📂 Project Root (HR-System)
 
-HR-System/ │── backend/ # Laravel Backend │ ├── app/ # Application Logic │ │ ├── Models/ # Eloquent Models │ │ ├── Http/ │ │ │ ├── Controllers/ # Controllers │ │ │ ├── Middleware/ # Middleware │ │ │ ├── Observer/ # Observers │ │ │ ├── Provider/ # Service Providers │ ├── database/ # Database Files │ │ ├── migrations/ # Database Migrations │ │ ├── seeders/ # Database Seeders │ ├── routes/ # API Routes │ │ ├── api.php # API Endpoints │ │ ├── web.php # Web Routes │ ├── config/ # Configuration Files │ ├── storage/ # Storage (logs, uploads, etc.) │ ├── public/ # Public Assets (profile pics, docs) │ ├── tests/ # Tests │ ├── composer.json # PHP Dependencies │ ├── artisan # Artisan CLI │ │── frontend/ # React Frontend │ ├── src/ │ │ ├── components/ # Reusable UI Components │ │ ├── pages/ # Page Components │ │ ├── hooks/ # Custom Hooks │ │ ├── common/ # Common Components │ │ ├── context/ # Global Context API │ │ ├── services/ # API Calls (Axios) │ │ ├── utils/ # Utility Functions │ │ ├── assets/ # Images, Icons, Styles │ │ ├── App.jsx # Main App Component │ │ ├── main.jsx # Entry Point │ │ ├── layout.jsx # Layout Component │ ├── public/ # Public Files │ ├── package.json # JavaScript Dependencies │ ├── vite.config.js # Vite Configuration │ │── docs/ # Documentation │── MT-Notes/ # Notes for projects
-│── README.md # Project Documentation │── .gitignore # Git Ignore File │── .env # Environment
+HR-System/
+├── backend/                   # Laravel Backend
+│   ├── app/                   # Application Logic
+│   │   ├── Models/            # Eloquent Models
+│   │   ├── Http/
+│   │   │   ├── Controllers/   # Controllers
+│   │   │   ├── Middleware/    # Middleware
+│   │   │   ├── Observer/      # Observers
+│   │   │   ├── Provider/      # Service Providers
+│   ├── database/              # Database Files
+│   │   ├── migrations/        # Database Migrations
+│   │   ├── seeders/           # Database Seeders
+│   ├── routes/                # API Routes
+│   │   ├── api.php            # API Endpoints
+│   │   ├── web.php            # Web Routes
+│   ├── config/                # Configuration Files
+│   ├── storage/               # Storage (logs, uploads, etc.)
+│   ├── public/                # Public Assets (profile pics, docs)
+│   ├── tests/                 # Tests
+│   ├── composer.json          # PHP Dependencies
+│   ├── artisan                # Artisan CLI
+│
+├── frontend/                   # React Frontend
+│   ├── src/
+│   │   ├── components/         # Reusable UI Components
+│   │   ├── pages/              # Page Components
+│   │   ├── hooks/              # Custom Hooks
+│   │   ├── common/             # Common Components
+│   │   ├── context/            # Global Context API
+│   │   ├── services/           # API Calls (Axios)
+│   │   ├── utils/              # Utility Functions
+│   │   ├── assets/             # Images, Icons, Styles
+│   │   ├── App.jsx             # Main App Component
+│   │   ├── main.jsx            # Entry Point
+│   │   ├── layout.jsx          # Layout Component
+│   ├── public/                 # Public Files
+│   ├── package.json            # JavaScript Dependencies
+│   ├── vite.config.js          # Vite Configuration
+│
+├── docs/                       # Documentation
+├── MT-Notes/                   # Notes for projects  
+├── README.md                   # Project Documentation
+├── .gitignore                  # Git Ignore File
+├── .env                        # Environment Variables
+
 
 
 
