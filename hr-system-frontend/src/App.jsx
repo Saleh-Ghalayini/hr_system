@@ -27,6 +27,8 @@ import Salaries from "./pages/Payroll/Salaries";
 
 import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
 import LeaveRequests from "./pages/Attendance/LeaveRequests";
+import AdminRate from "./pages/Performance/pages/AdminRate";
+import AdminAverage from "./pages/Performance/pages/AdminAverage";
 
 function App() {
   return (
@@ -74,17 +76,18 @@ function App() {
                 path="performance-reviews"
                 element={<EmpPerfo />}
               />
-              <Route
-                path="testing-4-navs"
-                element={<h1>performance-reviews</h1>}
-              />
+              
               <Route
                 path="employee-ratings"
                 element={<EmpRate />}
               />
               <Route
                 path="training-needs"
-                element={<h1>testing from app.jsx</h1>}
+                element={<AdminRate />}
+              />
+               <Route
+                path="average-rate"
+                element={<AdminAverage />}
               />
             </Route>
             <Route path="attendance/*" element={<Attendance />}>

@@ -5,7 +5,7 @@ import "./style.css"
 import Button from '../../../components/Button';
 import { request } from '../../../common/request';
 const EmpRate = () => {
-    const [rateArray, setRateArray] = useState([]);
+    // const [rateArray, setRateArray] = useState([]);
     // const [TypesArray, setTypesArray] = useState([]);
     const[rateValue, setValue] = useState({
         teamwork:5,
@@ -69,7 +69,7 @@ const EmpRate = () => {
                     
                 <Input
                 label={"Team Work"}
-                type={"text"}
+                type={"number"}
                 value={rateValue.teamwork}
                 onChange={(e)=>{
                     e.target.value > 10 ?e.target.value =10 : e.target.value

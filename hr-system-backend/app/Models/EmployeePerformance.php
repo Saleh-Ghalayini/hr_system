@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EmployeePerformance extends Model
 {
@@ -14,4 +15,8 @@ class EmployeePerformance extends Model
         'comment',
         'manager_id',
     ];
+
+    function user() : BelongsTo{
+     return   $this->belongsTo(User::class,'user_id');
+    }
 }

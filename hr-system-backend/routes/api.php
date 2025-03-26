@@ -74,6 +74,8 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/leave-balance-user/{id}', [LeaveBalanceController::class, "getLeaveBalanceForUserById"]);
             // performance Routes for rates an employee
             Route::post("/rateemployee",[PerformanceController::class,"rateEmployee"]);
+            // get the average rate for each type
+            Route::get("/averagerate", [PerformanceController::class,"getAverageRate"]);
         });
 
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {

@@ -296,3 +296,33 @@ class AuthController extends Controller {
 add to you .env 
 VITE_Image_Base_URL=http://127.0.0.1:8000/storage/
 to make sure when update profile picture it will appear in your web
+
+############################################################################3
+#### to insure that you can get photos from the storage file in laravel 
+In config/filesystems.php, check this:
+
+###########
+'disks' => [
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+        'visibility' => 'public',
+    ],
+],
+#########
+
+Make sure visibility => public
+
+then run :
+php artisan config:clear
+php artisan cache:clear
+php artisan storage:link
+
+clear cahce :
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+
+ then the photo url should be 
+ http://127.0.0.1:8000/storage/profile_photos/photo.png
