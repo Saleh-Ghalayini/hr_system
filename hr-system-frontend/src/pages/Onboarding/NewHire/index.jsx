@@ -251,15 +251,19 @@ const NewHire = () => {
 
             <div className="form-group">
               <label htmlFor="position">Position</label>
-              <input
-                type="text"
+              <select
                 id="position"
                 name="position"
                 value={formData.position}
                 onChange={handleChange}
                 className={errors.position ? 'error' : ''}
-                placeholder="Enter position"
-              />
+              >
+                 <option value="">Select Position</option>
+                <option value="Junior">Junior</option>
+                <option value="Senior">Senior</option>
+                <option value="Intern">Intern</option>
+                <option value="Executive">Executive</option>
+              </select>
               {errors.position && <span className="error-message">{errors.position}</span>}
             </div>
 
@@ -280,7 +284,7 @@ const NewHire = () => {
               {errors.gender && <span className="error-message">{errors.gender}</span>}
             </div>
 
-            <div className="form-group">
+            {/* <div className="form-group">
               <label htmlFor="insurance_id">Insurance ID</label>
               <input
                 type="number"
@@ -292,7 +296,7 @@ const NewHire = () => {
                 placeholder="Enter insurance ID"
               />
               {errors.insurance_id && <span className="error-message">{errors.insurance_id}</span>}
-            </div>
+            </div> */}
           </div>
 
           {errors.submit && <div className="submit-error">{errors.submit}</div>}
