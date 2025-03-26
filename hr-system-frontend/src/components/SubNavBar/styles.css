@@ -9,8 +9,11 @@ li.activate {
 
 a {
   padding: 0 1em;
-  color: black;
   text-decoration: none;
+}
+a:hover {
+  color: #43ba6e;
+  text-decoration: none !important;
 }
 
 .subnavbar {
