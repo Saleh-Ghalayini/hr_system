@@ -1,0 +1,22 @@
+.secondary-btn {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+    border-radius: 5px;
+    padding: 5px 10px;
+    cursor: pointer;
+    
+}
+
+.actions-btn {
+    gap: 10px;
+
+}
+.update-input{
+    /* width: 100%; */
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
