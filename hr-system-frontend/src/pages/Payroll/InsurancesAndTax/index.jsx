@@ -3,8 +3,9 @@ import InsuranceCard from "../../../components/InsuranceCard";
 import { request } from "../../../common/request";
 import InsuranceUpdater from "../../../components/InsuranceUpdater";
 import Button from "../../../components/Button";
+import "./styles.css";
 
-const InsuranceAndTax = ({}) => {
+const InsuranceAndTax = () => {
   const [loading, setLoading] = useState(true);
   const [insuranceData, setInsuranceData] = useState();
   const [trigger, setTrigger] = useState(false);
@@ -80,14 +81,14 @@ const InsuranceAndTax = ({}) => {
                   console.log(value);
                 }}
               />
-              <Button
-                text="UPDATE"
-                className="primary-btn"
-                onClick={() => {
-                  updateInsurance();
-                  setTrigger(!trigger);
-                }}
-              />
+              <div className="flex actions-btn ">
+                <Button
+                  text="UPDATE"
+                  className="primary-btn"
+                  onClick={updateInsurance}
+                />
+                <Button text="Cancel" className="secondary-btn" onClick={() => setTrigger(!trigger)} />
+              </div>
             </div>
           </div>
         )}

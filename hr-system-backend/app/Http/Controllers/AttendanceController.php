@@ -84,17 +84,6 @@ class AttendanceController extends Controller
         return null;
     }
 
-    private function checkUser($user)
-    {
-        if (!$user)
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 400);
-
-        return $user;
-    }
-
     public function getUserByName(Request $request)
     {
         $first_name = $request->first_name;
@@ -137,22 +126,23 @@ class AttendanceController extends Controller
 
     public function checkIn(Request $request)
     {
+        // dd("hello");
         $user = Auth::user();
         $validationResponse = $this->validateAttendance($user, $request, "in");
 
         if ($validationResponse) return $validationResponse;
 
-        $attendance = Attendance::create([
-            'user_id' => $user->id,
-            'full_name' => trim($user->first_name . ' ' . $user->last_name),
-            'date' => now()->toDateString(),
-            'check_in' => now()->toTimeString(),
-            'check_in_lon' => $request->check_in_lon,
-            'check_in_lat' => $request->check_in_lat,
-            'time_in_status' => $this->validateTime(now()->toTimeString(), "in"),
-            'loc_in_status' => $this->validateLocation($request->check_in_lon, $request->check_in_lat),
-            "full_name" => $user->first_name . " " . $user->last_name
-        ]);
+        $attendance = new Attendance();
+        $attendance->user_id = $user->id;
+        $attendance->full_name = trim($user->first_name . ' ' . $user->last_name);
+        $attendance->date = now()->toDateString();
+        $attendance->check_in = now()->toTimeString();
+        $attendance->check_in_lon = $request->check_in_lon;
+        $attendance->check_in_lat = $request->check_in_lat;
+        $attendance->time_in_status = $this->validateTime(now()->toTimeString(), "in");
+        $attendance->loc_in_status = $this->validateLocation($request->check_in_lon, $request->check_in_lat);
+        $attendance->save();
+
 
         return response()->json(['success' => true, 'message' => 'Check-in successful.', 'attendance' => $attendance]);
     }

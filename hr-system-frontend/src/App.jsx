@@ -64,7 +64,6 @@ function App() {
               <Route index element={<Navigate to="salaries" replace />} />
               <Route path="salaries" element={<Salaries />} />
               <Route path="insandtax" element={<InsuranceAndTax />} />
-              <Route path="bonuses" element={<h1>Bonuses</h1>} />
             </Route>
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />

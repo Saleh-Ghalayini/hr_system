@@ -7,7 +7,6 @@ export const SUBNAV_CONFIG = {
   "/payroll": [
     { text: "Salaries", link: "salaries" },
     { text: "Insurance & Tax", link: "insandtax" },
-    { text: "Bonuses", link: "bonuses" },
   ],
   "/onboarding": [
     { text: "New Hires", link: "new-hires" },
