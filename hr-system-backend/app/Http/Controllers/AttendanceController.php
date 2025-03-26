@@ -134,7 +134,7 @@ class AttendanceController extends Controller
             'check_in_lat' => $request->check_in_lat,
             'time_in_status' => $this->validateTime(now()->toTimeString(), "in"),
             'loc_in_status' => $this->validateLocation($request->check_in_lon, $request->check_in_lat),
-            "full_name" => $user->first_name . $user->last_name
+            "full_name" => $user->first_name . " " . $user->last_name
         ]);
 
         return response()->json(['success' => true, 'message' => 'Check-in successful.', 'attendance' => $attendance]);

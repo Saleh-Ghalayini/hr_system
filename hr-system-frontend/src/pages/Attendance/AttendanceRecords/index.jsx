@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import Input from "../../../components/Input";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AttendanceRecords = () => {
     
@@ -35,52 +37,22 @@ const AttendanceRecords = () => {
     const table_headers = [
         {key: 'date', label: "Date"},
         {key: 'employee', label: "Employee name"},
-        {key: 'check-in time', label: "check-in time"},
-        {key: 'check-out time', label: "check-out time"},
-        {key: 'location status', label: "location status"},
-        {key: 'status', label: "status"},
-        {key: 'hours worked', label: "hours worked"}
+        {key: 'check-in time', label: "Check-in time"},
+        {key: 'check-out time', label: "Check-out time"},
+        {key: 'location status', label: "Location status"},
+        {key: 'status', label: "Status"},
+        {key: 'hours worked', label: "Hours worked"}
     ];
 
     const [attendance, setAttendance] = useState([]);
 
-    const filter = async () => {
-        try {
-            
-            if (name) {
-                const [first_name, last_name] = name.split(" ");
-                if((start_date) || (start_date && end_date)) {
-                    const response = await request({
-                        method: "GET",
-                        path: "admin/attendance/user",
-                        data: {
-                            first_name: first_name,
-                            last_name: last_name,
-                            start_date: start_date,
-                            end_date: end_date
-                        },
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    });
-                    console.log(first_name + " " + last_name + " " + " " + start_date + " " + end_date )
-                    console.log(response);
-                }
-            }
-        } catch(error) {
-            console.log(error);
-        }
-    };
-    
-
     const checkInOut = async () => {
         if (longitude === null || latitude === null) {
-            console.error("Geolocation is not available.");
+            toast.error("Geolocation is not available.");
             return;
         }
-
+    
         try {
-
             const [first_name, last_name] = name.split(" ");
             const response = await request({
                 method: "POST",
@@ -101,84 +73,99 @@ const AttendanceRecords = () => {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
-            })
-            //console.log(response);
-            //console.log("Token:", token);
-            //console.log("Geolocation:", { latitude, longitude });
-
+            });
+    
+            toast.success(is_checked_in ? "Checked Out Successfully!" : "Checked In Successfully!");
+    
             setIsCheckedIn(!is_checked_in);
+    
+            fetchAllUsersAttendances();
+    
         } catch (error) {
+            toast.error("Error processing request.");
             console.error("Error Response:", error.response?.data || error.message);
         }
-        
     };
-
+    
     const fetchAllUsersAttendances = async () => {
         try {
             const response = await request({
-                method:"GET",
-            path:"admin/attendance/all",
-        headers:{
-          Authorization : `Bearer ${token}`
-        }
+                method: "GET",
+                path: "admin/attendance/all",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             });
-            
-            if (Array.isArray(response.attendance)) {   
-                console.log("Stored Token:", token);
-                const transformedData = response.attendance.map(item => ({
-                    date: item.date || "N/A",
-                    employee: item.full_name || "N/A",
-                    "check-in time": item.check_in || "N/A",
-                    "check-out time": item.check_out || "N/A",
-                    "location status": item.loc_in_status || "N/A",
-                    status: item.status || "N/A",
-                    "hours worked": item.working_hours || "0hrs"
-                }));
+    
+            if (Array.isArray(response.attendance)) {
+                const today = new Date();
+                const yesterday = new Date();
+                yesterday.setDate(today.getDate() - 1);
+    
+                const todayStr = today.toISOString().split("T")[0];
+                const yesterdayStr = yesterday.toISOString().split("T")[0];
+                
+                const transformedData = response.attendance.map(item => {
+                    const itemDate = item.date ? item.date.split("T")[0] : "N/A";
+    
+                    return {
+                        date: itemDate === todayStr ? "Today" : itemDate === yesterdayStr ? "Yesterday" : itemDate,
+                        employee: item.full_name || "Employee name",
+                        "check-in time": item.check_in || "--:--",
+                        "check-out time": item.check_out || "--:--",
+                        "location status": item.loc_in_status || "N/A",
+                        status: item.status || "N/A",
+                        "hours worked": item.working_hours || "0hrs"
+                    };
+                });
     
                 setAttendance(transformedData);
             }
-
+    
         } catch(error) {
             console.log(error);
         }
     };
+    
+    
 
     useEffect(() => {
         fetchAllUsersAttendances();
-      }, []);
-    return <>
-        <div className="attendance-records-container">
-            <div className="filter-container">
-                <div className="filter-inputs">
-                <p>filter by:</p>
-                <Input type="text" 
-                    value={name} 
-                    placeholder="Employee name" 
-                    className=""
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <Input type="text" 
-                    value={start_date} 
-                    placeholder="specific or starting date" 
-                    className=""
-                    onChange={(e) => setStartDate(e.target.value)}
-                />
-                <Input type="text" 
-                    value={end_date} 
-                    placeholder="Ending date" 
-                    className=""
-                    onChange={(e) => setEndDate(e.target.value)}
-                />
+    }, []);
+
+    return (
+        <>
+            <div className="attendance-records-container">
+                <div className="filter-container">
+                    <div className="filter-inputs">
+                        <p>Filter by:</p>
+                        <Input 
+                            type="text" 
+                            value={name} 
+                            placeholder="Employee name" 
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <Input 
+                            type="text" 
+                            value={start_date} 
+                            placeholder="Specific or starting date" 
+                            onChange={(e) => setStartDate(e.target.value)}
+                        />
+                        <Input 
+                            type="text" 
+                            value={end_date} 
+                            placeholder="Ending date" 
+                            onChange={(e) => setEndDate(e.target.value)}
+                        />
+                    </div>
+                    <Button className="filter-btn" text="Filter" onClick={fetchAllUsersAttendances} />
+                    <Button className="check-btn" text={is_checked_in ? "Check Out" : "Check In"} onClick={checkInOut} />
                 </div>
-                <Button className="filter-btn" text="Filter" onClick={filter} />
-                <Button className="check-btn" text={is_checked_in ? "Check Out" : "Check In"} onClick={checkInOut} />
+                <Table headers={table_headers} data={attendance} />
             </div>
-            <Table 
-                headers={table_headers}
-                data={attendance}
-            />
-        </div>
-    </>
+            <ToastContainer position="bottom-right" autoClose={3000} />
+        </>
+    );
 };
 
 export default AttendanceRecords;
