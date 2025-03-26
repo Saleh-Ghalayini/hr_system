@@ -15,9 +15,11 @@ class Attendance extends Model
         'check_out',
         'check_out_lon',
         'check_out_lat',
-        'location_status',
         'status',
-        'working_hours'
+        'working_hours',
+        'loc_in_status',
+        'loc_out_status',
+        'full_name'
     ];
 
     public function user()
