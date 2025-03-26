@@ -2,13 +2,16 @@
     overflow-y: scroll;
     height: 80vh;
 }
-/* .mychart{
-    width: 100%;
-} */
+
  .performnce-container{
     gap: 10px;
     width: 100%;
     flex-wrap: wrap;
+ }
+ .users-container{
+    width: 100%;
+    margin-top: 20px;
+    padding: 5px;
  }
 .chart{
     background-color: white;
@@ -66,4 +69,46 @@
  width: fit-content;
  flex-grow: 1;
 
+}
+
+.users-container{
+    background-color: white;
+    border-radius: 7px;
+    padding: 10px;
+    
+}
+.user-border{
+    border: 1px solid #315490;
+    border-radius: 7px;
+    padding: 5px;
+    margin: 10px 5px;
+}
+.user{
+  
+    padding: 5px;
+    gap: 20px;
+}
+.user-image img{
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+}
+.name{
+    font-size: large;
+}
+.position ,.email, .phone-number {
+    color: #3e3f41;
+}
+.display-none{
+    display: none;
+}
+
+.average-chart{
+    background-color: white;
+    border-radius: 7px;
+    width: 100%;
+    min-width: 500px;
+    flex-grow: 1;
+     height: 400px ;
+    
 }

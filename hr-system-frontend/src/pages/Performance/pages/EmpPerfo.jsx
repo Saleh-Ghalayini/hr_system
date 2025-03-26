@@ -19,8 +19,8 @@ const EmpPerfo = () => {
                     setRates(response.rates);
                     setComment(response.comment);
                     const avg = rates.reduce((sum, value) => sum + value, 0) / rates.length;
-                    avg.toFixed(2)                    
-                  setAverage(avg);
+                 const  rounded= avg.toFixed(2)                   
+                  setAverage(rounded);
                 }
     }
     useEffect(()=>{
