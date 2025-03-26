@@ -122,8 +122,8 @@ HR-System/
 ├── .env                        # Environment Variables
 
 ```
-
-
+##  ER Diagram(HR-System)
+<img src="src/assets/images/ER1.png" width="600">
 ## License
 This project is licensed under the **MIT License**.
 
