@@ -15,6 +15,7 @@ class Payroll extends Model{
         'base_salary_id',
         'extra_leaves',
         'month',
+        'total'
     ];
 
     public function insurance(){
