@@ -126,6 +126,11 @@ HR-System/
 
 <img src="hr-system-frontend\src\assets\images\ER1.png" width="600">
 <img src="hr-system-frontend\src\assets\images\ER.png" width="600">
+
+## API Documentation
+   ```sh
+   https://documenter.getpostman.com/view/33828343/2sAYkLmc1N
+   ```
 ## License
 This project is licensed under the **MIT License**.
 
