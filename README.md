@@ -75,7 +75,7 @@ If you'd like to contribute to this project, please follow the standard GitHub w
 - Open a pull request
 
 ## 📂 Project Root (HR-System)
-
+```
 HR-System/
 ├── backend/                   # Laravel Backend
 │   ├── app/                   # Application Logic
@@ -121,7 +121,7 @@ HR-System/
 ├── .gitignore                  # Git Ignore File
 ├── .env                        # Environment Variables
 
-
+```
 
 
 ## License
