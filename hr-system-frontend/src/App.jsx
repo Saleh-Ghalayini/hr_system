@@ -27,6 +27,7 @@ import Salaries from "./pages/Payroll/Salaries";
 
 import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
 import LeaveRequests from "./pages/Attendance/LeaveRequests";
+import AttendanceRecords from "./pages/Attendance/AttendanceRecords";
 
 function App() {
   return (
@@ -94,7 +95,7 @@ function App() {
               />
               <Route
                 path="attendance-records"
-                element={<h1>attendance-records</h1>}
+                element={<AttendanceRecords />}
               />
               <Route path="leave-requests" element={<LeaveRequests />} />
               <Route

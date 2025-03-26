@@ -18,7 +18,8 @@ class Attendance extends Model
         'status',
         'working_hours',
         'loc_in_status',
-        'loc_out_status'
+        'loc_out_status',
+        'full_name'
     ];
 
     public function user()
