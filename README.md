@@ -125,7 +125,7 @@ HR-System/
 ##  ER Diagram(HR-System)
 
 <img src="hr-system-frontend\src\assets\images\ER1.png" width="600">
-<img src="hr-system-frontend\srcassets\images\ER.png" width="600">
+<img src="hr-system-frontend\src\assets\images\ER.png" width="600">
 ## License
 This project is licensed under the **MIT License**.
 
