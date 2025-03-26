@@ -1,30 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import Table from "../../../components/Table";
+import { useEffect } from "react";
+import { request } from "../../../common/request";
 
 const Salaries = () => {
+  const [loading, setloading] = useState(true);
+  const [salaryData, setSalaryData] = useState();
+
+  useEffect(() => {
+    const fetchSalaries = async () => {
+      setloading(true);
+      try {
+        const response = await request({
+          method: "GET",
+          path: "admin/getsalaries",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setSalaryData(response);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setloading(false);
+      }
+    };
+    fetchSalaries();
+  }, []);
+
   const tableHeaders = [
-    { key: "date", label: "Date" },
-    { key: "employee", label: "Employee" },
-    { key: "role", label: "Role" },
+    { key: "month", label: "Month" },
+    { key: "fullname", label: "Employee" },
+    { key: "position", label: "Position" },
     { key: "insurance", label: "Insurance Plan" },
-    { key: "deductions", label: "Deductions" },
-    { key: "payrolls", label: "Payroll" },
+    { key: "total", label: "Payroll" },
   ];
 
-  const tableData = [
-    {
-      date: "March",
-      employee: "Halim Njeim",
-      role: "Junior",
-      insurance: "HFA",
-      deductions: "140.00",
-      payrolls: "1200.00$",
-    },
-  ];
-
-  return (
+  return loading ? (
+    <h1>Loading</h1>
+  ) : (
     <div>
-      <Table headers={tableHeaders} data={tableData} />
+      <Table headers={tableHeaders} data={salaryData} />
     </div>
   );
 };

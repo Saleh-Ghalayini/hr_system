@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class AttendanceController extends Controller
 {
@@ -34,16 +36,17 @@ class AttendanceController extends Controller
 
         //6371000 is the earth's radius in meters
         $distance = $angle * 6371000;
+        ("Calculated distance: " . $distance . " meters");
 
         //100 is the allowed range of distance for distance between company and user's location
-        return $distance > 100 ? "Review needed" : "Approved";
+        return $distance >= 100 ? "Review needed" : "Approved";
     }
 
     private function validateTime($time, $type)
     {
         $time = Carbon::parse($time);
         $end_time = Carbon::parse(env('COMPANY_END_TIME'));
-        $start_time = Carbon::parse(env('COMPANY_START_TIME'));
+        $start_time = Carbon::parse(env('COMPANY_START_TIME', '15:55:00'));
 
         if ($type === "in")
             return $time->greaterThan($start_time) ? "Late" : "On-time";
@@ -91,14 +94,31 @@ class AttendanceController extends Controller
         return $user;
     }
 
-    private function getUserByName($first_name, $last_name)
+    public function getUserByName(Request $request)
     {
-        return User::where('first_name', $first_name)
+        $first_name = $request->first_name;
+        $last_name = $request->last_name;
+
+        if (!$first_name || !$last_name) {
+            return response()->json(['success' => false, 'message' => 'First name and last name are required.'], 400);
+        }
+
+        $user = User::where('first_name', $first_name)
             ->where('last_name', $last_name)
             ->first();
+
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'User not found.'], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'user' => $user
+        ]);
     }
 
-    private function getAttendanceForUser($user, $date = null, $start_date = null, $end_date = null)
+
+    public function getAttendanceForUser($user, $date = null, $start_date = null, $end_date = null)
     {
         $attendanceQuery = Attendance::where('user_id', $user->id);
 
@@ -123,6 +143,7 @@ class AttendanceController extends Controller
 
         $attendance = Attendance::create([
             'user_id' => $user->id,
+            'full_name' => trim($user->first_name . ' ' . $user->last_name),
             'date' => now()->toDateString(),
             'check_in' => now()->toTimeString(),
             'check_in_lon' => $request->check_in_lon,
@@ -200,6 +221,8 @@ class AttendanceController extends Controller
         $first_name = $request->first_name;
         $last_name = $request->last_name;
 
+        Log::info("Received request:", $request->all());
+
         if (!$first_name || !$last_name) {
             return response()->json(['success' => false, 'message' => 'First name and last name are required.'], 400);
         }
@@ -218,9 +241,6 @@ class AttendanceController extends Controller
 
     public function getAllUsersAttendance(Request $request)
     {
-        if (Auth::user()->role !== 'HR') {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
 
         $attendanceQuery = Attendance::query();
 
