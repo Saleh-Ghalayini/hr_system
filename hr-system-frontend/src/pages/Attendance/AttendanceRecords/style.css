@@ -1,0 +1,37 @@
+.attendance-records-container {
+    padding: 20px;
+  }
+
+.filter-container {
+    background-color: white;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 15px;
+    font-family: 'Poppins';
+}
+
+.filter-container p {
+    font-size: 18px;
+    margin-right: 15px;
+} 
+
+.filter-inputs {
+    display: flex;
+    align-items: center;
+    font-family: 'Poppins';
+    gap: 5px;
+}
+
+.filter-btn {
+    height: 30px;
+    width: 55px;
+    font-size: 12px;
+}
+
+.check-btn {
+    height: 30px;
+    width: 85px;
+    font-size: 12px;
+}

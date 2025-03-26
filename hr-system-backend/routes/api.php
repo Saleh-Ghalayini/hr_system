@@ -20,7 +20,6 @@ Route::group(["prefix" => "v1"], function () {
         Route::post("/login", [AuthController::class, "login"]);
         Route::post("/add-user", [AuthController::class, "addUser"]);
     });
-
     // Authenticated routes
     Route::group(["middleware" => "auth:api"], function () {
         // check-in/out for admin and user
@@ -65,9 +64,16 @@ Route::group(["prefix" => "v1"], function () {
 
 
             //attendance routes
+
+            Route::get('/attendance/user', [AttendanceController::class, "getUserAttendance"]);
+            Route::get('/attendance/all', [AttendanceController::class, "getAllUsersAttendance"]);
+            Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
+            Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
+
             Route::get('/attendance/user', [AttendanceController::class, "getUserByName"]);
             Route::get('/attendance/all', [AttendanceController::class, "getAllUsersAttendance"]);
             Route::get('/attendance/user/{user_id}', [AttendanceController::class, "getUserAttendance"]);
+
 
 
 
@@ -92,6 +98,8 @@ Route::group(["prefix" => "v1"], function () {
             Route::get('/getsalaries', [PayrollController::class, "getPayrolls"]);
 
 
+
+
             Route::get('/getinsurances', [InsuranceController::class, 'getInsurances']);
             Route::post('/updateinsurance', [InsuranceController::class, 'updatePlan']);
 
@@ -100,6 +108,7 @@ Route::group(["prefix" => "v1"], function () {
 
             // get the average rate for each type
             Route::get("/averagerate", [PerformanceController::class,"getAverageRate"]);
+
         });
 
         Route::prefix('user')->middleware(['AdminMiddleware'])->group(function () {
