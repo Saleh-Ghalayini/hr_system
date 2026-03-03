@@ -14,7 +14,7 @@ class RegisterRequest extends BaseFormRequest
             'last_name'     => 'required|string|max:100',
             'email'         => 'required|email|unique:users,email|max:255',
             'password'      => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
-            'date_of_birth' => 'required|date|before:today',
+            'date_of_birth' => 'required|date|before:16 years ago',
             'nationality'   => 'required|string|max:100',
             'phone_number'  => 'required|string|max:20',
             'address'       => 'required|string|max:255',

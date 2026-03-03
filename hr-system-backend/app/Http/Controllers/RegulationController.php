@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Regulation;
-use App\Models\RegulationRequirement;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Models\RegulationRequirement;
 
 class RegulationController extends Controller
 {

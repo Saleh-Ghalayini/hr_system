@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Attendance;
 use App\Models\User;
+use App\Models\Attendance;
 use Illuminate\Support\Facades\Log;
 
 class AttendanceService
@@ -23,7 +23,7 @@ class AttendanceService
         $dlon  = $companyLon - $userLon;
         $angle = 2 * asin(sqrt(
             pow(sin($dlat / 2), 2) +
-            cos($userLat) * cos($companyLat) * pow(sin($dlon / 2), 2)
+                cos($userLat) * cos($companyLat) * pow(sin($dlon / 2), 2)
         ));
 
         $distance = $angle * 6371000;

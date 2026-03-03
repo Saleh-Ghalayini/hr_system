@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Insurance;
 use App\Models\Payroll;
+use App\Models\Insurance;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

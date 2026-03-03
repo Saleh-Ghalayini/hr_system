@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Enrollment;
 use App\Models\User;
 use App\Models\Course;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class EnrollmentController extends Controller
 {
@@ -57,7 +57,7 @@ class EnrollmentController extends Controller
                     ], 400);
                 }
             }
-            
+
             $enrollment->update($request->all());
             return response()->json([
                 'status' => 'success',
@@ -71,4 +71,4 @@ class EnrollmentController extends Controller
             ], 500);
         }
     }
-} 
+}

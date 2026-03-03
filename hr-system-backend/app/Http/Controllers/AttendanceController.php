@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
-use App\Models\User;
-use App\Traits\ApiResponse;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Attendance;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
@@ -29,7 +29,7 @@ class AttendanceController extends Controller
         $dlon  = $companyLon - $userLon;
         $angle = 2 * asin(sqrt(
             pow(sin($dlat / 2), 2) +
-            cos($userLat) * cos($companyLat) * pow(sin($dlon / 2), 2)
+                cos($userLat) * cos($companyLat) * pow(sin($dlon / 2), 2)
         ));
 
         $distance = $angle * 6371000;

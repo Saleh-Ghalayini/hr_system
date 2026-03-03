@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\Insurance;
 use App\Models\Payroll;
+use App\Models\Insurance;
 use Illuminate\Support\Facades\DB;
 
 class InsuranceService

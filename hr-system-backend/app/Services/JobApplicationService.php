@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\Candidate;
-use App\Models\JobApplication;
 use App\Models\JobOpening;
+use App\Models\JobApplication;
 use Illuminate\Support\Facades\DB;
 
 class JobApplicationService

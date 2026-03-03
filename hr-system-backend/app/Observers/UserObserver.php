@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
+use App\Models\User;
+use App\Models\Payroll;
 use App\Models\BaseSalary;
 use App\Models\LeaveBalance;
-use App\Models\Payroll;
-use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 

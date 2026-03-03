@@ -1,22 +1,22 @@
 <?php
 
-use App\Http\Controllers\Admin\AdminEnrollmentController;
-use App\Http\Controllers\Admin\CourseController;
-use App\Http\Controllers\AttendanceController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CandidateController;
-use App\Http\Controllers\InsuranceController;
-use App\Http\Controllers\JobApplicationController;
-use App\Http\Controllers\JobOpeningController;
-use App\Http\Controllers\LeaveBalanceController;
-use App\Http\Controllers\LeaveRequestController;
-use App\Http\Controllers\PayrollController;
-use App\Http\Controllers\PerformanceController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\RegulationController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PayrollController;
+use App\Http\Controllers\CandidateController;
+use App\Http\Controllers\InsuranceController;
+use App\Http\Controllers\JobOpeningController;
+use App\Http\Controllers\RegulationController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\LeaveBalanceController;
+use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\JobApplicationController;
+use App\Http\Controllers\Admin\AdminEnrollmentController;
 
 Route::prefix('v1')->group(function () {
 
@@ -38,34 +38,34 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:api')->group(function () {
 
         // Auth
-        Route::get('/validate-token', [AuthController::class, 'validateToken']);
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/validate-token', [AuthController::class, 'validateToken']);
 
         // Profile
-        Route::get('/profile/job-details', [UserController::class, 'getUserJobDetails']);
         Route::get('/profile/photo', [UserController::class, 'getImageUrl']);
         Route::post('/profile/photo', [UserController::class, 'uploadProfilePhoto']);
-        Route::put('/profile/basic-info', [UserController::class, 'updateUserBasicInfo']);
         Route::put('/profile/job-details', [UserController::class, 'updateJobDetails']);
+        Route::get('/profile/job-details', [UserController::class, 'getUserJobDetails']);
+        Route::put('/profile/basic-info', [UserController::class, 'updateUserBasicInfo']);
 
         // Attendance (own)
         Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
-        Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
         Route::get('/attendance/my', [AttendanceController::class, 'getMyAttendance']);
+        Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut']);
 
         // Leave (own)
-        Route::get('/leave/requests', [LeaveRequestController::class, 'getLeaveRequestsByUser']);
         Route::post('/leave/requests', [LeaveRequestController::class, 'leaveRequest']);
         Route::get('/leave/balance', [LeaveBalanceController::class, 'getLeaveBalanceForUser']);
+        Route::get('/leave/requests', [LeaveRequestController::class, 'getLeaveRequestsByUser']);
 
         // Enrollments (own)
         Route::get('/enrollments/my', [UserController::class, 'enrollments']);
 
         // Performance (self-rate team, view own ratings)
-        Route::post('/performance/rate-team', [PerformanceController::class, 'rateTeam']);
         Route::get('/performance/types', [PerformanceController::class, 'getTypes']);
-        Route::get('/performance/my-team-rate', [PerformanceController::class, 'getLastTeamRate']);
+        Route::post('/performance/rate-team', [PerformanceController::class, 'rateTeam']);
         Route::get('/performance/my-rate', [PerformanceController::class, 'getEmployeRate']);
+        Route::get('/performance/my-team-rate', [PerformanceController::class, 'getLastTeamRate']);
 
         // ─────────────────────────────────────────────────────────────
         // MANAGER + ADMIN
@@ -76,8 +76,8 @@ Route::prefix('v1')->group(function () {
             Route::get('/attendance/team', [AttendanceController::class, 'getUserAttendance']);
 
             // Rate employees (managers rate their reports)
-            Route::post('/performance/rate-employee', [PerformanceController::class, 'rateEmployee']);
             Route::get('/performance/average', [PerformanceController::class, 'getAverageRate']);
+            Route::post('/performance/rate-employee', [PerformanceController::class, 'rateEmployee']);
 
             // Leave approval
             Route::put('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'updateLeaveRequest']);
@@ -98,9 +98,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/users/{id}', [AuthController::class, 'getUserById']);
 
             // Attendance (full access)
+            Route::get('/attendance/search', [AttendanceController::class, 'getUserByName']);
             Route::get('/attendance/all', [AttendanceController::class, 'getAllUsersAttendance']);
             Route::get('/attendance/user/{user_id}', [AttendanceController::class, 'getUserAttendance']);
-            Route::get('/attendance/search', [AttendanceController::class, 'getUserByName']);
 
             // Leave (full access)
             Route::get('/leave/requests', [LeaveRequestController::class, 'getLeaveRequests']);
@@ -121,14 +121,14 @@ Route::prefix('v1')->group(function () {
             // Enrollments
             Route::get('/enrollments', [AdminEnrollmentController::class, 'index']);
             Route::post('/enrollments', [AdminEnrollmentController::class, 'store']);
-            Route::put('/enrollments/{enrollment}', [AdminEnrollmentController::class, 'updateEnrollment']);
             Route::delete('/enrollments/{enrollment}', [AdminEnrollmentController::class, 'destroy']);
+            Route::put('/enrollments/{enrollment}', [AdminEnrollmentController::class, 'updateEnrollment']);
 
             // Recruitment
+            Route::apiResource('candidates', CandidateController::class);
             Route::apiResource('job-openings', JobOpeningController::class)->except(['index']);
             Route::get('/job-openings/{jobOpening}/applications', [JobApplicationController::class, 'index']);
             Route::put('/job-applications/{application}', [JobApplicationController::class, 'updateStatus']);
-            Route::apiResource('candidates', CandidateController::class);
 
             // Regulations
             Route::apiResource('regulations', RegulationController::class);

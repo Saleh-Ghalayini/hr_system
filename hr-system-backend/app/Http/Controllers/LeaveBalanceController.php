@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LeaveBalance;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use App\Models\LeaveBalance;
 use Illuminate\Support\Facades\Auth;
 
 class LeaveBalanceController extends Controller

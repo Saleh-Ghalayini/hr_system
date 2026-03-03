@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\LeaveBalance;
-use App\Models\LeaveRequest;
-use App\Traits\ApiResponse;
 use Carbon\Carbon;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\LeaveRequest;
+use App\Models\LeaveBalance;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class LeaveRequestController extends Controller
 {

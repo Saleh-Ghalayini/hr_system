@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Candidate;
-use App\Models\JobApplication;
 use App\Models\JobOpening;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use App\Models\JobApplication;
 use Illuminate\Support\Facades\DB;
 
 class JobApplicationController extends Controller
