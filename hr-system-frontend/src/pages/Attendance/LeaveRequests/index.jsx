@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import "./style.css";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1/admin";
+const BASE = "http://127.0.0.1:8000/api/v1";
 
 const LeaveRequests = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -40,7 +40,7 @@ const LeaveRequests = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${API_BASE_URL}/leave-requests`,
+        `${BASE}/admin/leave/requests`,
         getAuthHeaders()
       );
       setLeaveRequests(response.data.data);
@@ -57,14 +57,11 @@ const LeaveRequests = () => {
     try {
       setModalLoading(true);
       const [userResponse, balanceResponse] = await Promise.all([
-        axios.get(`${API_BASE_URL}/getuserbyid/${userId}`, getAuthHeaders()),
-        axios.get(
-          `${API_BASE_URL}/leave-balance-user/${userId}`,
-          getAuthHeaders()
-        ),
+        axios.get(`${BASE}/admin/users/${userId}`, getAuthHeaders()),
+        axios.get(`${BASE}/admin/leave/balance-by-id/${userId}`, getAuthHeaders()),
       ]);
 
-      setUserData(userResponse.data);
+      setUserData(userResponse.data.data);
       setLeaveBalance(balanceResponse.data.data);
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -83,14 +80,14 @@ const LeaveRequests = () => {
       setUpdateLoading(true);
 
       await axios.put(
-        `${API_BASE_URL}/leave-requests/${selectedRequest.id}`,
+        `${BASE}/leave/requests/${selectedRequest.id}`,
         { status: newStatus },
         getAuthHeaders()
       );
 
       toast.success("Status updated successfully");
-      await fetchLeaveRequests(); // Refresh table data
-      handleCloseModal(); // Close modal after successful update
+      await fetchLeaveRequests();
+      handleCloseModal();
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status");
@@ -265,19 +262,19 @@ const LeaveRequests = () => {
                           <div className="balance-grid">
                             <div className="balance-item">
                               <span>Annual</span>
-                              <strong>{leaveBalance.balances.annual}</strong>
+                              <strong>{leaveBalance.balances?.annual}</strong>
                             </div>
                             <div className="balance-item">
                               <span>Sick</span>
-                              <strong>{leaveBalance.balances.sick}</strong>
+                              <strong>{leaveBalance.balances?.sick}</strong>
                             </div>
                             <div className="balance-item">
                               <span>Casual</span>
-                              <strong>{leaveBalance.balances.casual}</strong>
+                              <strong>{leaveBalance.balances?.casual}</strong>
                             </div>
                             <div className="balance-item">
                               <span>Other</span>
-                              <strong>{leaveBalance.balances.other}</strong>
+                              <strong>{leaveBalance.balances?.other}</strong>
                             </div>
                           </div>
                         </div>

@@ -1,5 +1,4 @@
 import React from "react";
-// import PropTypes from 'prop-types';
 import styles from "./Table.module.css";
 import StatusField from "../StatusField";
 
@@ -18,7 +17,7 @@ const Table = ({ headers, data }) => {
         </thead>
         <tbody>
           {data.map((row, index) => (
-            <tr key={index} className={styles.tableRow}>
+            <tr key={row.id ?? index} className={styles.tableRow}>
               {headers.map((header) =>
                 header.key === "status" ? (
                   <td key={header.key} className={styles.tableCell}>
@@ -26,7 +25,6 @@ const Table = ({ headers, data }) => {
                       text={row[header.key]}
                       status={row[header.key]}
                     />
-                    {/* {row[header.key]} */}
                   </td>
                 ) : (
                   <td key={header.key} className={styles.tableCell}>

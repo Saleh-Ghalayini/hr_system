@@ -1,7 +1,8 @@
 import React from "react";
 import "./style.css";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 const icons = [
   {
@@ -59,22 +60,14 @@ const icons = [
   },
   {
     id: "Logout",
-    // path: "/logout",
     icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
   },
- 
 ];
 
 const CustomIcon = ({ activeIconId }) => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const { logout } = useAuthContext();
 
-  const handleLogout = () => {
-    alert("Logout functionality here!");
-    navigate("/dashboard");
-  };
-
-  // Check if current path starts with icon path
   const isActive = (path) => {
     return location.pathname.startsWith(path) || activeIconId === path;
   };
@@ -91,7 +84,7 @@ const CustomIcon = ({ activeIconId }) => {
               {iconData.icon}
             </Link>
           ) : (
-            <div className="icon" onClick={handleLogout}>
+            <div className="icon" onClick={logout}>
               {iconData.icon}
             </div>
           )}

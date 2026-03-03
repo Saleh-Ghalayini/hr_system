@@ -51,7 +51,7 @@ class UserController extends Controller
         }
 
         return $this->success([
-            'user'       => $user->only(['id', 'first_name', 'last_name', 'email', 'position', 'gender']),
+            'user'       => $user->only(['id', 'first_name', 'last_name', 'email', 'position', 'gender', 'date_of_birth', 'nationality', 'phone_number', 'address', 'profile_url']),
             'job_detail' => $jobDetail,
         ]);
     }

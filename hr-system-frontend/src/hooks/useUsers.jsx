@@ -11,35 +11,11 @@ const useUsers = () => {
       try {
         const response = await request({
           method: "GET",
-          path: "admin/getallusers",
+          path: "admin/users",
         });
-        
-        // Log the full response for debugging
-        console.log('API Response:', response);
-        
-        // Check if response is an array
-        if (Array.isArray(response)) {
-          setUsers(response);
-        } 
-        // If response has a data property
-        else if (response && response.data) {
-          if (Array.isArray(response.data)) {
-            setUsers(response.data);
-          } else if (response.data.data && Array.isArray(response.data.data)) {
-            setUsers(response.data.data);
-          } else {
-            console.error('Unexpected response structure:', response);
-            setError(new Error('Invalid response structure'));
-            setUsers([]);
-          }
-        } else {
-          console.error('No valid data in response:', response);
-          setError(new Error('No valid data received'));
-          setUsers([]);
-        }
-      } catch (error) {
-        console.error('Error fetching users:', error);
-        setError(error);
+        setUsers(Array.isArray(response.data) ? response.data : []);
+      } catch (err) {
+        setError(err);
         setUsers([]);
       } finally {
         setLoading(false);

@@ -19,6 +19,7 @@ import CourseCatalog from "./pages/Training/CourseCatalog";
 
 import JobInfo from "./pages/Profile/pages/JobInfo";
 import BasicInfo from "./pages/Profile/pages/BasicInfo";
+import Salary from "./pages/Profile/pages/Salary";
 import Profile from "./pages/profile";
 import EmpPerfo from "./pages/Performance/pages/EmpPerfo";
 import EmpRate from "./pages/Performance/pages/EmpRate";
@@ -57,7 +58,7 @@ function App() {
               <Route index element={<Navigate to="basicinfo" replace />} />
               <Route path="basicinfo" element={<BasicInfo />} />
               <Route path="jobdetails" element={<JobInfo />} />
-              <Route path="salary" element={<h1>salary</h1>} />
+              <Route path="salary" element={<Salary />} />
             </Route>
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>

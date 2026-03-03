@@ -17,6 +17,7 @@ const NewHire = () => {
     address: "",
     position: "",
     gender: "",
+    insurance_id: 1,
   });
 
   const [errors, setErrors] = useState({});
@@ -25,61 +26,32 @@ const NewHire = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
+      setErrors((prev) => ({ ...prev, [name]: "" }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.first_name.trim()) {
-      newErrors.first_name = "First name is required";
-    }
-
-    if (!formData.last_name.trim()) {
-      newErrors.last_name = "Last name is required";
-    }
-
+    if (!formData.first_name.trim()) newErrors.first_name = "First name is required";
+    if (!formData.last_name.trim()) newErrors.last_name = "Last name is required";
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "Email is invalid";
     }
-
     if (!formData.password) {
       newErrors.password = "Password is required";
     } else if (formData.password.length < 8) {
       newErrors.password = "Password must be at least 8 characters";
     }
-
-    if (!formData.date_of_birth) {
-      newErrors.date_of_birth = "Date of birth is required";
-    }
-
-    if (!formData.nationality.trim()) {
-      newErrors.nationality = "Nationality is required";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "Address is required";
-    }
-
-    if (!formData.position.trim()) {
-      newErrors.position = "Position is required";
-    }
-
-    if (!formData.gender) {
-      newErrors.gender = "Gender is required";
-    }
+    if (!formData.date_of_birth) newErrors.date_of_birth = "Date of birth is required";
+    if (!formData.nationality.trim()) newErrors.nationality = "Nationality is required";
+    if (!formData.address.trim()) newErrors.address = "Address is required";
+    if (!formData.position.trim()) newErrors.position = "Position is required";
+    if (!formData.gender) newErrors.gender = "Gender is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -87,36 +59,25 @@ const NewHire = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/guest/add-user",
+        "http://127.0.0.1:8000/api/v1/guest/register",
         formData
       );
       if (response.status === 201) {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);
-          setFormData({
-            first_name: "",
-            last_name: "",
-            email: "",
-            password: "",
-            date_of_birth: "",
-          });
+          navigate("/onboarding/new-hires");
         }, 2000);
       }
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
-        submit:
-          error.response?.data?.message ||
-          "An error occurred. Please try again.",
+        submit: error.response?.data?.message || "An error occurred. Please try again.",
       }));
     } finally {
       setLoading(false);
@@ -134,7 +95,7 @@ const NewHire = () => {
         <div className="success-message">
           <Icon icon="mdi:check-circle" width="48" height="48" />
           <h2>Registration Successful!</h2>
-          <p>Redirecting to employees list...</p>
+          <p>Redirecting...</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="new-hire-form">
@@ -150,9 +111,7 @@ const NewHire = () => {
                 className={errors.first_name ? "error" : ""}
                 placeholder="Enter first name"
               />
-              {errors.first_name && (
-                <span className="error-message">{errors.first_name}</span>
-              )}
+              {errors.first_name && <span className="error-message">{errors.first_name}</span>}
             </div>
 
             <div className="form-group">
@@ -166,9 +125,7 @@ const NewHire = () => {
                 className={errors.last_name ? "error" : ""}
                 placeholder="Enter last name"
               />
-              {errors.last_name && (
-                <span className="error-message">{errors.last_name}</span>
-              )}
+              {errors.last_name && <span className="error-message">{errors.last_name}</span>}
             </div>
 
             <div className="form-group">
@@ -182,9 +139,7 @@ const NewHire = () => {
                 className={errors.email ? "error" : ""}
                 placeholder="Enter email address"
               />
-              {errors.email && (
-                <span className="error-message">{errors.email}</span>
-              )}
+              {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
@@ -198,9 +153,7 @@ const NewHire = () => {
                 className={errors.password ? "error" : ""}
                 placeholder="Enter password"
               />
-              {errors.password && (
-                <span className="error-message">{errors.password}</span>
-              )}
+              {errors.password && <span className="error-message">{errors.password}</span>}
             </div>
 
             <div className="form-group">
@@ -213,9 +166,7 @@ const NewHire = () => {
                 onChange={handleChange}
                 className={errors.date_of_birth ? "error" : ""}
               />
-              {errors.date_of_birth && (
-                <span className="error-message">{errors.date_of_birth}</span>
-              )}
+              {errors.date_of_birth && <span className="error-message">{errors.date_of_birth}</span>}
             </div>
 
             <div className="form-group">
@@ -229,9 +180,7 @@ const NewHire = () => {
                 className={errors.nationality ? "error" : ""}
                 placeholder="Enter nationality"
               />
-              {errors.nationality && (
-                <span className="error-message">{errors.nationality}</span>
-              )}
+              {errors.nationality && <span className="error-message">{errors.nationality}</span>}
             </div>
 
             <div className="form-group">
@@ -245,9 +194,7 @@ const NewHire = () => {
                 className={errors.phone_number ? "error" : ""}
                 placeholder="Enter phone number"
               />
-              {errors.phone_number && (
-                <span className="error-message">{errors.phone_number}</span>
-              )}
+              {errors.phone_number && <span className="error-message">{errors.phone_number}</span>}
             </div>
 
             <div className="form-group">
@@ -261,9 +208,7 @@ const NewHire = () => {
                 className={errors.address ? "error" : ""}
                 placeholder="Enter address"
               />
-              {errors.address && (
-                <span className="error-message">{errors.address}</span>
-              )}
+              {errors.address && <span className="error-message">{errors.address}</span>}
             </div>
 
             <div className="form-group">
@@ -281,9 +226,7 @@ const NewHire = () => {
                 <option value="Intern">Intern</option>
                 <option value="Executive">Executive</option>
               </select>
-              {errors.position && (
-                <span className="error-message">{errors.position}</span>
-              )}
+              {errors.position && <span className="error-message">{errors.position}</span>}
             </div>
 
             <div className="form-group">
@@ -300,9 +243,7 @@ const NewHire = () => {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
-              {errors.gender && (
-                <span className="error-message">{errors.gender}</span>
-              )}
+              {errors.gender && <span className="error-message">{errors.gender}</span>}
             </div>
           </div>
 
@@ -311,7 +252,7 @@ const NewHire = () => {
           <div className="form-actions">
             <button
               type="button"
-              onClick={() => navigate("/admin/employees")}
+              onClick={() => navigate("/onboarding/new-hires")}
               className="cancel-button"
             >
               Cancel

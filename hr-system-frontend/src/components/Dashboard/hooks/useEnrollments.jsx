@@ -9,29 +9,10 @@ const useEnrollments = () => {
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
-        const response = await dashboardService.getEnrollments();
-        console.log('Enrollments API Response:', response);
-        
-        if (Array.isArray(response)) {
-          setEnrollments(response);
-        } else if (response && response.data) {
-          if (Array.isArray(response.data)) {
-            setEnrollments(response.data);
-          } else if (response.data.data && Array.isArray(response.data.data)) {
-            setEnrollments(response.data.data);
-          } else {
-            console.error('Unexpected enrollments response structure:', response);
-            setError(new Error('Invalid enrollments response structure'));
-            setEnrollments([]);
-          }
-        } else {
-          console.error('No valid enrollments data in response:', response);
-          setError(new Error('No valid enrollments data received'));
-          setEnrollments([]);
-        }
-      } catch (error) {
-        console.error('Error fetching enrollments:', error);
-        setError(error);
+        const data = await dashboardService.getEnrollments();
+        setEnrollments(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err);
         setEnrollments([]);
       } finally {
         setLoading(false);

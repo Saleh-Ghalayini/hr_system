@@ -3,7 +3,8 @@ import "./style.css";
 import Table from "../../../components/Table";
 import axios from "axios";
 import baseApi from "../../../services/baseApi";
-// import { useAuth } from "../../../context/AuthContext";
+
+const BASE = "http://127.0.0.1:8000/api/v1";
 
 const debounce = (func, wait) => {
   let timeout;
@@ -14,7 +15,6 @@ const debounce = (func, wait) => {
 };
 
 const Enrollments = () => {
-  //   const { token } = useAuth(); // Get token from auth context
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState(false);
@@ -32,77 +32,51 @@ const Enrollments = () => {
     created_at: new Date().toISOString().split("T")[0],
   });
   const token = localStorage.getItem("token");
-  console.log(localStorage.getItem("token"));
 
-  // Fetch courses from API
+  const authHeaders = { headers: { Authorization: `Bearer ${token}` } };
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/admin/courses",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setCourses(response.data);
+        const response = await axios.get(`${BASE}/admin/courses`, authHeaders);
+        setCourses(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         console.error("Error fetching courses:", error);
       }
     };
-
     fetchCourses();
   }, [token]);
 
-  // Fetch users from API
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/admin/getallusers",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setUsers(response.data);
+        const response = await axios.get(`${BASE}/admin/users`, authHeaders);
+        setUsers(Array.isArray(response.data.data) ? response.data.data : []);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-
     fetchUsers();
   }, [token]);
 
-  // Fetch enrollments from API
-  useEffect(() => {
-    const fetchEnrollments = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/v1/admin/enrollments",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log("response", response);
-        setEnrollments(response.data);
-        setFilteredData(response.data);
-      } catch (error) {
-        console.error("Error fetching enrollments:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchEnrollments = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${BASE}/admin/enrollments`, authHeaders);
+      const data = Array.isArray(response.data.data) ? response.data.data : [];
+      setEnrollments(data);
+      setFilteredData(transformEnrollmentData(data));
+    } catch (error) {
+      console.error("Error fetching enrollments:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchEnrollments();
   }, [token]);
 
-  // Transform API data to table format
   const transformEnrollmentData = (data) => {
     return data.map((enrollment) => ({
       id: enrollment.id,
@@ -111,7 +85,6 @@ const Enrollments = () => {
       CourseName: enrollment.course?.course_name || "Course Not Available",
       DueDate: enrollment.end_date,
       status: enrollment.status,
-      //   CompletionDate: enrollment.status === "completed" ? enrollment.end_date : "N/A",
       certificate: enrollment.status === "completed" ? "Yes" : "No",
       url: enrollment.course?.certificate_text || "#",
     }));
@@ -123,18 +96,14 @@ const Enrollments = () => {
     { key: "CourseName", label: "Course Name" },
     { key: "DueDate", label: "End Date" },
     { key: "status", label: "Status" },
-    // { key: "CompletionDate", label: "Completion Date" },
     { key: "certificate", label: "Certificate" },
     { key: "url", label: "Certificate URL" },
   ];
 
-  // Memoized filter function
   const filterData = useCallback(
     (searchValue) => {
       const transformedData = transformEnrollmentData(enrollments);
-
       if (!searchValue.trim()) return transformedData;
-
       const lowerSearch = searchValue.toLowerCase();
       return transformedData.filter((item) =>
         Object.entries(item).some(([key, value]) => {
@@ -146,7 +115,6 @@ const Enrollments = () => {
     [enrollments]
   );
 
-  // Debounced filter function
   const debouncedFilter = useCallback(
     debounce((searchValue) => {
       setFilteredData(filterData(searchValue));
@@ -158,23 +126,17 @@ const Enrollments = () => {
   useEffect(() => {
     setLoading(true);
     debouncedFilter(search);
-
     return () => debouncedFilter.cancel?.();
   }, [search, debouncedFilter]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Create enrollment
   const enrollNewEmployee = async (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log("formData", formData);
     try {
       await baseApi.post("/admin/enrollments", formData, {
         headers: {
@@ -183,12 +145,12 @@ const Enrollments = () => {
         },
       });
 
-      // // Refresh enrollments list
-      // const enrollmentsResponse = await baseApi.get("/admin/enrollments");
-      // setEnrollments(enrollmentsResponse.data);
-      // setFilteredData(enrollmentsResponse.data);
+      // Refresh enrollments list
+      const enrollmentsResponse = await axios.get(`${BASE}/admin/enrollments`, authHeaders);
+      const data = Array.isArray(enrollmentsResponse.data.data) ? enrollmentsResponse.data.data : [];
+      setEnrollments(data);
+      setFilteredData(transformEnrollmentData(data));
 
-      // Reset form and close modal
       setFormData({
         user_id: "",
         course_id: "",
@@ -214,13 +176,11 @@ const Enrollments = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h2>Enroll</h2>
-              <div className="modal-close" onClick={() => setModal(false)}>
-                X
-              </div>
+              <div className="modal-close" onClick={() => setModal(false)}>X</div>
             </div>
             <div className="modal-body">
               <form className="modal-body-input">
-                <span>Select Employee</span>{" "}
+                <span>Select Employee</span>
                 <select
                   name="user_id"
                   id="user_id"
@@ -236,7 +196,7 @@ const Enrollments = () => {
                     </option>
                   ))}
                 </select>
-                <span>Select Course</span>{" "}
+                <span>Select Course</span>
                 <select
                   name="course_id"
                   id="course_id"
@@ -252,31 +212,13 @@ const Enrollments = () => {
                     </option>
                   ))}
                 </select>
-                <span>Start Date</span>{" "}
-                <input
-                  type="date"
-                  name="start_date"
-                  value={formData.start_date}
-                  onChange={handleInputChange}
-                  required
-                />
-                <span>Due Date</span>{" "}
-                <input
-                  type="date"
-                  name="due_date"
-                  value={formData.due_date}
-                  onChange={handleInputChange}
-                  required
-                />
-                <span>End Date</span>{" "}
-                <input
-                  type="date"
-                  name="end_date"
-                  value={formData.end_date}
-                  onChange={handleInputChange}
-                  required
-                />
-                <span>Status</span>{" "}
+                <span>Start Date</span>
+                <input type="date" name="start_date" value={formData.start_date} onChange={handleInputChange} required />
+                <span>Due Date</span>
+                <input type="date" name="due_date" value={formData.due_date} onChange={handleInputChange} required />
+                <span>End Date</span>
+                <input type="date" name="end_date" value={formData.end_date} onChange={handleInputChange} required />
+                <span>Status</span>
                 <select
                   name="status"
                   id="status"
@@ -293,13 +235,7 @@ const Enrollments = () => {
                 <button
                   onClick={enrollNewEmployee}
                   className="enroll-btn"
-                  style={{
-                    width: "100%",
-                    height: "30px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                    padding: "5px",
-                  }}
+                  style={{ width: "100%", height: "30px", borderRadius: "5px", border: "1px solid #ccc", padding: "5px" }}
                 >
                   {loading ? "Loading..." : "Enroll"}
                 </button>
@@ -316,18 +252,12 @@ const Enrollments = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
-          <div className="enroll-btn" onClick={() => setModal(true)}>
-            Enroll
-          </div>
+          <div className="enroll-btn" onClick={() => setModal(true)}>Enroll</div>
         </div>
-
         <Table
           headers={tableHeaders}
           data={filteredData}
-          emptyMessage={
-            search ? "No matching records found" : "No enrollments available"
-          }
+          emptyMessage={search ? "No matching records found" : "No enrollments available"}
         />
       </div>
     </div>

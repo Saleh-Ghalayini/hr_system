@@ -43,8 +43,9 @@ const CourseCatalog = () => {
           },
         }
       );
-      setCourses(response.data);
-      setFilteredData(response.data);
+      const data = Array.isArray(response.data.data) ? response.data.data : [];
+      setCourses(data);
+      setFilteredData(transformCourseData(data));
     } catch (error) {
       console.error("Error fetching courses:", error);
       setError("Failed to fetch courses. Please try again.");

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export const useAuth = () => {
@@ -48,7 +48,6 @@ export const useAuth = () => {
   useEffect(() => {
   
     const verifyAuth = async () => {
-      console.log("Starting auth verification");
       try {
         const { data } = await axios.get(
           "http://127.0.0.1:8000/api/v1/validate-token",
@@ -75,7 +74,6 @@ export const useAuth = () => {
         );
         logout();
       } finally {
-        console.log("Auth verification completed");
         setLoading(false);
       }
     };

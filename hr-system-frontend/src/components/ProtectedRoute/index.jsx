@@ -4,11 +4,9 @@ import { useAuthContext } from "../../context/AuthContext";
 
 const ProtectedRoute = () => {
   const { token, loading } = useAuthContext();
-  console.log("ProtectedRoute check:", { token, loading });
 
   if (loading) {
-    console.log("Auth verification in progress");
-    return <>loading...</>;
+    return <div className="loading-spinner">Loading...</div>;
   }
 
   return token ? <Outlet /> : <Navigate to="/login" replace />;

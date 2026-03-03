@@ -15,9 +15,7 @@ import {
 import {
   Grid,
   Typography,
-  Box,
   Container,
-  CircularProgress,
 } from "@mui/material";
 import "./style.css";
 import useUsers from "../../hooks/useUsers";
@@ -38,7 +36,6 @@ import {
   getRadarChartOptions,
 } from "./utils/chartData";
 import Loading from "../../assets/loader/loading";
-import { toast } from "react-toastify";
 
 // Register ChartJS components
 ChartJS.register(
@@ -68,14 +65,14 @@ const Dashboard = () => {
   const chartOptions = getChartOptions();
 
   if (isLoading) {
-    return (
-    <Loading />
-    );
+    return <Loading />;
   }
 
   if (hasError) {
     return (
-     toast.error("Error loading dashboard data")
+      <div className="dashboard-error">
+        <p>Error loading dashboard data. Please refresh the page.</p>
+      </div>
     );
   }
 

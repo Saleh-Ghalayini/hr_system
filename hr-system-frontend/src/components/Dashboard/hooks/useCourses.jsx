@@ -9,29 +9,10 @@ const useCourses = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await dashboardService.getCourses();
-        console.log('Courses API Response:', response);
-        
-        if (Array.isArray(response)) {
-          setCourses(response);
-        } else if (response && response.data) {
-          if (Array.isArray(response.data)) {
-            setCourses(response.data);
-          } else if (response.data.data && Array.isArray(response.data.data)) {
-            setCourses(response.data.data);
-          } else {
-            console.error('Unexpected courses response structure:', response);
-            setError(new Error('Invalid courses response structure'));
-            setCourses([]);
-          }
-        } else {
-          console.error('No valid courses data in response:', response);
-          setError(new Error('No valid courses data received'));
-          setCourses([]);
-        }
-      } catch (error) {
-        console.error('Error fetching courses:', error);
-        setError(error);
+        const data = await dashboardService.getCourses();
+        setCourses(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setError(err);
         setCourses([]);
       } finally {
         setLoading(false);

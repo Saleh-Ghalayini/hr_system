@@ -1,28 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Table from "../../../components/Table";
-import { useEffect } from "react";
 import { request } from "../../../common/request";
 
 const Salaries = () => {
-  const [loading, setloading] = useState(true);
-  const [salaryData, setSalaryData] = useState();
+  const [loading, setLoading] = useState(true);
+  const [salaryData, setSalaryData] = useState([]);
 
   useEffect(() => {
     const fetchSalaries = async () => {
-      setloading(true);
+      setLoading(true);
       try {
         const response = await request({
           method: "GET",
-          path: "admin/getsalaries",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          path: "admin/payroll",
         });
-        setSalaryData(response);
+        setSalaryData(Array.isArray(response.data) ? response.data : []);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       } finally {
-        setloading(false);
+        setLoading(false);
       }
     };
     fetchSalaries();
@@ -36,9 +32,11 @@ const Salaries = () => {
     { key: "total", label: "Payroll" },
   ];
 
-  return loading ? (
-    <h1>Loading</h1>
-  ) : (
+  if (loading) {
+    return <div className="loading-spinner">Loading...</div>;
+  }
+
+  return (
     <div>
       <Table headers={tableHeaders} data={salaryData} />
     </div>

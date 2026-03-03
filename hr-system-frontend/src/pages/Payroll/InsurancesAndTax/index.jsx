@@ -1,67 +1,68 @@
 import React, { useEffect, useState } from "react";
 import InsuranceCard from "../../../components/InsuranceCard";
 import { request } from "../../../common/request";
-import InsuranceUpdater from "../../../components/InsuranceUpdater";
 import Button from "../../../components/Button";
 import "./styles.css";
 
 const InsuranceAndTax = () => {
   const [loading, setLoading] = useState(true);
-  const [insuranceData, setInsuranceData] = useState();
+  const [insuranceData, setInsuranceData] = useState([]);
   const [trigger, setTrigger] = useState(false);
-  const [insuranceType, setInsuranceType] = useState();
-  const [value, setValue] = useState();
+  const [insuranceId, setInsuranceId] = useState(null);
+  const [insuranceType, setInsuranceType] = useState("");
+  const [value, setValue] = useState("");
+
+  const fetchInsurance = async () => {
+    try {
+      setLoading(true);
+      const response = await request({
+        method: "GET",
+        path: "admin/insurances",
+      });
+      setInsuranceData(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchInsurance = async () => {
-      try {
-        setLoading(true);
-        const response = await request({
-          method: "GET",
-          path: "admin/getinsurances",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        setInsuranceData(response);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchInsurance();
   }, []);
 
   const updateInsurance = async () => {
-    const response = await request({
-      method: "POST",
-      path: "admin/updateinsurance",
-      data: {
-        type: insuranceType,
-        value: value,
-      },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    try {
+      const response = await request({
+        method: "PUT",
+        path: `admin/insurances/${insuranceId}`,
+        data: { value: parseFloat(value) },
+      });
 
-    if (response.success) {
-      setTrigger(!trigger);
-      window.location.reload();
+      if (response.success) {
+        setTrigger(false);
+        setValue("");
+        fetchInsurance();
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
-  return loading ? (
-    <h1>Loading</h1>
-  ) : (
+  if (loading) {
+    return <div className="loading-spinner">Loading...</div>;
+  }
+
+  return (
     <div className="flex">
       {insuranceData.map((insurance) => (
         <InsuranceCard
+          key={insurance.id}
           insuranceType={insurance.type}
           deduction={insurance.cost}
           onClick={() => {
-            setTrigger(!trigger);
+            setTrigger(true);
+            setInsuranceId(insurance.id);
             setInsuranceType(insurance.type);
           }}
         />
@@ -74,20 +75,22 @@ const InsuranceAndTax = () => {
                 <h2>{insuranceType}</h2>
               </header>
               <input
-                type="text"
+                type="number"
                 className="update-input"
-                onChange={(e) => {
-                  setValue(e.target.value);
-                  console.log(value);
-                }}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
               />
-              <div className="flex actions-btn ">
+              <div className="flex actions-btn">
                 <Button
                   text="UPDATE"
                   className="primary-btn"
                   onClick={updateInsurance}
                 />
-                <Button text="Cancel" className="secondary-btn" onClick={() => setTrigger(!trigger)} />
+                <Button
+                  text="Cancel"
+                  className="secondary-btn"
+                  onClick={() => { setTrigger(false); setValue(""); }}
+                />
               </div>
             </div>
           </div>

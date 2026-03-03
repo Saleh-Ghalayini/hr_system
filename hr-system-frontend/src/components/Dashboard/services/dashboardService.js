@@ -4,7 +4,7 @@ export const dashboardService = {
   getLeaveRequests: async () => {
     const response = await request({
       method: "GET",
-      path: "admin/leave-requests",
+      path: "admin/leave/requests",
     });
     return response.data;
   },
@@ -14,7 +14,7 @@ export const dashboardService = {
       method: "GET",
       path: "admin/courses",
     });
-    return response;
+    return response.data;
   },
 
   getEnrollments: async () => {
@@ -22,6 +22,6 @@ export const dashboardService = {
       method: "GET",
       path: "admin/enrollments",
     });
-    return response;
+    return response.data;
   },
 };
