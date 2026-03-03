@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
@@ -32,14 +32,9 @@ class AuthController extends Controller
         return $this->success($user);
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $data = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if (!$token = Auth::attempt($data)) {
+        if (!$token = Auth::attempt($request->validated())) {
             return $this->error('Invalid credentials.', 401, [
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -58,22 +53,9 @@ class AuthController extends Controller
         ], 'Login successful.');
     }
 
-    public function addUser(Request $request)
+    public function addUser(RegisterRequest $request)
     {
-        $data = $request->validate([
-            'first_name'    => 'required|string|max:100',
-            'last_name'     => 'required|string|max:100',
-            'email'         => 'required|email|unique:users,email|max:255',
-            'password'      => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
-            'date_of_birth' => 'required|date|before:today',
-            'nationality'   => 'required|string|max:100',
-            'phone_number'  => 'required|string|max:20',
-            'address'       => 'required|string|max:255',
-            'position'      => 'required|string|max:100',
-            'gender'        => 'required|in:male,female,other',
-            'insurance_id'  => 'required|exists:insurances,id',
-        ]);
-
+        $data             = $request->validated();
         $data['password'] = bcrypt($data['password']);
 
         $user  = User::create($data);

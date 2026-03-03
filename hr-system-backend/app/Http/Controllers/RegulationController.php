@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Regulation;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Regulation\RegulationRequest;
+use App\Http\Requests\Regulation\RequirementRequest;
 use App\Models\RegulationRequirement;
 
 class RegulationController extends Controller
@@ -20,15 +21,9 @@ class RegulationController extends Controller
         return $this->success($regulations);
     }
 
-    public function store(Request $request)
+    public function store(RegulationRequest $request)
     {
-        $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'category'    => 'nullable|string|max:100',
-        ]);
-
-        $regulation = Regulation::create($data);
+        $regulation = Regulation::create($request->validated());
 
         return $this->created($regulation, 'Regulation created successfully.');
     }
@@ -40,15 +35,9 @@ class RegulationController extends Controller
         return $this->success($regulation);
     }
 
-    public function update(Request $request, Regulation $regulation)
+    public function update(RegulationRequest $request, Regulation $regulation)
     {
-        $data = $request->validate([
-            'name'        => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'category'    => 'nullable|string|max:100',
-        ]);
-
-        $regulation->update($data);
+        $regulation->update($request->validated());
 
         return $this->success($regulation, 'Regulation updated successfully.');
     }
@@ -69,31 +58,18 @@ class RegulationController extends Controller
         return $this->success($requirements);
     }
 
-    public function storeRequirement(Request $request, Regulation $regulation)
+    public function storeRequirement(RequirementRequest $request, Regulation $regulation)
     {
-        $data = $request->validate([
-            'description'       => 'required|string',
-            'responsible_party' => 'nullable|exists:users,id',
-            'due_date'          => 'nullable|date',
-            'status'            => 'sometimes|in:pending,in_progress,completed',
-        ]);
-
+        $data                  = $request->validated();
         $data['regulation_id'] = $regulation->id;
-        $requirement = RegulationRequirement::create($data);
+        $requirement           = RegulationRequirement::create($data);
 
         return $this->created($requirement, 'Requirement added successfully.');
     }
 
-    public function updateRequirement(Request $request, Regulation $regulation, RegulationRequirement $requirement)
+    public function updateRequirement(RequirementRequest $request, Regulation $regulation, RegulationRequirement $requirement)
     {
-        $data = $request->validate([
-            'description'       => 'sometimes|string',
-            'responsible_party' => 'nullable|exists:users,id',
-            'due_date'          => 'nullable|date',
-            'status'            => 'sometimes|in:pending,in_progress,completed',
-        ]);
-
-        $requirement->update($data);
+        $requirement->update($request->validated());
 
         return $this->success($requirement, 'Requirement updated successfully.');
     }

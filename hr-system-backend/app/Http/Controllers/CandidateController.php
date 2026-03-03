@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Candidate;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Job\CandidateRequest;
 
 class CandidateController extends Controller
 {
@@ -19,16 +19,9 @@ class CandidateController extends Controller
         return $this->success($candidates);
     }
 
-    public function store(Request $request)
+    public function store(CandidateRequest $request)
     {
-        $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'email'       => 'required|email|unique:candidates,email|max:255',
-            'phone'       => 'required|string|max:20',
-            'resume_path' => 'nullable|string|max:500',
-        ]);
-
-        $candidate = Candidate::create($data);
+        $candidate = Candidate::create($request->validated());
 
         return $this->created($candidate, 'Candidate created successfully.');
     }
@@ -40,16 +33,9 @@ class CandidateController extends Controller
         return $this->success($candidate);
     }
 
-    public function update(Request $request, Candidate $candidate)
+    public function update(CandidateRequest $request, Candidate $candidate)
     {
-        $data = $request->validate([
-            'name'        => 'sometimes|string|max:255',
-            'email'       => 'sometimes|email|unique:candidates,email,' . $candidate->id . '|max:255',
-            'phone'       => 'sometimes|string|max:20',
-            'resume_path' => 'nullable|string|max:500',
-        ]);
-
-        $candidate->update($data);
+        $candidate->update($request->validated());
 
         return $this->success($candidate, 'Candidate updated successfully.');
     }

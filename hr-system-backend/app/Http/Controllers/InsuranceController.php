@@ -2,43 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Payroll;
 use App\Models\Insurance;
+use App\Services\InsuranceService;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Insurance\UpdateInsurancePlanRequest;
 
 class InsuranceController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(private InsuranceService $insuranceService) {}
 
     public function getInsurances()
     {
         return $this->success(Insurance::all());
     }
 
-    public function updatePlan(Request $request, Insurance $insurance)
+    public function updatePlan(UpdateInsurancePlanRequest $request, Insurance $insurance)
     {
-        $data = $request->validate([
-            'value' => 'required|numeric|min:0|max:100000',
-        ]);
+        $updated = $this->insuranceService->updatePlan($insurance, (float) $request->validated()['value']);
 
-        DB::transaction(function () use ($insurance, $data) {
-            $oldCost = $insurance->cost;
-            $newCost = (float) $data['value'];
-            $delta   = $oldCost - $newCost;
-
-            $insurance->update([
-                'old_cost' => $oldCost,
-                'cost'     => $newCost,
-            ]);
-
-            if ($delta != 0) {
-                Payroll::where('insurance_id', $insurance->id)
-                    ->increment('total', $delta);
-            }
-        });
-
-        return $this->success($insurance->fresh(), 'Insurance plan updated successfully.');
+        return $this->success($updated, 'Insurance plan updated successfully.');
     }
 }

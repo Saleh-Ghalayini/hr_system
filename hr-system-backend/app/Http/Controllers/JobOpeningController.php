@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobOpening;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Job\JobOpeningRequest;
 use Illuminate\Support\Facades\Auth;
 
 class JobOpeningController extends Controller
@@ -31,17 +31,11 @@ class JobOpeningController extends Controller
         return $this->success($openings);
     }
 
-    public function store(Request $request)
+    public function store(JobOpeningRequest $request)
     {
-        $data = $request->validate([
-            'title'       => 'required|string|max:255',
-            'department'  => 'required|string|max:255',
-            'description' => 'required|string',
-            'status'      => 'sometimes|in:open,closed,on_hold',
-        ]);
-
+        $data              = $request->validated();
         $data['posted_by'] = Auth::id();
-        $opening = JobOpening::create($data);
+        $opening           = JobOpening::create($data);
 
         return $this->created($opening, 'Job opening created successfully.');
     }
@@ -53,16 +47,9 @@ class JobOpeningController extends Controller
         return $this->success($jobOpening);
     }
 
-    public function update(Request $request, JobOpening $jobOpening)
+    public function update(JobOpeningRequest $request, JobOpening $jobOpening)
     {
-        $data = $request->validate([
-            'title'       => 'sometimes|string|max:255',
-            'department'  => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'status'      => 'sometimes|in:open,closed,on_hold',
-        ]);
-
-        $jobOpening->update($data);
+        $jobOpening->update($request->validated());
 
         return $this->success($jobOpening, 'Job opening updated successfully.');
     }

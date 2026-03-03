@@ -3,42 +3,25 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Services\PerformanceService;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Performance\RateTeamRequest;
+use App\Http\Requests\Performance\RateEmployeeRequest;
 use App\Models\PerformanceType;
 use App\Models\TeamPerformance;
 use App\Models\EmployeePerformance;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PerformanceController extends Controller
 {
     use ApiResponse;
 
-    public function rateTeam(Request $request)
+    public function __construct(private PerformanceService $performanceService) {}
+
+    public function rateTeam(RateTeamRequest $request)
     {
-        $data = $request->validate([
-            'type_ids'   => 'required|array|min:1',
-            'type_ids.*' => 'required|exists:performance_types,id',
-            'rate'       => 'required|array|min:1',
-            'rate.*'     => 'required|integer|between:1,5',
-            'comment'    => 'nullable|string|max:1000',
-        ]);
-
-        if (count($data['type_ids']) !== count($data['rate'])) {
-            return $this->error('The number of type IDs must match the number of ratings.', 422);
-        }
-
-        $user    = Auth::user();
-        $records = [];
-
-        foreach ($data['type_ids'] as $index => $typeId) {
-            $records[] = TeamPerformance::create([
-                'user_id' => $user->id,
-                'type_id' => $typeId,
-                'rate'    => $data['rate'][$index],
-                'comment' => $data['comment'] ?? null,
-            ]);
-        }
+        $records = $this->performanceService->rateTeam(Auth::id(), $request->validated());
 
         return $this->created($records, 'Team ratings submitted successfully.');
     }
@@ -64,33 +47,9 @@ class PerformanceController extends Controller
         return $this->success(PerformanceType::all());
     }
 
-    public function rateEmployee(Request $request)
+    public function rateEmployee(RateEmployeeRequest $request)
     {
-        $data = $request->validate([
-            'user_id'    => 'required|exists:users,id',
-            'type_ids'   => 'required|array|min:1',
-            'type_ids.*' => 'required|exists:performance_types,id',
-            'rate'       => 'required|array|min:1',
-            'rate.*'     => 'required|integer|between:1,5',
-            'comment'    => 'nullable|string|max:1000',
-        ]);
-
-        if (count($data['type_ids']) !== count($data['rate'])) {
-            return $this->error('The number of type IDs must match the number of ratings.', 422);
-        }
-
-        $manager = Auth::user();
-        $records = [];
-
-        foreach ($data['type_ids'] as $index => $typeId) {
-            $records[] = EmployeePerformance::create([
-                'user_id'    => $data['user_id'],
-                'manager_id' => $manager->id,
-                'type_id'    => $typeId,
-                'rate'       => $data['rate'][$index],
-                'comment'    => $data['comment'] ?? null,
-            ]);
-        }
+        $records = $this->performanceService->rateEmployee(Auth::id(), $request->validated());
 
         return $this->created($records, 'Employee ratings submitted successfully.');
     }

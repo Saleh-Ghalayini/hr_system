@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Task\TaskRequest;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
@@ -22,20 +22,11 @@ class TaskController extends Controller
         return $this->success($tasks);
     }
 
-    public function store(Request $request)
+    public function store(TaskRequest $request)
     {
-        $data = $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'assigned_to' => 'nullable|exists:users,id',
-            'project_id'  => 'nullable|exists:projects,id',
-            'priority'    => 'sometimes|in:low,medium,high',
-            'status'      => 'sometimes|in:todo,in_progress,done',
-            'due_date'    => 'nullable|date',
-        ]);
-
+        $data               = $request->validated();
         $data['created_by'] = Auth::id();
-        $task = Task::create($data);
+        $task               = Task::create($data);
         $task->load('assignedTo:id,first_name,last_name', 'project:id,name');
 
         return $this->created($task, 'Task created successfully.');
@@ -52,19 +43,9 @@ class TaskController extends Controller
         return $this->success($task);
     }
 
-    public function update(Request $request, Task $task)
+    public function update(TaskRequest $request, Task $task)
     {
-        $data = $request->validate([
-            'title'       => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'assigned_to' => 'nullable|exists:users,id',
-            'project_id'  => 'nullable|exists:projects,id',
-            'priority'    => 'sometimes|in:low,medium,high',
-            'status'      => 'sometimes|in:todo,in_progress,done',
-            'due_date'    => 'nullable|date',
-        ]);
-
-        $task->update($data);
+        $task->update($request->validated());
 
         return $this->success($task, 'Task updated successfully.');
     }

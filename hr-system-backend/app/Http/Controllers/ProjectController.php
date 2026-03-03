@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Project\ProjectRequest;
 use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
@@ -21,16 +21,11 @@ class ProjectController extends Controller
         return $this->success($projects);
     }
 
-    public function store(Request $request)
+    public function store(ProjectRequest $request)
     {
-        $data = $request->validate([
-            'name'        => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status'      => 'sometimes|in:active,on_hold,completed,cancelled',
-        ]);
-
+        $data               = $request->validated();
         $data['created_by'] = Auth::id();
-        $project = Project::create($data);
+        $project            = Project::create($data);
 
         return $this->created($project, 'Project created successfully.');
     }
@@ -45,15 +40,9 @@ class ProjectController extends Controller
         return $this->success($project);
     }
 
-    public function update(Request $request, Project $project)
+    public function update(ProjectRequest $request, Project $project)
     {
-        $data = $request->validate([
-            'name'        => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'status'      => 'sometimes|in:active,on_hold,completed,cancelled',
-        ]);
-
-        $project->update($data);
+        $project->update($request->validated());
 
         return $this->success($project, 'Project updated successfully.');
     }

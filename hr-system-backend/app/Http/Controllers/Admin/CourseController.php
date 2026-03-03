@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Course;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Course\CourseRequest;
 use App\Http\Controllers\Controller;
 
 class CourseController extends Controller
@@ -16,17 +16,9 @@ class CourseController extends Controller
         return $this->success(Course::withCount('enrollments')->get());
     }
 
-    public function store(Request $request)
+    public function store(CourseRequest $request)
     {
-        $data = $request->validate([
-            'course_name'      => 'required|string|max:255',
-            'description'      => 'required|string',
-            'skills'           => 'nullable|array',
-            'duration_hours'   => 'required|integer|min:1',
-            'certificate_text' => 'nullable|string|max:1000',
-        ]);
-
-        $course = Course::create($data);
+        $course = Course::create($request->validated());
 
         return $this->created($course, 'Course created successfully.');
     }
@@ -38,17 +30,9 @@ class CourseController extends Controller
         return $this->success($course);
     }
 
-    public function update(Request $request, Course $course)
+    public function update(CourseRequest $request, Course $course)
     {
-        $data = $request->validate([
-            'course_name'      => 'sometimes|string|max:255',
-            'description'      => 'sometimes|string',
-            'skills'           => 'nullable|array',
-            'duration_hours'   => 'sometimes|integer|min:1',
-            'certificate_text' => 'nullable|string|max:1000',
-        ]);
-
-        $course->update($data);
+        $course->update($request->validated());
 
         return $this->success($course, 'Course updated successfully.');
     }

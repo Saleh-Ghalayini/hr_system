@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Enrollment;
+use App\Services\EnrollmentService;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
+use App\Http\Requests\Enrollment\StoreEnrollmentRequest;
+use App\Http\Requests\Enrollment\UpdateEnrollmentRequest;
 use App\Http\Controllers\Controller;
 
 class AdminEnrollmentController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(private EnrollmentService $enrollmentService) {}
 
     public function index()
     {
@@ -21,26 +25,9 @@ class AdminEnrollmentController extends Controller
         return $this->success($enrollments);
     }
 
-    public function store(Request $request)
+    public function store(StoreEnrollmentRequest $request)
     {
-        $data = $request->validate([
-            'user_id'    => 'required|exists:users,id',
-            'course_id'  => 'required|exists:courses,id',
-            'start_date' => 'required|date',
-            'end_date'   => 'required|date|after_or_equal:start_date',
-            'status'     => 'sometimes|in:enrolled,in_progress,completed,terminated',
-        ]);
-
-        $existing = Enrollment::where('user_id', $data['user_id'])
-            ->where('course_id', $data['course_id'])
-            ->whereNotIn('status', ['terminated'])
-            ->first();
-
-        if ($existing) {
-            return $this->error('User is already enrolled in this course.', 400);
-        }
-
-        $enrollment = Enrollment::create($data);
+        $enrollment = $this->enrollmentService->store($request->validated());
 
         return $this->created(
             $enrollment->load('user:id,first_name,last_name', 'course:id,course_name'),
@@ -48,35 +35,11 @@ class AdminEnrollmentController extends Controller
         );
     }
 
-    public function updateEnrollment(Request $request, Enrollment $enrollment)
+    public function updateEnrollment(UpdateEnrollmentRequest $request, Enrollment $enrollment)
     {
-        $data = $request->validate([
-            'user_id'    => 'sometimes|exists:users,id',
-            'course_id'  => 'sometimes|exists:courses,id',
-            'start_date' => 'sometimes|date',
-            'end_date'   => 'sometimes|date|after_or_equal:start_date',
-            'status'     => 'sometimes|in:enrolled,in_progress,completed,terminated',
-        ]);
+        $updated = $this->enrollmentService->update($enrollment, $request->validated());
 
-        // Check duplicate if user/course is being changed
-        if (isset($data['user_id']) || isset($data['course_id'])) {
-            $userId   = $data['user_id']   ?? $enrollment->user_id;
-            $courseId = $data['course_id'] ?? $enrollment->course_id;
-
-            $duplicate = Enrollment::where('user_id', $userId)
-                ->where('course_id', $courseId)
-                ->where('id', '!=', $enrollment->id)
-                ->whereNotIn('status', ['terminated'])
-                ->first();
-
-            if ($duplicate) {
-                return $this->error('User is already enrolled in this course.', 400);
-            }
-        }
-
-        $enrollment->update($data);
-
-        return $this->success($enrollment, 'Enrollment updated successfully.');
+        return $this->success($updated, 'Enrollment updated successfully.');
     }
 
     public function destroy(Enrollment $enrollment)
