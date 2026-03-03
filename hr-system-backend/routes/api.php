@@ -17,6 +17,7 @@ use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
+use App\Http\Controllers\User\UserController as AdminUserController;
 
 Route::prefix('v1')->group(function () {
 
@@ -58,6 +59,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/leave/balance', [LeaveBalanceController::class, 'getLeaveBalanceForUser']);
         Route::get('/leave/requests', [LeaveRequestController::class, 'getLeaveRequestsByUser']);
 
+        // Payroll (own)
+        Route::get('/profile/payroll', [PayrollController::class, 'getMyPayroll']);
+
         // Enrollments (own)
         Route::get('/enrollments/my', [UserController::class, 'enrollments']);
 
@@ -96,6 +100,7 @@ Route::prefix('v1')->group(function () {
             // Users
             Route::get('/users', [AuthController::class, 'getAllUsers']);
             Route::get('/users/{id}', [AuthController::class, 'getUserById']);
+            Route::get('/users/{user}/courses', [AdminUserController::class, 'userCourses']);
 
             // Attendance (full access)
             Route::get('/attendance/search', [AttendanceController::class, 'getUserByName']);

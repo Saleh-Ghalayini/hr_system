@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Payroll;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Auth;
 
 class PayrollController extends Controller
 {
@@ -19,5 +20,20 @@ class PayrollController extends Controller
         ])->orderBy('fullname')->get();
 
         return $this->success($payrolls);
+    }
+
+    public function getMyPayroll()
+    {
+        $payroll = Payroll::with([
+            'insurance:id,type,cost',
+            'baseSalary:id,position,salary',
+            'tax:id,label,rate',
+        ])->where('user_id', Auth::id())->first();
+
+        if (!$payroll) {
+            return $this->notFound('Payroll record not found.');
+        }
+
+        return $this->success($payroll);
     }
 }
