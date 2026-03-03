@@ -3,22 +3,33 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Enrollment extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
-        'user_id', 'course_id', 'start_date', 
-        'end_date', 'status'
+        'user_id',
+        'course_id',
+        'start_date',
+        'end_date',
+        'status',
     ];
 
-    public function user()
+    protected $casts = [
+        'start_date' => 'date',
+        'end_date' => 'date',
+    ];
+
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function course()
+    public function course(): BelongsTo
     {
-        return $this->belongsTo(Course::class, 'course_id');
+        return $this->belongsTo(Course::class);
     }
-    
 }

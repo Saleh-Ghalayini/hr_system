@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Middleware\AdminMiddleware;
+use App\Http\Middleware\ManagerMiddleware;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,16 +17,17 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            "AdminMiddleware" => AdminMiddleware::class
+            'AdminMiddleware'   => AdminMiddleware::class,
+            'ManagerMiddleware' => ManagerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Request $request) {
-            if ($request->is("api/*")) {
+        // Return consistent JSON for all unauthenticated API requests
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
+            if ($request->is('api/*')) {
                 return response()->json([
-                    "success" => false,
-                    "error" => "Unauthorized",
-                    "message" => "token 5alsa medeta "
+                    'success' => false,
+                    'message' => 'Unauthenticated. Please log in.',
                 ], 401);
             }
         });

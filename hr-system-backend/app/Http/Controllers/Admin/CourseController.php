@@ -4,80 +4,63 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Course;
-use Exception;
-use Illuminate\Validation\ValidationException;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
+    use ApiResponse;
+
     public function index()
     {
-        // dd("hello");
-        return Course::all();
+        return $this->success(Course::withCount('enrollments')->get());
     }
 
     public function store(Request $request)
     {
-     try{
-     $course = new Course();
-     //sample json data for creating new course is 
-     $course->course_name = $request->course_name;
-     $course->description = $request->description;
-     $course->skills = $request->skills;
-     $course->duration_hours = $request->duration_hours;
-     $course->certificate_text = $request->certificate_text;
-     $course->save();
-     return response()->json([
-        'status' => 'success',
-        'message' => 'Course created successfully',
-        'course' => $course
-    ], 201);
+        $data = $request->validate([
+            'course_name'      => 'required|string|max:255',
+            'description'      => 'required|string',
+            'skills'           => 'nullable|array',
+            'duration_hours'   => 'required|integer|min:1',
+            'certificate_text' => 'nullable|string|max:1000',
+        ]);
 
-    }catch(ValidationException $e){
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage()
-        ], 422);
-     }
+        $course = Course::create($data);
+
+        return $this->created($course, 'Course created successfully.');
+    }
+
+    public function show(Course $course)
+    {
+        $course->loadCount('enrollments');
+
+        return $this->success($course);
     }
 
     public function update(Request $request, Course $course)
     {
         $data = $request->validate([
-            'course_name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'skills' => 'sometimes|json',
-            'duration_hours' => 'sometimes|integer|min:1',
-            'certificate_text' => 'nullable|string'
+            'course_name'      => 'sometimes|string|max:255',
+            'description'      => 'sometimes|string',
+            'skills'           => 'nullable|array',
+            'duration_hours'   => 'sometimes|integer|min:1',
+            'certificate_text' => 'nullable|string|max:1000',
         ]);
 
         $course->update($data);
-        return $course;
+
+        return $this->success($course, 'Course updated successfully.');
     }
 
-    public function destroy($course_id)
+    public function destroy(Course $course)
     {
-        try {
-            $course = Course::findOrFail($course_id);
-
-            if ($course->enrollments->count() > 0 || $course->id == 1) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Course has enrollments'
-                ], 400);
-            }
-            
-            $course->delete();
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Course deleted successfully'
-            ], 200);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Course not found'
-            ], 404);
+        if ($course->enrollments()->count() > 0) {
+            return $this->error('Cannot delete a course that has active enrollments.', 400);
         }
+
+        $course->delete();
+
+        return $this->success(null, 'Course deleted successfully.');
     }
 }

@@ -2,33 +2,18 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class BaseSalarySeeder extends Seeder
 {
-    
-    public function run(): void{
-        
+    public function run(): void
+    {
         DB::table('base_salaries')->insert([
-            [
-                "position"=>'Junior',
-                "salary" => 800,
-            ],
-            [
-                "position" => 'Senior',
-                "salary" => 1600,
-            ],
-            [
-                "position" => 'Intern',
-                "salary" => 300,
-            ],
-            [
-                "position" => 'Executive',
-                "salary" => 2100,
-            ]
+            ['position' => 'Intern',    'salary' => 300,  'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Junior',    'salary' => 800,  'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Senior',    'salary' => 1600, 'created_at' => now(), 'updated_at' => now()],
+            ['position' => 'Executive', 'salary' => 2100, 'created_at' => now(), 'updated_at' => now()],
         ]);
-        
     }
 }

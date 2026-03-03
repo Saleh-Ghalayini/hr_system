@@ -3,34 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\LeaveBalance;
-use Illuminate\Http\Request;
+use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 
 class LeaveBalanceController extends Controller
 {
+    use ApiResponse;
+
     public function getLeaveBalances()
     {
-        $leaveBalances = LeaveBalance::all();
-        return response()->json([
-            'success' => true,
-            'data' => $leaveBalances
-        ], 200);
+        $leaveBalances = LeaveBalance::with('user:id,first_name,last_name,email')
+            ->get();
+
+        return $this->success($leaveBalances);
     }
-    public function getLeaveBalanceForUser()
+
+    public function getLeaveBalanceForUser(?User $user = null)
     {
-        $user = Auth::user();
-        $leaveBalance = LeaveBalance::where('user_id', $user->id)->first();
-        return response()->json([
-            'success' => true,
-            'data' => $leaveBalance
-        ], 200);
+        $target = $user ?? Auth::user();
+
+        $leaveBalance = LeaveBalance::where('user_id', $target->id)->first();
+
+        if (!$leaveBalance) {
+            return $this->notFound('Leave balance not found.');
+        }
+
+        return $this->success($leaveBalance);
     }
+
     public function getLeaveBalanceForUserById($id)
     {
         $leaveBalance = LeaveBalance::where('user_id', $id)->first();
-        return response()->json([
-            'success' => true,
-            'data' => $leaveBalance
-        ], 200);
+
+        if (!$leaveBalance) {
+            return $this->notFound('Leave balance not found.');
+        }
+
+        return $this->success($leaveBalance);
     }
 }

@@ -2,24 +2,17 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class InsuranceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(): void{
-        
+    public function run(): void
+    {
         DB::table('insurances')->insert([
-            ['type'=>'HAF',
-            'cost'=>50,],
-            ['type'=>'GNA',
-            'cost'=>70,],
-            ['type'=>'RLDA',
-            'cost'=>100,]
+            ['type' => 'HAF',  'cost' => 50,  'old_cost' => 50,  'created_at' => now(), 'updated_at' => now()],
+            ['type' => 'GNA',  'cost' => 70,  'old_cost' => 70,  'created_at' => now(), 'updated_at' => now()],
+            ['type' => 'RLDA', 'cost' => 100, 'old_cost' => 100, 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }

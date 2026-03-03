@@ -4,26 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
-    public $timestamps = false;
     protected $fillable = [
         'course_name',
         'description',
         'skills',
         'duration_hours',
-        'certificate_text'
-    ];
-    protected $casts = [
-        'skills' => 'array'
+        'certificate_text',
     ];
 
-    public function enrollments()
+    protected $casts = [
+        'skills' => 'array',
+    ];
+
+    public function enrollments(): HasMany
     {
-        return $this->hasMany(Enrollment::class, 'course_id');
+        return $this->hasMany(Enrollment::class);
     }
 }

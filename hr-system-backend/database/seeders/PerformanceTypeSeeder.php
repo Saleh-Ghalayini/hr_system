@@ -2,25 +2,20 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+
 class PerformanceTypeSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $performanceTypes = [
-            ['name' => 'Team work'],
-            ['name' => 'Communication'],
-            ['name' => 'Problem-Handling'],
-            ['name' => 'Collaboration'],
-            ['name' => 'Creativity'],
-            ['name' => 'ٌReliability'],
-        ];
-
-        DB::table('performance_types')->insert($performanceTypes);
+        DB::table('performance_types')->insert([
+            ['name' => 'Team Work',        'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Communication',    'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Problem-Handling', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Collaboration',    'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Creativity',       'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Reliability',      'created_at' => now(), 'updated_at' => now()],
+        ]);
     }
 }

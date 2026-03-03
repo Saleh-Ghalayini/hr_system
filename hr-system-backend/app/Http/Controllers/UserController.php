@@ -1,109 +1,159 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\Enrollment;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
 class UserController extends Controller
 {
+    use ApiResponse;
 
-     public function updateUserBasicInfo(Request $request){
+    public function updateUserBasicInfo(Request $request)
+    {
+        $data = $request->validate([
+            'first_name'    => 'sometimes|string|max:100',
+            'last_name'     => 'sometimes|string|max:100',
+            'date_of_birth' => 'sometimes|date|before:today',
+            'nationality'   => 'sometimes|string|max:100',
+            'phone_number'  => 'sometimes|string|max:20',
+            'address'       => 'sometimes|string|max:255',
+            'position'      => 'sometimes|string|max:100',
+        ]);
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
-        $user->first_name = $request["first_name"] ?$request['first_name'] : $user->first_name;
-        $user->last_name = $request["last_name"] ?$request['last_name'] : $user->last_name;
-        $user->date_of_birth = $request["date_of_birth"] ?$request['date_of_birth'] : $user->date_of_birth;
-        $user->nationality = $request["nationality"] ?$request['nationality'] : $user->nationality;
-        $user->phone_number = $request["phone_number"] ?$request['phone_number'] : $user->phone_number;
-        $user->address = $request["address"] ?$request['address'] : $user->address;
-        $user->position = $request["position"] ?$request['position'] : $user->position;
+        $user->update($data);
 
-        $user->save();
+        return $this->success($user, 'Profile updated successfully.');
+    }
 
-        return response()->json([
-            'message' => 'User data updated successfully.',
-            'user' => $user
+    public function updateJobDetails(Request $request)
+    {
+        $data = $request->validate([
+            'title'             => 'sometimes|string|max:255',
+            'employment_type'   => 'sometimes|in:full_time,part_time,contract,internship',
+            'employment_status' => 'sometimes|in:active,on_leave,terminated',
+            'employee_level'    => 'sometimes|string|max:100',
+            'work_location'     => 'sometimes|in:on_site,remote,hybrid',
+            'hiring_date'       => 'sometimes|date',
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user      = Auth::user();
+        $jobDetail = $user->jobDetail;
+
+        if (!$jobDetail) {
+            return $this->notFound('Job details not found.');
+        }
+
+        $jobDetail->update($data);
+
+        return $this->success($jobDetail, 'Job details updated successfully.');
+    }
+
+    public function getUserJobDetails()
+    {
+        /** @var \App\Models\User $user */
+        $user      = Auth::user();
+        $jobDetail = $user->jobDetail;
+
+        if (!$jobDetail) {
+            return $this->notFound('Job details not found.');
+        }
+
+        return $this->success([
+            'user'       => $user->only(['id', 'first_name', 'last_name', 'email', 'position', 'gender']),
+            'job_detail' => $jobDetail,
         ]);
     }
-    public function updateJobDetails(Request $request){
-        $user = Auth::user();
-        $jobDetails = $user->userJobDetail;
-        $jobDetails->title = $request["title"] ?$request['title'] : $jobDetails->title;
-          $jobDetails->employment_type = $request["employment_type"] ?$request['employment_type'] : $jobDetails->employment_type;
-          $jobDetails->employment_status = $request["employment_status"] ?$request['employment_status'] : $jobDetails->employment_status;
-          $jobDetails->employee_level = $request["employee_level"] ?$request['employee_level'] : $jobDetails->employee_level;
-          $jobDetails->work_location = $request["work_location"] ?$request['work_location'] : $jobDetails->work_location;
-          $jobDetails->hiring_date = $request["hiring_date"] ?$request['hiring_date'] : $jobDetails->hiring_date;
-          $jobDetails->save();
-          return response()->
-          json([
-              "success"=>true,
-              "message"=> "updated succesfully",
-              "jobs"=> $jobDetails,
-          ]);
-    }
-    public function getUserJobDetails(){
-        $user = Auth::user();
-        $jobDetails = $user->userJobDetail;
 
-        // check for the user job details if exist
-        if(!$jobDetails){
-            return response()->
-            json([
-                "success"=>false,
-                "message"=> "failed to load details"
-            ]);
+    public function uploadProfilePhoto(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|string',
+        ]);
+
+        $image = $request->input('image');
+
+        if (!preg_match('/^data:(image\/(jpeg|png|webp|gif));base64,/i', $image, $matches)) {
+            return $this->error('Invalid image format. Only JPEG, PNG, WebP, and GIF are allowed.', 422);
         }
-        //return oob details  data of the user
-        return response()->
-            json([
-                "success"=>true,
-                "jobdetails"=> $jobDetails,
-                "user"=> $user
-            ]);
 
-    }
+        $mimeType  = strtolower($matches[1]);
+        $raw       = str_replace(' ', '+', substr($image, strpos($image, ',') + 1));
+        $imageData = base64_decode($raw, true);
 
-    public function uploadProfilePhoto(Request $request){
+        if ($imageData === false) {
+            return $this->error('Invalid base64 image data.', 422);
+        }
 
-    $request->validate([
-        'image' => 'required|string',
-    ]);
+        if (strlen($imageData) > 2 * 1024 * 1024) {
+            return $this->error('Image exceeds the 2 MB size limit.', 422);
+        }
 
-    // Decode Base64 string
-    $image = $request->input('image');
-    $image = str_replace('data:image/png;base64,', '', $image);
-    $image = str_replace('data:image/jpeg;base64,', '', $image);
-    $image = str_replace(' ', '+', $image);
-    $imageData = base64_decode($image);
+        $extensions = [
+            'image/jpeg' => 'jpg',
+            'image/png'  => 'png',
+            'image/webp' => 'webp',
+            'image/gif'  => 'gif',
+        ];
+        $ext      = $extensions[$mimeType] ?? 'jpg';
+        $fileName = 'profile_' . Auth::id() . '_' . time() . '.' . $ext;
 
-    $fileName = 'profile_' . time() . '.png';
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-    // Store in storage/app/public/profile_photos/
-    Storage::disk('public')->put('profile_photos/' . $fileName, $imageData);
+        if ($user->profile_url && Storage::disk('public')->exists($user->profile_url)) {
+            Storage::disk('public')->delete($user->profile_url);
+        }
 
-    /** @var \App\Models\User $user */
-    $user = Auth::user();
-    if ($user) {
+        Storage::disk('public')->put('profile_photos/' . $fileName, $imageData);
+
         $user->profile_url = 'profile_photos/' . $fileName;
         $user->save();
+
+        return $this->success(
+            ['photo_url' => url('storage/profile_photos/' . $fileName)],
+            'Profile photo uploaded successfully.'
+        );
     }
 
-    return response()->json([
-        'status' => true,
-        'message' => 'Profile photo uploaded successfully!',
-        'photo_url' => url('storage/profile_photos/' . $fileName)
-    ]);
-   }
-   public function getImageUrl(){
-    $user = Auth::user();
-    $profileImg = $user->profile_url;
+    public function getImageUrl()
+    {
+        return $this->success(['photo_url' => Auth::user()->profile_url]);
+    }
 
-    return response()->json([
-        'success' => true,
-        'photo_url' => $profileImg
-    ]);
-    
-   }
+    public function enrollments()
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        $enrollments = $user->enrollments()
+            ->with('course:id,course_name,description,duration_hours,certificate_text')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(fn(Enrollment $e) => [
+                'id'                   => $e->id,
+                'course_name'          => $e->course->course_name ?? null,
+                'start_date'           => $e->start_date,
+                'end_date'             => $e->end_date,
+                'status'               => $e->status,
+                'progress'             => match ($e->status) {
+                    'completed'   => 100,
+                    'in_progress' => 50,
+                    'terminated'  => 0,
+                    default       => 25,
+                },
+                'certificate_eligible' => $e->status === 'completed',
+            ]);
+
+        return $this->success([
+            'enrollments' => $enrollments,
+            'total'       => $enrollments->count(),
+        ]);
+    }
 }

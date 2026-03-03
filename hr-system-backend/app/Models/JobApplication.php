@@ -3,20 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobApplication extends Model
 {
-    protected $fillable = ['status', 'interview_date', 'notes'];
+    use SoftDeletes;
 
-    // Relationship to candidate
-    public function candidate()
+    protected $fillable = [
+        'candidate_id',
+        'job_opening_id',
+        'status',
+        'interview_date',
+        'notes',
+    ];
+
+    protected $casts = [
+        'interview_date' => 'datetime',
+    ];
+
+    public function candidate(): BelongsTo
     {
-        return $this->belongsTo(Candidate::class, 'candidate_id');
+        return $this->belongsTo(Candidate::class);
     }
 
-    // Relationship to job opening
-    public function jobOpening()
+    public function jobOpening(): BelongsTo
     {
-        return $this->belongsTo(JobOpening::class, 'job_opening_id');
+        return $this->belongsTo(JobOpening::class);
     }
 }

@@ -4,19 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class EmployeePerformance extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'employees_performance';
+
     protected $fillable = [
         'user_id',
+        'manager_id',
         'type_id',
         'rate',
         'comment',
-        'manager_id',
+        'created_date',
     ];
 
-    function user() : BelongsTo{
-     return   $this->belongsTo(User::class,'user_id');
+    protected $casts = [
+        'created_date' => 'date',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
+    public function type(): BelongsTo
+    {
+        return $this->belongsTo(PerformanceType::class, 'type_id');
     }
 }

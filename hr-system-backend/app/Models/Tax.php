@@ -3,11 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Payroll;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Tax extends Model{
-    
-    public function payroll(){
+class Tax extends Model
+{
+    protected $fillable = [
+        'rate',
+        'label',
+    ];
+
+    public function payrolls(): HasMany
+    {
         return $this->hasMany(Payroll::class);
     }
 }

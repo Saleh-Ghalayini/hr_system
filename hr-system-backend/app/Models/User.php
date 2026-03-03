@@ -2,23 +2,22 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
-use App\Models\Enrollment;
-use App\Models\LeaveBalance;
-use App\Models\LeaveRequest;
 use App\Observers\UserObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements JWTSubject
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
+
     protected $fillable = [
         'first_name',
         'last_name',
@@ -36,23 +35,22 @@ class User extends Authenticatable implements JWTSubject
         'manager_id',
     ];
 
-    public function enrollments(): HasMany
-    {
-        return $this->hasMany(Enrollment::class);
-    }
-
-
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
         ];
     }
+
+    // JWT
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -62,10 +60,34 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
-      public function userJobDetail(): HasOne
+
+    // Relationships
+
+    public function manager(): BelongsTo
     {
-        return $this->hasOne(JobDetail::class,'user_id');
+        return $this->belongsTo(User::class, 'manager_id');
     }
+
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(User::class, 'manager_id');
+    }
+
+    public function insurance(): BelongsTo
+    {
+        return $this->belongsTo(Insurance::class);
+    }
+
+    public function jobDetail(): HasOne
+    {
+        return $this->hasOne(JobDetail::class);
+    }
+
+    public function payroll(): HasOne
+    {
+        return $this->hasOne(Payroll::class);
+    }
+
     public function leaveBalance(): HasOne
     {
         return $this->hasOne(LeaveBalance::class);
@@ -75,5 +97,44 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(LeaveRequest::class);
     }
-  
+
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function employeePerformances(): HasMany
+    {
+        return $this->hasMany(EmployeePerformance::class);
+    }
+
+    public function teamPerformances(): HasMany
+    {
+        return $this->hasMany(TeamPerformance::class);
+    }
+
+    public function managedPerformances(): HasMany
+    {
+        return $this->hasMany(EmployeePerformance::class, 'manager_id');
+    }
+
+    public function assignedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'assigned_to');
+    }
+
+    public function createdTasks(): HasMany
+    {
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
+    public function emails(): HasMany
+    {
+        return $this->hasMany(Email::class);
+    }
 }

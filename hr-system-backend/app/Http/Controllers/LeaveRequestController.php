@@ -4,93 +4,109 @@ namespace App\Http\Controllers;
 
 use App\Models\LeaveBalance;
 use App\Models\LeaveRequest;
+use App\Traits\ApiResponse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LeaveRequestController extends Controller
 {
+    use ApiResponse;
+
     public function leaveRequest(Request $request)
     {
-        $request->validate([
-            'leave_type' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'reason' => 'required'
+        $data = $request->validate([
+            'leave_type' => 'required|in:annual,sick,casual,other',
+            'start_date' => 'required|date|after_or_equal:today',
+            'end_date'   => 'required|date|after_or_equal:start_date',
+            'reason'     => 'required|string|max:1000',
         ]);
-        $leaveRequest = new LeaveRequest();
-        $leaveRequest->user_id = Auth::user()->id;
-        $leaveRequest->leave_type = $request->leave_type;
 
-        $leaveBalance = LeaveBalance::where('user_id', Auth::user()->id)->first();
-        if ($leaveBalance->balances[$request->leave_type] == 0 || $leaveBalance->balances[$request->leave_type] == null) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Insufficient leave balance'
-            ], 400);
+        $days = (int) Carbon::parse($data['start_date'])->diffInDays(Carbon::parse($data['end_date'])) + 1;
+
+        $leaveBalance = LeaveBalance::where('user_id', Auth::id())->first();
+
+        if (!$leaveBalance) {
+            return $this->error('Leave balance record not found.', 404);
         }
 
-        $leaveRequest->start_date = $request->start_date;
-        $leaveRequest->end_date = $request->end_date;
-        $leaveRequest->status = "pending";
-        $leaveRequest->reason = $request->reason;
-        $leaveRequest->save();
-        return response()->json([
-            'success' => true,
-            'message' => 'Leave request created successfully',
-            'data' => $leaveRequest
-        ], 200);
-    }
-    public function getLeaveRequests()
-    {
-        // dd("hello");
-        $leaveRequests = LeaveRequest::all();
-        return response()->json([
-            'success' => true,
-            'data' => $leaveRequests
-        ], 200);
-    }
-    public function getLeaveRequestsByUser()
-    {
-        $leaveRequests = LeaveRequest::where('user_id', Auth::user()->id)->get();
-        return response()->json([
-            'success' => true,
-            'data' => $leaveRequests
-        ], 200);
+        $balances    = $leaveBalance->balances;
+        $currentDays = $balances[$data['leave_type']] ?? 0;
+
+        if ($currentDays < $days) {
+            return $this->error(
+                "Insufficient leave balance. You have {$currentDays} day(s) remaining for {$data['leave_type']} leave.",
+                400
+            );
+        }
+
+        $leaveRequest = DB::transaction(function () use ($data) {
+            return LeaveRequest::create([
+                'user_id'    => Auth::id(),
+                'leave_type' => $data['leave_type'],
+                'start_date' => $data['start_date'],
+                'end_date'   => $data['end_date'],
+                'status'     => 'pending',
+                'reason'     => $data['reason'],
+            ]);
+        });
+
+        return $this->created($leaveRequest, 'Leave request submitted successfully.');
     }
 
-    public function updateLeaveRequest(Request $request, $id)
+    public function getLeaveRequests()
     {
-        $request->validate([
+        $leaveRequests = LeaveRequest::with('user:id,first_name,last_name,email')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $this->success($leaveRequests);
+    }
+
+    public function getLeaveRequestsByUser()
+    {
+        $leaveRequests = LeaveRequest::where('user_id', Auth::id())
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $this->success($leaveRequests);
+    }
+
+    public function updateLeaveRequest(Request $request, LeaveRequest $leaveRequest)
+    {
+        $data = $request->validate([
             'status' => 'required|in:approved,rejected',
         ]);
 
-        $leaveRequest = LeaveRequest::findOrFail($id);
-
         if ($leaveRequest->status !== 'pending') {
-            return response()->json(['message' => 'Request already processed'], 400);
+            return $this->error('This leave request has already been processed.', 400);
         }
 
-        $leaveRequest->update(['status' => $request->status]);
+        DB::transaction(function () use ($leaveRequest, $data) {
+            $leaveRequest->update(['status' => $data['status']]);
 
-        // If approved, decrement leave balance
-        if ($request->status === 'approved') {
-            $leaveBalance = LeaveBalance::where('user_id', $leaveRequest->user_id)->first();
+            if ($data['status'] === 'approved') {
+                $leaveBalance = LeaveBalance::where('user_id', $leaveRequest->user_id)->first();
 
-            if ($leaveBalance) {
-                $balances = $leaveBalance->balances;
-
-                if (isset($balances[$leaveRequest->leave_type]) && $balances[$leaveRequest->leave_type] > 0) {
-                    $balances[$leaveRequest->leave_type]--;
-
-                    $leaveBalance->update(['balances' => $balances]);
-
-                    return response()->json(['message' => 'Leave approved, balance updated']);
-                } else {
-                    return response()->json(['message' => 'Insufficient leave balance'], 400);
+                if (!$leaveBalance) {
+                    abort(404, 'Leave balance record not found for this user.');
                 }
-            }
-        }
 
-        return response()->json(['message' => 'Leave request updated']);
+                $balances = $leaveBalance->balances;
+                $type     = $leaveRequest->leave_type;
+                $days     = (int) Carbon::parse($leaveRequest->start_date)
+                    ->diffInDays(Carbon::parse($leaveRequest->end_date)) + 1;
+
+                if (($balances[$type] ?? 0) < $days) {
+                    abort(400, 'Insufficient leave balance to approve this request.');
+                }
+
+                $balances[$type] -= $days;
+                $leaveBalance->update(['balances' => $balances]);
+            }
+        });
+
+        return $this->success($leaveRequest->fresh(), 'Leave request updated successfully.');
     }
 }

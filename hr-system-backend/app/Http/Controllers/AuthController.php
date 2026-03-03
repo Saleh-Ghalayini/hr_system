@@ -3,162 +3,110 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
 class AuthController extends Controller
 {
-    private function validateAuthRequest(Request $request, bool $isLogin = false)
-    {
-        $rules = [
-            'email' => ['required', 'email'],
-            'password' => [
-                'required',
-                Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    // ->symbols()
-            ],
-        ];
+    use ApiResponse;
 
-        if (!$isLogin) {
-            // Add validation for new required fields
-            $rules['first_name'] = ['required', 'string', 'max:255'];
-            $rules['last_name'] = ['required', 'string', 'max:255'];
-            $rules['date-of-birth'] = ['required', 'date'];
-            $rules['nationality'] = ['required', 'string', 'max:255'];
-            $rules['phone_number'] = ['required', 'numeric'];
-            $rules['address'] = ['required', 'string', 'max:255'];
-            $rules['position'] = ['required', 'string', 'max:255'];
-            $rules['gender'] = ['required', 'in:male,female,other'];
-            $rules['insurance_id'] = ['required', 'numeric'];
-            // $rules['role'] = ['required', 'in:admin,user,manager'];
-        }
-
-        return Validator::make($request->all(), $rules);
-    }
     public function getAllUsers()
     {
-        $users = User::all();
-        return response()->json($users);
+        $users = User::with('jobDetail:id,user_id,title,employment_type,employment_status,employee_level,work_location,hiring_date')
+            ->select('id', 'first_name', 'last_name', 'email', 'position', 'gender', 'role', 'created_at')
+            ->get();
+
+        return $this->success($users);
     }
+
     public function getUserById($id)
     {
-        $user = User::find($id);
+        $user = User::with(['jobDetail', 'payroll', 'leaveBalance'])->find($id);
+
         if (!$user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'User not found'
-            ], 404);
+            return $this->notFound('User not found.');
         }
-        return response()->json($user);
+
+        return $this->success($user);
     }
 
     public function login(Request $request)
     {
-        $validator = $this->validateAuthRequest($request, true);
+        $data = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
-
-        $credentials = $request->only('email', 'password');
-
-        if (!$token = Auth::attempt($credentials)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid credentials',
-                'errors' => ['email' => ['The provided credentials are incorrect.']]
-            ], 401);
+        if (!$token = Auth::attempt($data)) {
+            return $this->error('Invalid credentials.', 401, [
+                'email' => ['The provided credentials are incorrect.'],
+            ]);
         }
 
         $user = Auth::user();
-        $userDetails = [
-            'id' => $user->id,
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'email' => $user->email,
-            'token' => $token
-        ];
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Login successful',
-            'data' => $userDetails
-        ], 200);
+        return $this->success([
+            'id'          => $user->id,
+            'first_name'  => $user->first_name,
+            'last_name'   => $user->last_name,
+            'email'       => $user->email,
+            'role'        => $user->role,
+            'profile_url' => $user->profile_url,
+            'token'       => $token,
+        ], 'Login successful.');
     }
 
     public function addUser(Request $request)
     {
-        try {
-            $user = new User();
-            $user->first_name = $request->first_name;
-            $user->last_name = $request->last_name;
-            $user->email = $request->email;
-            $user->password = bcrypt($request->password);
-            $user->date_of_birth = $request->date_of_birth;
-            $user->nationality = $request->nationality;
-            $user->phone_number = $request->phone_number;
-            $user->address = $request->address;
-            $user->position = $request->position;
-            $user->gender = $request->gender;
-            $user->insurance_id = 1;
-            // $user->base_salary = $request->base_salary;
-            $user->save();
-            $token = Auth::login($user);
+        $data = $request->validate([
+            'first_name'    => 'required|string|max:100',
+            'last_name'     => 'required|string|max:100',
+            'email'         => 'required|email|unique:users,email|max:255',
+            'password'      => ['required', Password::min(8)->letters()->mixedCase()->numbers()],
+            'date_of_birth' => 'required|date|before:today',
+            'nationality'   => 'required|string|max:100',
+            'phone_number'  => 'required|string|max:20',
+            'address'       => 'required|string|max:255',
+            'position'      => 'required|string|max:100',
+            'gender'        => 'required|in:male,female,other',
+            'insurance_id'  => 'required|exists:insurances,id',
+        ]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Registration successful',
-                'data' => [
-                    'id' => $user->id,
-                    'first_name' => $user->first_name,
-                    'last_name' => $user->last_name,
-                    'email' => $user->email,
-                    'token' => $token
-                ]
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Registration failed',
-                'errors' => ['server' => ['An error occurred during registration.']],
-                'error-Message' => $e->getMessage()
-            ], 500);
-        }
+        $data['password'] = bcrypt($data['password']);
+
+        $user  = User::create($data);
+        $token = Auth::login($user);
+
+        return $this->created([
+            'id'         => $user->id,
+            'first_name' => $user->first_name,
+            'last_name'  => $user->last_name,
+            'email'      => $user->email,
+            'role'       => $user->role,
+            'token'      => $token,
+        ], 'Registration successful.');
     }
-    public function validateToken(Request $request)
-    {
-        // dd("validate token");
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
-        }
 
+    public function validateToken()
+    {
         $user = Auth::user();
-        return response()->json([
-            'success' => true,
-            'message' => 'Token is valid',
-            'data' => $user
-        ], 200);
+
+        return $this->success([
+            'id'          => $user->id,
+            'first_name'  => $user->first_name,
+            'last_name'   => $user->last_name,
+            'email'       => $user->email,
+            'role'        => $user->role,
+            'profile_url' => $user->profile_url,
+        ], 'Token is valid.');
     }
 
     public function logout()
     {
         Auth::logout();
-        return response()->json([
-            'success' => true,
-            'message' => 'Logout successful'
-        ], 200);
+
+        return $this->success(null, 'Logout successful.');
     }
 }

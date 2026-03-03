@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\BaseSalary;
 use App\Models\Payroll;
-use Illuminate\Http\Request;
-use App\Models\Insurance;
+use App\Traits\ApiResponse;
 
+class PayrollController extends Controller
+{
+    use ApiResponse;
 
-class PayrollController extends Controller{
-    
-    public function getPayrolls(){
-        return Payroll::all();
-    }
+    public function getPayrolls()
+    {
+        $payrolls = Payroll::with([
+            'user:id,first_name,last_name,email,position',
+            'insurance:id,type,cost',
+            'baseSalary:id,position,salary',
+            'tax:id,label,rate',
+        ])->orderBy('fullname')->get();
 
-    public function updateTotal(){
-        $payroll = Payroll::all();
-        foreach($payroll as $p){
-            $p->total = $p->total +Insurance::where('type', $p->insurance)->value('old_cost') - Insurance::where('type', $p->insurance)->value('cost');
-            $p->save();
-        }
+        return $this->success($payrolls);
     }
 }

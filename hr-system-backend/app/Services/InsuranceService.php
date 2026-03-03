@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Insurance;
+use App\Models\Payroll;
+use Illuminate\Support\Facades\DB;
+
+class InsuranceService
+{
+    public function updatePlan(Insurance $insurance, float $newValue): Insurance
+    {
+        DB::transaction(function () use ($insurance, $newValue) {
+            $oldCost = $insurance->cost;
+            $delta   = $oldCost - $newValue;
+
+            $insurance->update([
+                'old_cost' => $oldCost,
+                'cost'     => $newValue,
+            ]);
+
+            if ($delta != 0) {
+                Payroll::where('insurance_id', $insurance->id)
+                    ->increment('total', $delta);
+            }
+        });
+
+        return $insurance->fresh();
+    }
+}
