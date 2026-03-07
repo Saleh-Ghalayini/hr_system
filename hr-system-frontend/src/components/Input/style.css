@@ -1,29 +1,42 @@
 
-.input-label{
-    gap:3px;
+.input-label {
+    gap: 3px;
     padding: 6px;
-    }
-    
-    .input-label label , input{
-        align-self: flex-start;
-    }
-    
-    .input-label input{
-        height: 45px;
-       max-width: 330px;
-        border: 1px solid #0F4C75 ;
-        background-color: #E8E9EB;
-        opacity: 0.5;
-        font-size: 0.8rem;
-        font-weight: 600;
-       padding: 5px;
-      color: #131414;
-        }
-    .border-rad-eight{
-        border-radius: 6px;
-    }
-    
-    .input:focus{
-        outline: none;
-        border: 3px solid #0F4C75;
-    }
+}
+
+.input-label label,
+input {
+    align-self: flex-start;
+}
+
+.input-label input {
+    height: 40px;
+    max-width: 330px;
+    border: 1px solid #cbd5e0;
+    background-color: #f5f7fa;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    color: #2d3748;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 6px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+}
+
+.input-label input:focus {
+    outline: none;
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+    background-color: #ffffff;
+}
+
+.border-rad-eight {
+    border-radius: 6px;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+}

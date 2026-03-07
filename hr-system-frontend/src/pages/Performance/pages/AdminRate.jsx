@@ -70,7 +70,12 @@ const AdminRate = () => {
             <div
               className="user flex flex-dir-row align-center"
               onClick={() => {
-                setUserId(userid === user.id ? null : user.id);
+                const next = userid === user.id ? null : user.id;
+                setUserId(next);
+                if (next !== null) {
+                  setValue({ teamwork: 5, comunication: 5, problemhandling: 5, collaboration: 5, creativity: 5, reliability: 5 });
+                  setComment("");
+                }
               }}
             >
               <div className="user-image">

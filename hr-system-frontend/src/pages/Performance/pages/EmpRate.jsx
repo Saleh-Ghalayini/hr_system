@@ -4,6 +4,7 @@ import PieChart from '../../../components/PieChart';
 import "./style.css";
 import Button from '../../../components/Button';
 import { request } from '../../../common/request';
+import { toast } from 'react-toastify';
 
 const EmpRate = () => {
     const [rateValue, setValue] = useState({
@@ -57,10 +58,13 @@ const EmpRate = () => {
                 },
             });
             if (response.success) {
+                toast.success("Team rated successfully!");
                 setComment("");
+            } else {
+                toast.error("Failed to submit rating.");
             }
         } catch (error) {
-            console.error(error);
+            toast.error("Failed to submit rating.");
         }
     };
 

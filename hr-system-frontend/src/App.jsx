@@ -34,6 +34,9 @@ import AttendanceRecords from "./pages/Attendance/AttendanceRecords";
 import AdminRate from "./pages/Performance/pages/AdminRate";
 import AdminAverage from "./pages/Performance/pages/AdminAverage";
 import NewHire from "./pages/Onboarding/NewHire";
+import SalaryReports from "./pages/Reports/SalaryReports";
+import PaymentHistory from "./pages/Reports/PaymentHistory";
+import TaxSettings from "./pages/Reports/TaxSettings";
 
 
 function App() {
@@ -100,12 +103,9 @@ function App() {
             </Route>
             <Route path="reports/*" element={<Reports />}>
               <Route index element={<Navigate to="salary-reports" replace />} />
-              <Route path="salary-reports" element={<h1>salary-reports</h1>} />
-              <Route
-                path="payment-history"
-                element={<h1>payment-history</h1>}
-              />
-              <Route path="tax-settings" element={<h1>tax-settings</h1>} />
+              <Route path="salary-reports" element={<SalaryReports />} />
+              <Route path="payment-history" element={<PaymentHistory />} />
+              <Route path="tax-settings" element={<TaxSettings />} />
             </Route>
           </Route>
         </Routes>

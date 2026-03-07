@@ -60,7 +60,7 @@ const CourseCatalog = () => {
       id: course.id,
       course_name: course.course_name,
       description: course.description,
-      skills: course.skills.join(", "),
+      skills: (course.skills ?? []).join(", "),
       duration: `${course.duration_hours} hours`,
       certificate: course.certificate_text,
     }));
@@ -84,12 +84,12 @@ const CourseCatalog = () => {
   };
 
   const handleSkillsChange = (e) => {
-    const skills = e.target.value.split(",").map((skill) => skill.trim());
+    const skills = e.target.value.split(",").map((skill) => skill.trim()).filter((skill) => skill.length > 0);
     setFormData((prev) => ({
       ...prev,
       skills,
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
   const validateForm = () => {

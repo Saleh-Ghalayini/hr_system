@@ -16,6 +16,9 @@ const AttendanceRecords = () => {
     const [end_date, setEndDate] = useState("");
     const [attendance, setAttendance] = useState([]);
     const [rawRecords, setRawRecords] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const PAGE_SIZE = 15;
 
     const getLocation = () => {
         navigator.geolocation.getCurrentPosition(
@@ -88,6 +91,7 @@ const AttendanceRecords = () => {
 
     const fetchAllUsersAttendances = async () => {
         try {
+            setLoading(true);
             const response = await request({
                 method: "GET",
                 path: "admin/attendance/all",
@@ -97,6 +101,8 @@ const AttendanceRecords = () => {
             setAttendance(transformRecords(records));
         } catch {
             // silently fail — table stays empty
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -113,6 +119,7 @@ const AttendanceRecords = () => {
             filtered = filtered.filter(item => item.date && item.date.split("T")[0] <= end_date);
         }
         setAttendance(transformRecords(filtered));
+        setCurrentPage(1);
     };
 
     useEffect(() => {
@@ -147,7 +154,13 @@ const AttendanceRecords = () => {
                     <Button className="filter-btn" text="Filter" onClick={handleFilter} />
                     <Button className="check-btn" text={is_checked_in ? "Check Out" : "Check In"} onClick={checkInOut} />
                 </div>
-                <Table headers={table_headers} data={attendance} />
+                <Table
+                    headers={table_headers}
+                    data={attendance.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)}
+                    loading={loading}
+                    emptyMessage="No attendance records found"
+                    pagination={attendance.length > PAGE_SIZE ? { currentPage, totalPages: Math.ceil(attendance.length / PAGE_SIZE), onPageChange: setCurrentPage } : undefined}
+                />
             </div>
             <ToastContainer position="bottom-right" autoClose={3000} />
         </>

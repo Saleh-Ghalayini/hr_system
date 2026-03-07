@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MyChart from '../../../components/Chart';
 import "./style.css";
 import { request } from '../../../common/request';
+import { toast } from 'react-toastify';
 
 const EmpPerfo = () => {
     const [rates, setRates] = useState([5, 5, 5, 5, 5, 5]);
@@ -30,7 +31,7 @@ const EmpPerfo = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            toast.error("Failed to load performance data.");
         }
     };
 

@@ -1,6 +1,7 @@
 import { request } from '../../../common/request';
 import MyChart from '../../../components/Chart';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 const AdminAverage = () => {
     const [labels, setLabels] = useState([]);
@@ -17,7 +18,7 @@ const AdminAverage = () => {
                 setAverageRateArray(response.data.map(r => parseFloat(r.average_rate)));
             }
         } catch (error) {
-            console.error(error);
+            toast.error("Failed to load average ratings.");
         }
     };
 

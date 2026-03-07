@@ -6,12 +6,15 @@ import "./style.css";
 
 const BASE = "http://127.0.0.1:8000/api/v1";
 
+const PAGE_SIZE = 15;
+
 const LeaveRequests = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState("");
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -129,6 +132,7 @@ const LeaveRequests = () => {
     }
 
     setFilteredData(filtered);
+    setCurrentPage(1);
   }, [leaveRequests, statusFilter, search]);
 
   useEffect(() => {
@@ -139,7 +143,7 @@ const LeaveRequests = () => {
     filterData();
   }, [filterData, search, statusFilter]);
 
-  const transformedData = filteredData.map((item) => ({
+  const allTransformed = filteredData.map((item) => ({
     ...item,
     status: item.status,
     actions: (
@@ -148,6 +152,12 @@ const LeaveRequests = () => {
       </button>
     ),
   }));
+
+  const totalPages = Math.ceil(allTransformed.length / PAGE_SIZE);
+  const transformedData = allTransformed.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   return (
     <div className="leave-requests-container">
@@ -182,6 +192,7 @@ const LeaveRequests = () => {
             ? "No matching leave requests found"
             : "No leave requests available"
         }
+        pagination={totalPages > 1 ? { currentPage, totalPages, onPageChange: setCurrentPage } : undefined}
       />
 
       {showModal && selectedRequest && (

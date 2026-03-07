@@ -1,15 +1,23 @@
 import React from 'react';
 import { Grid, Paper, Typography } from '@mui/material';
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar, Doughnut, Line, Radar } from 'react-chartjs-2';
 
-const Chart = ({ 
-  title, 
-  data, 
-  options, 
-  type = 'pie', // Default to pie chart
-  height = '300px', // Default height
+const chartComponents = {
+  pie:      Pie,
+  bar:      Bar,
+  doughnut: Doughnut,
+  line:     Line,
+  radar:    Radar,
+};
+
+const Chart = ({
+  title,
+  data,
+  options,
+  type = 'bar',
+  height = '300px',
 }) => {
-  const ChartComponent = type === 'pie' ? Pie : Bar;
+  const ChartComponent = chartComponents[type] ?? Bar;
 
   return (
 

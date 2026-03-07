@@ -14,12 +14,15 @@ const debounce = (func, wait) => {
   };
 };
 
+const PAGE_SIZE = 10;
+
 const Enrollments = () => {
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [courses, setCourses] = useState([]);
   const [users, setUsers] = useState([]);
   const [formData, setFormData] = useState({
@@ -28,8 +31,6 @@ const Enrollments = () => {
     status: "enrolled",
     start_date: "",
     end_date: "",
-    due_date: "",
-    created_at: new Date().toISOString().split("T")[0],
   });
   const token = localStorage.getItem("token");
 
@@ -81,7 +82,7 @@ const Enrollments = () => {
     return data.map((enrollment) => ({
       id: enrollment.id,
       date: enrollment.start_date,
-      AssignetTo: `${enrollment.user?.first_name} ${enrollment.user?.last_name}`,
+      AssignedTo: `${enrollment.user?.first_name} ${enrollment.user?.last_name}`,
       CourseName: enrollment.course?.course_name || "Course Not Available",
       DueDate: enrollment.end_date,
       status: enrollment.status,
@@ -92,7 +93,7 @@ const Enrollments = () => {
 
   const tableHeaders = [
     { key: "date", label: "Start Date" },
-    { key: "AssignetTo", label: "Assigned To" },
+    { key: "AssignedTo", label: "Assigned To" },
     { key: "CourseName", label: "Course Name" },
     { key: "DueDate", label: "End Date" },
     { key: "status", label: "Status" },
@@ -118,6 +119,7 @@ const Enrollments = () => {
   const debouncedFilter = useCallback(
     debounce((searchValue) => {
       setFilteredData(filterData(searchValue));
+      setCurrentPage(1);
       setLoading(false);
     }, 300),
     [filterData]
@@ -157,8 +159,6 @@ const Enrollments = () => {
         status: "enrolled",
         start_date: "",
         end_date: "",
-        due_date: "",
-        created_at: new Date().toISOString().split("T")[0],
       });
       setModal(false);
     } catch (error) {
@@ -214,8 +214,6 @@ const Enrollments = () => {
                 </select>
                 <span>Start Date</span>
                 <input type="date" name="start_date" value={formData.start_date} onChange={handleInputChange} required />
-                <span>Due Date</span>
-                <input type="date" name="due_date" value={formData.due_date} onChange={handleInputChange} required />
                 <span>End Date</span>
                 <input type="date" name="end_date" value={formData.end_date} onChange={handleInputChange} required />
                 <span>Status</span>
@@ -245,7 +243,7 @@ const Enrollments = () => {
         </div>
       )}
       <div className="enrollments-main-container">
-        <div className="search-contianer">
+        <div className="search-container">
           <input
             type="text"
             placeholder="Search by name, course, or status..."
@@ -256,8 +254,10 @@ const Enrollments = () => {
         </div>
         <Table
           headers={tableHeaders}
-          data={filteredData}
+          data={filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)}
+          loading={loading}
           emptyMessage={search ? "No matching records found" : "No enrollments available"}
+          pagination={filteredData.length > PAGE_SIZE ? { currentPage, totalPages: Math.ceil(filteredData.length / PAGE_SIZE), onPageChange: setCurrentPage } : undefined}
         />
       </div>
     </div>

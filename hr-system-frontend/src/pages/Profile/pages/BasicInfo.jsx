@@ -36,11 +36,14 @@ const BasicInfo = () => {
         data: { image: base64Image },
       });
       if (response.success) {
+        toast.success("Photo updated successfully!");
         setBase64Image("");
         getBasicInfo();
+      } else {
+        toast.error("Failed to upload photo.");
       }
     } catch (error) {
-      console.error(error);
+      toast.error("Failed to upload photo.");
     }
   };
 
@@ -90,7 +93,7 @@ const BasicInfo = () => {
         getBasicInfo();
       }
     } catch (error) {
-      console.error(error);
+      toast.error("Failed to update basic info.");
     }
   };
 

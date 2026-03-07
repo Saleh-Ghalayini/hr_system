@@ -13,7 +13,7 @@
   padding: 20px;
   border-radius: 10px;
 }
-.search-contianer {
+.search-container {
   display: flex;
 
   justify-content: space-between;
@@ -21,7 +21,7 @@
   margin-bottom: 10px;
   gap: 10px;
 }
-.search-contianer input {
+.search-container input {
   flex: 1;
   padding: 10px 15px;
   border: 1px solid #e1e1e1;
@@ -114,10 +114,10 @@
   font-weight: 500;
   transition: background-color 0.3s ease;
 }
-.search-contianer input:focus {
+.search-container input:focus {
   outline: none;
 }
-.search-contianer button {
+.search-container button {
   width: 100px;
   height: 30px;
   border-radius: 5px;

@@ -2,9 +2,12 @@ import React, { useState, useEffect } from "react";
 import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 
+const PAGE_SIZE = 10;
+
 const Salaries = () => {
   const [loading, setLoading] = useState(true);
   const [salaryData, setSalaryData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchSalaries = async () => {
@@ -14,7 +17,11 @@ const Salaries = () => {
           method: "GET",
           path: "admin/payroll",
         });
-        setSalaryData(Array.isArray(response.data) ? response.data : []);
+        const raw = Array.isArray(response.data) ? response.data : [];
+        setSalaryData(raw.map((p) => ({
+          ...p,
+          insurance: p.insurance?.type ?? "—",
+        })));
       } catch (error) {
         console.error(error);
       } finally {
@@ -29,16 +36,24 @@ const Salaries = () => {
     { key: "fullname", label: "Employee" },
     { key: "position", label: "Position" },
     { key: "insurance", label: "Insurance Plan" },
-    { key: "total", label: "Payroll" },
+    { key: "total", label: "Payroll ($)" },
   ];
 
-  if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
-  }
+  const totalPages = Math.ceil(salaryData.length / PAGE_SIZE);
+  const paginatedData = salaryData.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   return (
-    <div>
-      <Table headers={tableHeaders} data={salaryData} />
+    <div className="page-wrapper">
+      <Table
+        headers={tableHeaders}
+        data={paginatedData}
+        loading={loading}
+        emptyMessage="No payroll records found"
+        pagination={totalPages > 1 ? { currentPage, totalPages, onPageChange: setCurrentPage } : undefined}
+      />
     </div>
   );
 };

@@ -59,7 +59,7 @@ const Salary = () => {
             <div className="salary-card" style={{ background: "#f5f5f5", borderRadius: "8px", padding: "1rem" }}>
               <h3>Tax</h3>
               <p>{payroll.tax?.label ?? "—"}</p>
-              <small>Rate: {payroll.tax?.rate ? `${payroll.tax.rate * 100}%` : "—"}</small>
+              <small>Rate: {payroll.tax?.rate ? `${payroll.tax.rate}%` : "—"}</small>
             </div>
 
             <div
