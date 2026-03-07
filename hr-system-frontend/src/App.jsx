@@ -80,7 +80,7 @@ function App() {
               <Route path="performance-reviews" element={<EmpPerfo />} />
 
               <Route path="employee-ratings" element={<EmpRate />} />
-              <Route path="rate-empolyee" element={<AdminRate />} />
+              <Route path="rate-employee" element={<AdminRate />} />
               <Route path="average-rate" element={<AdminAverage />} />
             </Route>
             <Route path="attendance/*" element={<Attendance />}>

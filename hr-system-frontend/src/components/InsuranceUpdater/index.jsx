@@ -35,10 +35,7 @@ const InsuranceUpdater = (props) => {
         <input
           type="text"
           className="update-input"
-          onChange={(e) => {
-            setValue(e.target.value);
-            console.log(value);
-          }}
+          onChange={(e) => setValue(e.target.value)}
         />
         <Button
           text="UPDATE"

@@ -11,9 +11,10 @@ class RegulationRequest extends BaseFormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'name'        => "{$required}|string|max:255",
-            'description' => 'nullable|string',
-            'category'    => 'nullable|string|max:100',
+            'name'           => "{$required}|string|max:255",
+            'description'    => 'nullable|string',
+            'jurisdiction'   => "{$required}|string|max:255",
+            'effective_date' => "{$required}|date",
         ];
     }
 }

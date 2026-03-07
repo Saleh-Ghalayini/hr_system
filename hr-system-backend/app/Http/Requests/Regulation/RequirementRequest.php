@@ -11,9 +11,9 @@ class RequirementRequest extends BaseFormRequest
         $required = $this->isMethod('POST') ? 'required' : 'sometimes';
 
         return [
-            'description'       => "{$required}|string",
+            'requirement'       => "{$required}|string",
             'responsible_party' => 'nullable|exists:users,id',
-            'due_date'          => 'nullable|date',
+            'deadline'          => 'nullable|date',
             'status'            => 'sometimes|in:pending,in_progress,completed',
         ];
     }
