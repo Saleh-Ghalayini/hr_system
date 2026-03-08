@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
@@ -8,33 +8,33 @@ import { toast, ToastContainer } from "react-toastify";
 const BasicInfo = () => {
   const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
   const [base64Image, setBase64Image] = useState("");
+  const [previewUrl, setPreviewUrl] = useState("/logo.png");
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const fileRef = useRef(null);
+
   const [basicInfo, setBasicInfo] = useState({
-    firstName: "",
-    lastName: "",
-    dob: "",
-    email: "",
-    nationality: "",
-    contactNumber: "",
-    gender: "",
-    Address: "",
+    firstName: "", lastName: "", dob: "", email: "",
+    nationality: "", contactNumber: "", gender: "", Address: "",
     profile_url: "/logo.png",
   });
+
+  const set = (key) => (e) => setBasicInfo((p) => ({ ...p, [key]: e.target.value }));
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
+    setPreviewUrl(URL.createObjectURL(file));
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => setBase64Image(reader.result);
   };
 
   const uploadImg = async () => {
+    if (!base64Image) { toast.info("Please select a photo first."); return; }
+    setUploading(true);
     try {
-      const response = await request({
-        method: "POST",
-        path: "profile/photo",
-        data: { image: base64Image },
-      });
+      const response = await request({ method: "POST", path: "profile/photo", data: { image: base64Image } });
       if (response.success) {
         toast.success("Photo updated successfully!");
         setBase64Image("");
@@ -42,140 +42,117 @@ const BasicInfo = () => {
       } else {
         toast.error("Failed to upload photo.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to upload photo.");
+    } finally {
+      setUploading(false);
     }
   };
 
   const getBasicInfo = async () => {
     try {
-      const response = await request({
-        method: "GET",
-        path: "profile/job-details",
-      });
+      const response = await request({ method: "GET", path: "profile/job-details" });
       if (response.success) {
         const u = response.data.user;
+        const url = u.profile_url ? ImageBaseUrl + u.profile_url : "/logo.png";
         setBasicInfo({
-          firstName: u.first_name ?? "",
-          lastName: u.last_name ?? "",
-          dob: u.date_of_birth ?? "",
-          email: u.email ?? "",
-          nationality: u.nationality ?? "",
-          contactNumber: u.phone_number ?? "",
-          gender: u.gender ?? "",
-          Address: u.address ?? "",
-          profile_url: u.profile_url ? ImageBaseUrl + u.profile_url : "/logo.png",
+          firstName: u.first_name ?? "", lastName: u.last_name ?? "",
+          dob: u.date_of_birth ?? "", email: u.email ?? "",
+          nationality: u.nationality ?? "", contactNumber: u.phone_number ?? "",
+          gender: u.gender ?? "", Address: u.address ?? "", profile_url: url,
         });
+        setPreviewUrl(url);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // silently fail
     }
   };
 
   const updateBasicInfo = async () => {
+    setSaving(true);
     try {
       const response = await request({
-        method: "PUT",
-        path: "profile/basic-info",
+        method: "PUT", path: "profile/basic-info",
         data: {
-          first_name: basicInfo.firstName,
-          last_name: basicInfo.lastName,
-          date_of_birth: basicInfo.dob,
-          email: basicInfo.email,
-          nationality: basicInfo.nationality,
-          phone_number: basicInfo.contactNumber,
-          gender: basicInfo.gender,
-          address: basicInfo.Address,
+          first_name: basicInfo.firstName, last_name: basicInfo.lastName,
+          date_of_birth: basicInfo.dob, email: basicInfo.email,
+          nationality: basicInfo.nationality, phone_number: basicInfo.contactNumber,
+          gender: basicInfo.gender, address: basicInfo.Address,
         },
       });
-      if (response.success) {
-        toast.success("Basic Info Updated Successfully");
-        getBasicInfo();
-      }
-    } catch (error) {
-      toast.error("Failed to update basic info.");
+      if (response.success) toast.success("Profile saved successfully!");
+      else toast.error("Failed to save changes.");
+    } catch {
+      toast.error("Failed to save changes.");
+    } finally {
+      setSaving(false);
     }
   };
 
-  useEffect(() => {
-    getBasicInfo();
-  }, []);
+  useEffect(() => { getBasicInfo(); }, []);
 
   return (
-    <div className="flex align-center justify-center mt-1">
+    <div className="profilebody">
+      <ToastContainer />
       <div className="containerP">
-        <div className="photo-container flex felx-dir-row align-center flex-wrap border-rad-eight p-1">
-          <img src={basicInfo.profile_url} alt="profile photo" id="profImg" />
-          <Input type={"file"} label={"Photo"} onChange={handleImageChange} />
-          <Button className="btn btn-width" text={"update"} onClick={uploadImg} />
-        </div>
 
-        <div className="bg-white p-1 border-rad-eight full-width flex flex-dir-col">
-          <h1 className="subtitle">Basic Information</h1>
-          <div className="input-container flex justify-center align-center flex-wrap">
-            <div className="flex-grow-1">
-              <Input
-                type={"text"}
-                label={"First Name"}
-                placeholder={"First name"}
-                value={basicInfo.firstName}
-                onChange={(e) => setBasicInfo({ ...basicInfo, firstName: e.target.value })}
+        {/* Photo card */}
+        <div className="profile-card">
+          <p className="profile-card-title">Profile Photo</p>
+          <div className="photo-section">
+            <img src={previewUrl} alt="Profile" className="photo-avatar"
+              onError={(e) => { e.target.src = "/logo.png"; }} />
+            <div className="photo-actions">
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleImageChange}
               />
-              <Input
-                type={"text"}
-                label={"Last Name"}
-                placeholder={"Last name"}
-                value={basicInfo.lastName}
-                onChange={(e) => setBasicInfo({ ...basicInfo, lastName: e.target.value })}
+              <Button
+                text="Choose Photo"
+                className=""
+                onClick={() => fileRef.current?.click()}
               />
-              <Input
-                type={"date"}
-                label={"Date of Birth"}
-                value={basicInfo.dob}
-                onChange={(e) => setBasicInfo({ ...basicInfo, dob: e.target.value })}
-              />
-              <Input
-                type={"text"}
-                label={"Email"}
-                placeholder={"Example@gmail.com"}
-                value={basicInfo.email}
-                onChange={(e) => setBasicInfo({ ...basicInfo, email: e.target.value })}
-              />
-            </div>
-            <div className="flex-grow-1">
-              <Input
-                type={"text"}
-                label={"Nationality"}
-                placeholder={"Nationality"}
-                value={basicInfo.nationality}
-                onChange={(e) => setBasicInfo({ ...basicInfo, nationality: e.target.value })}
-              />
-              <Input
-                type={"text"}
-                label={"Contact Number"}
-                placeholder={"Phone number"}
-                value={basicInfo.contactNumber}
-                onChange={(e) => setBasicInfo({ ...basicInfo, contactNumber: e.target.value })}
-              />
-              <Input
-                type={"text"}
-                label={"Gender"}
-                placeholder={"Gender"}
-                value={basicInfo.gender}
-                onChange={(e) => setBasicInfo({ ...basicInfo, gender: e.target.value })}
-              />
-              <Input
-                type={"text"}
-                label={"Address"}
-                placeholder={"Address"}
-                value={basicInfo.Address}
-                onChange={(e) => setBasicInfo({ ...basicInfo, Address: e.target.value })}
-              />
+              {base64Image && (
+                <Button
+                  text={uploading ? "Uploading…" : "Upload Photo"}
+                  className=""
+                  onClick={uploadImg}
+                />
+              )}
+              <p className="photo-hint">JPG, PNG or GIF — max 2 MB</p>
             </div>
           </div>
-          <Button className="btn-width btn align-self-end" onClick={updateBasicInfo} text={"update"} />
-          <ToastContainer />
         </div>
+
+        {/* Info card */}
+        <div className="profile-card">
+          <p className="profile-card-title">Basic Information</p>
+          <div className="input-grid">
+            <Input type="text" label="First Name" placeholder="First name"
+              value={basicInfo.firstName} onChange={set("firstName")} />
+            <Input type="text" label="Nationality" placeholder="Nationality"
+              value={basicInfo.nationality} onChange={set("nationality")} />
+            <Input type="text" label="Last Name" placeholder="Last name"
+              value={basicInfo.lastName} onChange={set("lastName")} />
+            <Input type="text" label="Contact Number" placeholder="Phone number"
+              value={basicInfo.contactNumber} onChange={set("contactNumber")} />
+            <Input type="date" label="Date of Birth"
+              value={basicInfo.dob} onChange={set("dob")} />
+            <Input type="text" label="Gender" placeholder="Gender"
+              value={basicInfo.gender} onChange={set("gender")} />
+            <Input type="text" label="Email" placeholder="you@example.com"
+              value={basicInfo.email} onChange={set("email")} />
+            <Input type="text" label="Address" placeholder="Address"
+              value={basicInfo.Address} onChange={set("Address")} />
+          </div>
+          <div className="form-actions">
+            <Button text={saving ? "Saving…" : "Save Changes"} onClick={updateBasicInfo} />
+          </div>
+        </div>
+
       </div>
     </div>
   );

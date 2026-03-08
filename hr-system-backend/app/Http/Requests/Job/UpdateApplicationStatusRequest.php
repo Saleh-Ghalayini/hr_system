@@ -9,7 +9,7 @@ class UpdateApplicationStatusRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'status'         => 'required|in:pending,reviewed,interviewed,hired,rejected',
+            'status'         => 'required|in:applied,interviewed,hired,rejected',
             'interview_date' => 'nullable|date',
             'notes'          => 'nullable|string',
         ];

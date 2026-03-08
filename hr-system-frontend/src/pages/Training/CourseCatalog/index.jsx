@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./style.css";
 import Table from "../../../components/Table";
-import axios from "axios";
+import { request } from "../../../common/request";
+import { toast } from "react-toastify";
 
 const debounce = (func, wait) => {
   let timeout;
@@ -13,7 +14,7 @@ const debounce = (func, wait) => {
 
 const CourseCatalog = () => {
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -25,36 +26,28 @@ const CourseCatalog = () => {
     certificate_text: "",
   });
   const [error, setError] = useState("");
-  const token = localStorage.getItem("token");
 
-  // Fetch courses from API
   useEffect(() => {
     fetchCourses();
-  }, [token]);
+  }, []);
 
   const fetchCourses = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/v1/admin/courses",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = Array.isArray(response.data.data) ? response.data.data : [];
+      const response = await request({
+        method: "GET",
+        path: "admin/courses",
+      });
+      const data = Array.isArray(response.data) ? response.data : [];
       setCourses(data);
       setFilteredData(transformCourseData(data));
     } catch (error) {
-      console.error("Error fetching courses:", error);
-      setError("Failed to fetch courses. Please try again.");
+      toast.error("Failed to fetch courses.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Transform API data to table format
   const transformCourseData = (data) => {
     return data.map((course) => ({
       id: course.id,
@@ -80,7 +73,7 @@ const CourseCatalog = () => {
       ...prev,
       [name]: value,
     }));
-    setError(""); // Clear error when user types
+    setError("");
   };
 
   const handleSkillsChange = (e) => {
@@ -124,21 +117,13 @@ const CourseCatalog = () => {
     setError("");
 
     try {
-      await axios.post(
-        "http://127.0.0.1:8000/api/v1/admin/courses",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await request({
+        method: "POST",
+        path: "admin/courses",
+        data: formData,
+      });
 
-      // Refresh courses list
       await fetchCourses();
-
-      // Reset form and close modal
       setFormData({
         course_name: "",
         description: "",
@@ -147,8 +132,8 @@ const CourseCatalog = () => {
         certificate_text: "",
       });
       setModal(false);
+      toast.success("Course created successfully!");
     } catch (error) {
-      console.error("Error creating course:", error);
       setError(
         error.response?.data?.message ||
           "Failed to create course. Please try again."
@@ -158,13 +143,10 @@ const CourseCatalog = () => {
     }
   };
 
-  // Memoized filter function
   const filterData = useCallback(
     (searchValue) => {
       const transformedData = transformCourseData(courses);
-
       if (!searchValue.trim()) return transformedData;
-
       const lowerSearch = searchValue.toLowerCase();
       return transformedData.filter((item) =>
         Object.values(item).some((value) =>
@@ -175,19 +157,15 @@ const CourseCatalog = () => {
     [courses]
   );
 
-  // Debounced filter function
   const debouncedFilter = useCallback(
     debounce((searchValue) => {
       setFilteredData(filterData(searchValue));
-      setLoading(false);
     }, 300),
     [filterData]
   );
 
   useEffect(() => {
-    setLoading(true);
     debouncedFilter(search);
-
     return () => debouncedFilter.cancel?.();
   }, [search, debouncedFilter]);
 
@@ -278,7 +256,6 @@ const CourseCatalog = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
           <div className="course-btn" onClick={() => setModal(true)}>
             Add Course
           </div>
@@ -287,6 +264,7 @@ const CourseCatalog = () => {
         <Table
           headers={tableHeaders}
           data={filteredData}
+          loading={loading}
           emptyMessage={
             search ? "No matching courses found" : "No courses available"
           }

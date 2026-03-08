@@ -14,7 +14,7 @@ class RequirementRequest extends BaseFormRequest
             'requirement'       => "{$required}|string",
             'responsible_party' => 'nullable|exists:users,id',
             'deadline'          => 'nullable|date',
-            'status'            => 'sometimes|in:pending,in_progress,completed',
+            'status'            => 'sometimes|in:compliant,non_compliant,in_review',
         ];
     }
 }

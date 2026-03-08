@@ -10,16 +10,13 @@ const Salary = () => {
   useEffect(() => {
     const fetchPayroll = async () => {
       try {
-        const response = await request({
-          method: "GET",
-          path: "profile/payroll",
-        });
+        const response = await request({ method: "GET", path: "profile/payroll" });
         if (response.success) {
           setPayroll(response.data);
         } else {
           setError("Payroll record not found.");
         }
-      } catch (err) {
+      } catch {
         setError("Failed to load payroll data.");
       } finally {
         setLoading(false);
@@ -28,53 +25,61 @@ const Salary = () => {
     fetchPayroll();
   }, []);
 
-  if (loading) return <div className="loading-spinner">Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  const base = payroll?.base_salary?.salary ?? 0;
+  const taxRate = payroll?.tax?.rate ?? 0;
+  const insuranceCost = payroll?.insurance?.cost ?? 0;
+  const taxAmount = base > 0 ? ((base * taxRate) / 100).toFixed(2) : null;
+  const net = base > 0 ? (base - (base * taxRate) / 100 - insuranceCost).toFixed(2) : null;
+
+  if (loading) return <div className="loading-spinner" />;
+
+  if (error) return (
+    <div className="profilebody">
+      <div className="profile-card profile-error">{error}</div>
+    </div>
+  );
+
   if (!payroll) return null;
 
   return (
-    <div className="flex align-center justify-center mt-1">
+    <div className="profilebody">
       <div className="containerP">
-        <div className="bg-white p-1 border-rad-eight full-width flex flex-dir-col">
-          <h1 className="subtitle">My Salary</h1>
+        <div className="profile-card">
+          <p className="profile-card-title">My Salary</p>
 
-          <div className="salary-grid" style={{ display: "grid", gap: "1rem", padding: "1rem" }}>
-            <div className="salary-card" style={{ background: "#f5f5f5", borderRadius: "8px", padding: "1rem" }}>
-              <h3>Position</h3>
-              <p>{payroll.position ?? "—"}</p>
+          <div className="salary-summary">
+            <div className="salary-item">
+              <p className="salary-item-label">Position</p>
+              <p className="salary-item-value">{payroll.position ?? "—"}</p>
+              <p className="salary-item-sub">{payroll.base_salary?.position ?? ""}</p>
             </div>
 
-            <div className="salary-card" style={{ background: "#f5f5f5", borderRadius: "8px", padding: "1rem" }}>
-              <h3>Base Salary</h3>
-              <p>${payroll.base_salary?.salary ?? "—"}</p>
-              <small>({payroll.base_salary?.position})</small>
+            <div className="salary-item">
+              <p className="salary-item-label">Base Salary</p>
+              <p className="salary-item-value">${payroll.base_salary?.salary?.toLocaleString() ?? "—"}</p>
+              <p className="salary-item-sub">per month</p>
             </div>
 
-            <div className="salary-card" style={{ background: "#f5f5f5", borderRadius: "8px", padding: "1rem" }}>
-              <h3>Insurance Plan</h3>
-              <p>{payroll.insurance?.type ?? "—"}</p>
-              <small>Deduction: ${payroll.insurance?.cost ?? "—"}</small>
+            <div className="salary-item">
+              <p className="salary-item-label">Tax</p>
+              <p className="salary-item-value">{payroll.tax?.label ?? "—"}</p>
+              <p className="salary-item-sub">
+                {taxRate}% {taxAmount ? `(−$${taxAmount})` : ""}
+              </p>
             </div>
 
-            <div className="salary-card" style={{ background: "#f5f5f5", borderRadius: "8px", padding: "1rem" }}>
-              <h3>Tax</h3>
-              <p>{payroll.tax?.label ?? "—"}</p>
-              <small>Rate: {payroll.tax?.rate ? `${payroll.tax.rate}%` : "—"}</small>
+            <div className="salary-item">
+              <p className="salary-item-label">Insurance</p>
+              <p className="salary-item-value">{payroll.insurance?.type ?? "—"}</p>
+              <p className="salary-item-sub">
+                {insuranceCost > 0 ? `−$${insuranceCost}` : "No deduction"}
+              </p>
             </div>
 
-            <div
-              className="salary-card"
-              style={{
-                background: "#1976d2",
-                color: "white",
-                borderRadius: "8px",
-                padding: "1rem",
-                gridColumn: "1 / -1",
-              }}
-            >
-              <h3>Net Total</h3>
-              <p style={{ fontSize: "1.5rem", fontWeight: "bold" }}>${payroll.total ?? "—"}</p>
-              {payroll.month && <small>Period: {payroll.month}</small>}
+            <div className="salary-item salary-net">
+              <p className="salary-item-label">Net Pay</p>
+              <p className="salary-item-value">${net ?? payroll.total ?? "—"}</p>
+              {payroll.month && <p className="salary-item-sub">Period: {payroll.month}</p>}
             </div>
           </div>
         </div>

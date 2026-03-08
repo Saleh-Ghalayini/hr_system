@@ -1,22 +1,65 @@
 .secondary-btn {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid #000;
-    border-radius: 5px;
-    padding: 5px 10px;
+    background-color: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 8px 16px;
     cursor: pointer;
-    
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.secondary-btn:hover {
+    background-color: #e5e7eb;
 }
 
 .actions-btn {
     gap: 10px;
-
-}
-.update-input{
-    /* width: 100%; */
-    padding: 10px;
-    border: 1px solid #000;
-    border-radius: 5px;
-    margin-bottom: 10px;
 }
 
+.update-input {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Lato', sans-serif;
+    margin-bottom: 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.update-input:focus {
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+}
+
+.updater {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.updater-container {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    min-width: 320px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    gap: 12px;
+}
+
+.updater-container header h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    color: #142f5a;
+    margin: 0 0 16px;
+}

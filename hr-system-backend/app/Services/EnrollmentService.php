@@ -10,7 +10,7 @@ class EnrollmentService
     {
         $existing = Enrollment::where('user_id', $data['user_id'])
             ->where('course_id', $data['course_id'])
-            ->whereNotIn('status', ['terminated'])
+            ->whereNotIn('status', ['terminated', 'completed'])
             ->first();
 
         if ($existing) {
@@ -29,7 +29,7 @@ class EnrollmentService
             $duplicate = Enrollment::where('user_id', $userId)
                 ->where('course_id', $courseId)
                 ->where('id', '!=', $enrollment->id)
-                ->whereNotIn('status', ['terminated'])
+                ->whereNotIn('status', ['terminated', 'completed'])
                 ->first();
 
             if ($duplicate) {

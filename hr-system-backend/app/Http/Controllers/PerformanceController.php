@@ -54,9 +54,9 @@ class PerformanceController extends Controller
         return $this->created($records, 'Employee ratings submitted successfully.');
     }
 
-    public function getEmployeRate(Request $request)
+    public function getEmployeRate()
     {
-        $userId = $request->filled('user_id') ? $request->user_id : Auth::id();
+        $userId = Auth::id();
 
         $latestRatings = EmployeePerformance::where('user_id', $userId)
             ->with('type:id,name')

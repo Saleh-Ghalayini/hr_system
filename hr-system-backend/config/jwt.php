@@ -108,7 +108,7 @@ return [
     |
     */
 
-    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 999999),
+    'refresh_ttl' => (int) env('JWT_REFRESH_TTL', 20160),
 
     /*
     |--------------------------------------------------------------------------

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 const AdminAverage = () => {
     const [labels, setLabels] = useState([]);
     const [averageRateArray, setAverageRateArray] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const averageRate = async () => {
         try {
@@ -19,12 +20,16 @@ const AdminAverage = () => {
             }
         } catch (error) {
             toast.error("Failed to load average ratings.");
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         averageRate();
     }, []);
+
+    if (loading) return <div className="loading-spinner" />;
 
     return (
         <div className='users-container flex flex-dir-col p-1'>

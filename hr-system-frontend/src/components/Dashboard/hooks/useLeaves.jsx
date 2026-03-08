@@ -13,7 +13,6 @@ const useLeaves = () => {
         setLeaves(data);
       } catch (err) {
         setError(err);
-        console.error('Error fetching leaves:', err);
       } finally {
         setLoading(false);
       }

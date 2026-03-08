@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import axios from "axios";
+import { request } from "../../../common/request";
 import "./style.css";
 
 const NewHire = () => {
@@ -63,11 +63,12 @@ const NewHire = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/guest/register",
-        formData
-      );
-      if (response.status === 201) {
+      const response = await request({
+        method: "POST",
+        path: "guest/register",
+        data: formData,
+      });
+      if (response.success) {
         setSuccess(true);
         setTimeout(() => {
           setSuccess(false);

@@ -19,13 +19,15 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\User\UserController as AdminUserController;
 
+Route::get('/health', fn () => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
+
 Route::prefix('v1')->group(function () {
 
     // ─────────────────────────────────────────────────────────────────
     // GUEST (unauthenticated)
     // ─────────────────────────────────────────────────────────────────
     Route::prefix('guest')->group(function () {
-        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
         Route::post('/register', [AuthController::class, 'addUser']);
 
         // Candidates can view open positions and apply without an account

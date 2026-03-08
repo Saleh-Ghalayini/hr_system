@@ -31,7 +31,6 @@ class User extends Authenticatable implements JWTSubject
         'position',
         'gender',
         'insurance_id',
-        'role',
         'manager_id',
     ];
 

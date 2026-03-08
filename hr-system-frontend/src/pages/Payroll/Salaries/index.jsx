@@ -22,8 +22,8 @@ const Salaries = () => {
           ...p,
           insurance: p.insurance?.type ?? "—",
         })));
-      } catch (error) {
-        console.error(error);
+      } catch {
+        // silently fail — table shows empty state
       } finally {
         setLoading(false);
       }

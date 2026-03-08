@@ -1,91 +1,52 @@
 import React from "react";
 import "./style.css";
-import { Icon } from "@iconify/react/dist/iconify.js";
+import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
 
 const icons = [
-  {
-    id: "Dashboard",
-    path: "/dashboard",
-    icon: <Icon icon="famicons:home" width="33" height="33" color="white" />,
-  },
-  {
-    id: "Attendance",
-    path: "/attendance",
-    icon: (
-      <Icon icon="lucide:calendar-check" width="33" height="33" color="white" />
-    ),
-  },
-  {
-    id: "Onboarding",
-    path: "/onboarding",
-    icon: (
-      <Icon
-        icon="fluent-mdl2:onboarding"
-        width="33"
-        height="33"
-        color="white"
-      />
-    ),
-  },
-  {
-    id: "Training",
-    path: "/training",
-    icon: (
-      <Icon
-        icon="fluent:learning-app-16-filled"
-        width="33"
-        height="33"
-        color="white"
-      />
-    ),
-  },
-  {
-    id: "Performance",
-    path: "/performance",
-    icon: <Icon icon="mdi:speedometer" width="33" height="33" color="white" />,
-  },
-  {
-    id: "Payroll",
-    path: "/payroll",
-    icon: (
-      <Icon icon="bx:money-withdraw" width="33" height="33" color="white" />
-    ),
-  },
-  {
-    id: "Reports",
-    path: "/reports",
-    icon: <Icon icon="carbon:report" width="33" height="33" color="white" />,
-  },
-  {
-    id: "Logout",
-    icon: <Icon icon="mage:logout" width="33" height="33" color="white" />,
-  },
+  { id: "Dashboard",   path: "/dashboard",   icon: "famicons:home",                  label: "Dashboard"   },
+  { id: "Attendance",  path: "/attendance",  icon: "lucide:calendar-check",          label: "Attendance"  },
+  { id: "Onboarding",  path: "/onboarding",  icon: "fluent-mdl2:onboarding",         label: "Onboarding"  },
+  { id: "Training",    path: "/training",    icon: "fluent:learning-app-16-filled",  label: "Training"    },
+  { id: "Performance", path: "/performance", icon: "mdi:speedometer",                label: "Performance" },
+  { id: "Payroll",     path: "/payroll",     icon: "bx:money-withdraw",              label: "Payroll"     },
+  { id: "Reports",     path: "/reports",     icon: "carbon:report",                  label: "Reports"     },
+  { id: "Logout",                            icon: "mage:logout",                    label: "Logout"      },
 ];
 
-const CustomIcon = ({ activeIconId }) => {
+const CustomIcon = ({ activeIconId, collapsed }) => {
   const location = useLocation();
   const { logout } = useAuthContext();
 
-  const isActive = (path) => {
-    return location.pathname.startsWith(path) || activeIconId === path;
-  };
+  const isActive = (path) =>
+    location.pathname.startsWith(path) || activeIconId === path;
+
+  const renderContent = (iconData) => (
+    <>
+      <Icon icon={iconData.icon} width="22" height="22" color="white" className="nav-icon" />
+      {!collapsed && <span className="nav-label">{iconData.label}</span>}
+    </>
+  );
 
   return (
-    <div className="sidebar-icon">
+    <div className="nav-items">
       {icons.map((iconData) => (
-        <div key={iconData.id} className="sidebar-icon-container">
+        <div
+          key={iconData.id}
+          className="nav-item-wrapper"
+          title={collapsed ? iconData.label : ""}
+        >
           {iconData.path ? (
             <Link
               to={iconData.path}
-              className={`icon ${isActive(iconData.path) ? "active" : ""}`}
+              className={`nav-item ${isActive(iconData.path) ? "active" : ""}`}
             >
-              {iconData.icon}
+              {renderContent(iconData)}
             </Link>
           ) : (
-            <div className="icon" onClick={logout}>
-              {iconData.icon}
+            <div className="nav-item logout-item" onClick={logout}>
+              {renderContent(iconData)}
             </div>
           )}
         </div>

@@ -1,79 +1,225 @@
-.profilebody{
-    overflow-y: scroll;
-    height: 80vh;
+.profilebody {
+    padding: 24px;
+    max-width: 920px;
+    margin: 0 auto;
+    width: 100%;
 }
-
 
 .containerP {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 28px;
-    border-radius: 6px;
-    width: 90%;
-   margin-top: 20px;
+    gap: 20px;
+    width: 100%;
+    margin-top: 0;
 }
 
-.btn-width{
-   margin: 10px 0;
-    width: 100px;
-    padding: 5px;
-}
-.align-self-end{
-    align-self: flex-end;
-}
-.input-container{
-    gap: 28px;
-    align-items: flex-start;
+/* ── Section cards ── */
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    width: 100%;
 }
 
-.subtitle{
-    align-self: flex-start;
+.profile-card-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #142f5a;
+    margin: 0 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e9ecef;
 }
-.input{
-    width: 100%;
-   
-}
-.select{
-    height: 45px;
-        max-width: 330px;
-        border: 1px solid #0F4C75 ;
-        background-color: #E8E9EB;
-        opacity: 0.5;
-        font-size: 0.8rem;
-        font-weight: 600;
-       padding: 5px;
-      color: #131414; 
-}
-.photo-container{
-    background-color: white;
-    width: 100%;
-    
-    justify-content: space-around;
+
+/* ── Photo section ── */
+.photo-section {
+    display: flex;
     align-items: center;
-    gap: 10px;
-    
-}
-.photo-container img{
-    height: 80px;
-    width: 80px;
-    border-radius: 50%;
-    border: 3px solid #28EEA7;
-}
-.bg-white{
-    background-color: white;
-}
-.flex-wrap{
+    gap: 20px;
     flex-wrap: wrap;
 }
 
-.flex-grow-1{
-flex-grow: 1;
+.photo-avatar {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    border: 3px solid #28eea7;
+    object-fit: cover;
+    flex-shrink: 0;
 }
 
-@media (max-width:420px) {
-    .subtitle{
+.photo-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.photo-hint {
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+}
+
+/* ── Input grid ── */
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 24px;
+}
+
+@media (max-width: 600px) {
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Form actions ── */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #f0f0f0;
+}
+
+/* ── Salary cards ── */
+.salary-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 4px;
+}
+
+.salary-item {
+    background: #f8faff;
+    border: 1px solid #e5ecf9;
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.salary-item-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+    margin: 0 0 6px;
+}
+
+.salary-item-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+    margin: 0 0 2px;
+}
+
+.salary-item-sub {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+}
+
+.salary-net {
+    background: linear-gradient(135deg, #142f5a 0%, #1e4a8a 100%);
+    border: none;
+    grid-column: 1 / -1;
+}
+
+.salary-net .salary-item-label {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.salary-net .salary-item-value {
+    color: #28eea7;
+    font-size: 1.6rem;
+}
+
+.salary-net .salary-item-sub {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ── Error state ── */
+.profile-error {
+    text-align: center;
+    padding: 40px;
+    color: #dc2626;
+    font-family: 'Lato', sans-serif;
+}
+
+/* ── Legacy classes kept for compatibility ── */
+.btn-width {
+    margin: 10px 0;
+    width: 120px;
+}
+
+.align-self-end {
+    align-self: flex-end;
+}
+
+.input-container {
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.subtitle {
+    align-self: flex-start;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #142f5a;
+}
+
+.input {
+    width: 100%;
+}
+
+.select {
+    height: 40px;
+    max-width: 330px;
+    border: 1px solid #cbd5e0;
+    background-color: #f5f7fa;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 5px 10px;
+    color: #2d3748;
+    border-radius: 6px;
+}
+
+.photo-container {
+    background-color: white;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+.photo-container img {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+    border: 3px solid #28eea7;
+}
+
+.bg-white {
+    background-color: white;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.flex-grow-1 {
+    flex-grow: 1;
+}
+
+@media (max-width: 420px) {
+    .subtitle {
         font-size: 18px;
     }
 }

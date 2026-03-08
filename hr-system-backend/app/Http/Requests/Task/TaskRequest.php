@@ -16,7 +16,7 @@ class TaskRequest extends BaseFormRequest
             'assigned_to' => 'nullable|exists:users,id',
             'project_id'  => 'nullable|exists:projects,id',
             'priority'    => 'sometimes|in:low,medium,high',
-            'status'      => 'sometimes|in:todo,in_progress,done',
+            'status'      => 'sometimes|in:todo,in_progress,blocked,done',
             'due_date'    => 'nullable|date',
         ];
     }

@@ -20,8 +20,8 @@ const InsuranceAndTax = () => {
         path: "admin/insurances",
       });
       setInsuranceData(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // silently fail — shows empty
     } finally {
       setLoading(false);
     }
@@ -44,17 +44,17 @@ const InsuranceAndTax = () => {
         setValue("");
         fetchInsurance();
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
+      // silently fail
     }
   };
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return <div className="loading-spinner" />;
   }
 
   return (
-    <div className="flex">
+    <div className="page-wrapper flex flex-wrap" style={{ gap: 16 }}>
       {insuranceData.map((insurance) => (
         <InsuranceCard
           key={insurance.id}

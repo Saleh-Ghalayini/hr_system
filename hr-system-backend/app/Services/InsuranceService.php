@@ -12,7 +12,7 @@ class InsuranceService
     {
         DB::transaction(function () use ($insurance, $newValue) {
             $oldCost = $insurance->cost;
-            $delta   = $oldCost - $newValue;
+            $delta   = $newValue - $oldCost;
 
             $insurance->update([
                 'old_cost' => $oldCost,

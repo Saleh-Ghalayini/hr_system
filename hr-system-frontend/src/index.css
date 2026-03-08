@@ -40,6 +40,13 @@ body {
   display: flex;
 }
 
+/* Top-level app shell — used only in Layout.jsx */
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .flex-dir-col {
   flex-direction: column;
 }
@@ -159,8 +166,10 @@ body {
 .text-left   { 
   text-align: left; 
 }
-.main-content{
+.main-content {
+  flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* ── Loading Spinner ── */

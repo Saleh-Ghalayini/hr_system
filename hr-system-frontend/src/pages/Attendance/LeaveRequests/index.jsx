@@ -1,12 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Table from "../../../components/Table";
-import axios from "axios";
+import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 import "./style.css";
 
-const BASE = "http://127.0.0.1:8000/api/v1";
-
 const PAGE_SIZE = 15;
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return "—";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "2-digit", month: "short", year: "numeric",
+    });
+  } catch {
+    return dateStr;
+  }
+};
 
 const LeaveRequests = () => {
   const [leaveRequests, setLeaveRequests] = useState([]);
@@ -35,21 +44,16 @@ const LeaveRequests = () => {
     { key: "actions", label: "Actions" },
   ];
 
-  const getAuthHeaders = () => ({
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-
   const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `${BASE}/admin/leave/requests`,
-        getAuthHeaders()
-      );
-      setLeaveRequests(response.data.data);
-      setFilteredData(response.data.data);
+      const response = await request({
+        method: "GET",
+        path: "admin/leave/requests",
+      });
+      setLeaveRequests(response.data);
+      setFilteredData(response.data);
     } catch (error) {
-      console.error("Error fetching leave requests:", error);
       setError("Failed to fetch leave requests");
     } finally {
       setLoading(false);
@@ -60,14 +64,14 @@ const LeaveRequests = () => {
     try {
       setModalLoading(true);
       const [userResponse, balanceResponse] = await Promise.all([
-        axios.get(`${BASE}/admin/users/${userId}`, getAuthHeaders()),
-        axios.get(`${BASE}/admin/leave/balance-by-id/${userId}`, getAuthHeaders()),
+        request({ method: "GET", path: `admin/users/${userId}` }),
+        request({ method: "GET", path: `admin/leave/balance-by-id/${userId}` }),
       ]);
 
-      setUserData(userResponse.data.data);
-      setLeaveBalance(balanceResponse.data.data);
+      setUserData(userResponse.data);
+      setLeaveBalance(balanceResponse.data);
     } catch (error) {
-      console.error("Error fetching user details:", error);
+      toast.error("Failed to load user details");
     } finally {
       setModalLoading(false);
     }
@@ -82,28 +86,27 @@ const LeaveRequests = () => {
     try {
       setUpdateLoading(true);
 
-      await axios.put(
-        `${BASE}/leave/requests/${selectedRequest.id}`,
-        { status: newStatus },
-        getAuthHeaders()
-      );
+      await request({
+        method: "PUT",
+        path: `leave/requests/${selectedRequest.id}`,
+        data: { status: newStatus },
+      });
 
       toast.success("Status updated successfully");
       await fetchLeaveRequests();
       handleCloseModal();
     } catch (error) {
-      console.error("Error updating status:", error);
       toast.error("Failed to update status");
     } finally {
       setUpdateLoading(false);
     }
   };
 
-  const handleViewDetails = (request) => {
-    setSelectedRequest(request);
-    setNewStatus(request.status);
+  const handleViewDetails = (req) => {
+    setSelectedRequest(req);
+    setNewStatus(req.status);
     setShowModal(true);
-    fetchUserDetails(request.user_id);
+    fetchUserDetails(req.user_id);
   };
 
   const handleCloseModal = () => {
@@ -145,10 +148,11 @@ const LeaveRequests = () => {
 
   const allTransformed = filteredData.map((item) => ({
     ...item,
-    status: item.status,
+    start_date: formatDate(item.start_date),
+    end_date: formatDate(item.end_date),
     actions: (
       <button onClick={() => handleViewDetails(item)} className="view-btn">
-        View Details
+        Details
       </button>
     ),
   }));
@@ -206,7 +210,7 @@ const LeaveRequests = () => {
             </div>
             <div className="modal-body">
               {modalLoading ? (
-                <div className="loading">Loading...</div>
+                <div className="loading-spinner" />
               ) : (
                 <>
                   <div className="modal-grid">

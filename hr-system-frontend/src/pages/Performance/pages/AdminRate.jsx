@@ -53,8 +53,8 @@ const AdminRate = () => {
         path: "admin/users",
       });
       setUsers(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error(error);
+    } catch {
+      toast.error("Failed to load users.");
     }
   };
 
@@ -97,8 +97,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.teamwork}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, teamwork: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, teamwork: val });
                 }}
                 placeholder={"Rate 1~10"}
               />
@@ -107,8 +107,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.comunication}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, comunication: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, comunication: val });
                 }}
                 placeholder={"Rate 1~10"}
               />
@@ -117,8 +117,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.problemhandling}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, problemhandling: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, problemhandling: val });
                 }}
                 placeholder={"Rate 1~10"}
               />
@@ -127,8 +127,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.collaboration}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, collaboration: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, collaboration: val });
                 }}
                 placeholder={"Rate 1~10"}
               />
@@ -137,8 +137,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.creativity}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, creativity: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, creativity: val });
                 }}
                 placeholder={"Rate 1~10"}
               />
@@ -147,8 +147,8 @@ const AdminRate = () => {
                 type={"number"}
                 value={rateValue.reliability}
                 onChange={(e) => {
-                  e.target.value > 10 ? (e.target.value = 10) : e.target.value;
-                  setValue({ ...rateValue, reliability: e.target.value });
+                  const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
+                  setValue({ ...rateValue, reliability: val });
                 }}
                 placeholder={"Rate 1~10"}
               />

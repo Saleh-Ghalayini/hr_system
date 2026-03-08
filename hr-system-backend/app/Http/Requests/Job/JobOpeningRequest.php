@@ -14,7 +14,7 @@ class JobOpeningRequest extends BaseFormRequest
             'title'       => "{$required}|string|max:255",
             'department'  => "{$required}|string|max:255",
             'description' => "{$required}|string",
-            'status'      => 'sometimes|in:open,closed,on_hold',
+            'status'      => 'sometimes|in:open,closed,draft',
         ];
     }
 }

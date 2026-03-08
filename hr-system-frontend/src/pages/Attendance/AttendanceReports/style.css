@@ -1,0 +1,86 @@
+.att-reports-page {
+    padding: 20px;
+}
+
+.att-reports-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.att-reports-header h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+}
+
+.month-select {
+    height: 38px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    color: #142f5a;
+    background: white;
+    cursor: pointer;
+    min-width: 180px;
+}
+
+.month-select:focus {
+    outline: none;
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+}
+
+.att-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.att-stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #cbd5e0;
+}
+
+.att-stat-card.present { border-left-color: #069855; }
+.att-stat-card.late    { border-left-color: #d39c1d; }
+.att-stat-card.absent  { border-left-color: #dc2626; }
+.att-stat-card.hours   { border-left-color: #28eea7; }
+
+.att-stat-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.att-stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+}
+
+.att-reports-table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}

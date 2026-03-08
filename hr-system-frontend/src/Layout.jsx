@@ -14,7 +14,7 @@ const Layout = () => {
   const subnavItems = SUBNAV_CONFIG[rootPath] || [];
 
   return (
-    <div className="flex">
+    <div className="app-layout">
       <SideBar activePage={rootPath} />
       <div className="col">
         <NavBar />

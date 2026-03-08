@@ -1,114 +1,191 @@
-.perfobody{
-    overflow-y: scroll;
-    height: 80vh;
+.perfobody {
+    padding: 20px;
 }
 
- .performnce-container{
-    gap: 10px;
+.performnce-container {
+    gap: 16px;
     width: 100%;
     flex-wrap: wrap;
- }
- .users-container{
-    width: 100%;
-    margin-top: 20px;
-    padding: 5px;
- }
-.chart{
-    background-color: white;
-    border-radius: 7px;
-    width: 55%;
-    min-width: 500px;
-    flex-grow: 1;
-     height: 400px ;
-}
-.rate-comment{
-    background-color: white;
-    border-radius: 7px;
-    width: 40%;
-    height: 400px ;
-    gap: 10px;
-    flex-grow: 1;
-    overflow-y: scroll;
-}
-.comment{
-    border-radius: 7px;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-    gap: 10px;
-    padding: 10px;
-}
-.comment-text{
-    padding: 5px;
+    padding: 20px;
 }
 
-.inputs-container{
+.users-container {
+    width: 100%;
+    margin-top: 16px;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+}
+
+.chart {
+    background-color: white;
+    border-radius: 12px;
+    width: 55%;
+    min-width: 340px;
+    flex-grow: 1;
+    min-height: 380px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rate-comment {
+    background-color: white;
+    border-radius: 12px;
+    width: 40%;
+    min-width: 240px;
+    min-height: 380px;
+    flex-grow: 1;
+    gap: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    overflow-y: auto;
+}
+
+.rate-comment h3,
+.rate-comment .rate h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+    margin: 0 0 8px;
+}
+
+.rate h3 span {
+    display: inline-block;
+    margin-left: 8px;
+    background: linear-gradient(135deg, #142f5a, #1e4a8a);
+    color: #28eea7;
+    padding: 2px 12px;
+    border-radius: 99px;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.comment {
+    border-radius: 10px;
+    background: #f8faff;
+    border: 1px solid #e5ecf9;
+    gap: 8px;
+    padding: 14px;
+}
+
+.comment-text {
+    font-size: 0.875rem;
+    color: #374151;
+    font-family: 'Lato', sans-serif;
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+}
+
+.inputs-container {
     width: 50%;
     flex-wrap: wrap;
+    min-width: 280px;
 }
-.mt{
-    margin-top: 25px;
+
+.mt {
+    margin-top: 20px;
 }
-.btn{
-    width: 100px;
-    padding: 7px;
+
+.btn {
+    width: 120px;
+    padding: 8px;
     margin: 10px 0;
 }
-.flex-wrap{
+
+.flex-wrap {
     flex-wrap: wrap;
 }
-.flex-grow-1{
+
+.flex-grow-1 {
     flex-grow: 1;
 }
-.flex-start{
+
+.flex-start {
     align-self: flex-start;
 }
-/* ===== */
-.rate-container{
- background-color: white;
- border-radius: 7px;
- padding: 10px;
- width: fit-content;
- flex-grow: 1;
 
-}
-
-.users-container{
+/* Rate container */
+.rate-container {
     background-color: white;
-    border-radius: 7px;
-    padding: 10px;
-    
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    flex-grow: 1;
 }
-.user-border{
-    border: 1px solid #315490;
-    border-radius: 7px;
-    padding: 5px;
-    margin: 10px 5px;
+
+.user-border {
+    border: 1px solid #e5ecf9;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 8px 4px;
+    transition: box-shadow 0.2s;
 }
-.user{
-  
-    padding: 5px;
-    gap: 20px;
+
+.user-border:hover {
+    box-shadow: 0 4px 12px rgba(20, 47, 90, 0.1);
 }
-.user-image img{
-    height: 80px;
-    width: 80px;
+
+.user {
+    padding: 4px;
+    gap: 16px;
+    align-items: center;
+}
+
+.user-image img {
+    height: 52px;
+    width: 52px;
     border-radius: 50%;
+    border: 2px solid #28eea7;
+    object-fit: cover;
 }
-.name{
-    font-size: large;
+
+.name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
 }
-.position ,.email, .phone-number {
-    color: #3e3f41;
+
+.position, .email, .phone-number {
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-family: 'Lato', sans-serif;
 }
-.display-none{
+
+.display-none {
     display: none;
 }
 
-.average-chart{
+.average-chart {
     background-color: white;
-    border-radius: 7px;
+    border-radius: 12px;
     width: 100%;
-    min-width: 500px;
+    min-width: 320px;
     flex-grow: 1;
-     height: 400px ;
-    
+    min-height: 380px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Pie chart wrapper in EmpRate */
+.piechart {
+    min-width: 280px;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+    min-height: 320px;
 }

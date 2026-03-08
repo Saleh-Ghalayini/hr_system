@@ -1,10 +1,60 @@
-.icon {
-  cursor: pointer;
-  transition: all 0.3s ease;
+.nav-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 8px;
 }
 
-.icon.active {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-} 
+.nav-item-wrapper {
+    width: 100%;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.75);
+    transition: background 0.2s, color 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    min-height: 44px;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.nav-icon {
+    flex-shrink: 0;
+}
+
+.nav-label {
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Poppins', sans-serif;
+    opacity: 1;
+    transition: opacity 0.2s;
+    user-select: none;
+}
+
+.logout-item {
+    margin-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 12px;
+    color: rgba(255, 120, 120, 0.85);
+}
+
+.logout-item:hover {
+    background: rgba(255, 80, 80, 0.15);
+    color: #ff8080;
+}

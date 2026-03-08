@@ -1,35 +1,36 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { request, getToken } from "../common/request";
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [token, setToken] = useState(getToken);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // console.log("useAuth initialization:", { token, loading });
-
-  const login = async (email, password) => {
-    // console.log("Login attempt started");
+  const login = async (email, password, rememberMe = false) => {
     try {
-      const { data } = await axios.post(
-        "http://127.0.0.1:8000/api/v1/guest/login",
-        { email, password }
-      );
-
-      // console.log("Login response:", data);
+      const data = await request({
+        method: "POST",
+        path: "guest/login",
+        data: { email, password },
+      });
 
       if (data.success) {
-        // console.log("Login successful, setting token");
-        localStorage.setItem("token", data.data.token);
-        setToken(data.data.token);
+        const tok = data.data.token;
+        if (rememberMe) {
+          localStorage.setItem("token", tok);
+          sessionStorage.removeItem("token");
+        } else {
+          sessionStorage.setItem("token", tok);
+          localStorage.removeItem("token");
+        }
+        setToken(tok);
         setUser(data.data.user);
         navigate("/dashboard");
       }
       return data;
     } catch (error) {
-      // console.error("Login error:", error.response?.data || error.message);
       return {
         success: false,
         message: error.response?.data?.message || "Network error",
@@ -38,54 +39,39 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    // console.log("Logging out");
     localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     setToken(null);
     setUser(null);
     navigate("/login");
   };
 
   useEffect(() => {
-  
     const verifyAuth = async () => {
       try {
-        const { data } = await axios.get(
-          "http://127.0.0.1:8000/api/v1/validate-token",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // console.log("Auth verification response:", data);
+        const data = await request({
+          method: "GET",
+          path: "validate-token",
+        });
 
         if (data.success) {
-          // console.log("Auth verification successful, user:", data.data);
           setUser(data.data);
         } else {
-          // console.log("Auth verification failed, logging out");
           logout();
         }
-      } catch (error) {
-        console.error(
-          "Auth verification error:",
-          error.response?.data || error.message
-        );
+      } catch {
         logout();
       } finally {
         setLoading(false);
       }
     };
+
     if (token) {
       verifyAuth();
     } else {
-      // console.log("No token found, skipping verification");
       setLoading(false);
     }
   }, [token]);
-  
 
-  // console.log("useAuth state update:", { user, token, loading });
   return { user, token, loading, login, logout };
 };

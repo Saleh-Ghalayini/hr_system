@@ -1,125 +1,192 @@
 .enrollments-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 15px;
+    width: 100%;
+    padding: 20px;
 }
-.enrollments-main-container {
-  width: 90%;
-  height: 100%;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-}
-.search-container {
-  display: flex;
 
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  gap: 10px;
+.enrollments-main-container {
+    width: 100%;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
 .search-container input {
-  flex: 1;
-  padding: 10px 15px;
-  border: 1px solid #e1e1e1;
-  border-radius: 5px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.3s ease;
+    flex: 1;
+    height: 40px;
+    padding: 0 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    background: #f9fafb;
 }
-.enroll-modal {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.modal-content {
-  width: 500px;
-  height: 500px;
-  background-color: #fff;
-  border-radius: 10px;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
-.modal-body {
-  padding: 10px;
-}
-.modal-body-input {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  /* align-items: center; */
-  padding: 10px;
-}
-.modal-body-input input {
-  width: 100%;
-  height: 30px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  padding: 5px;
-}
-.modal-body-input span {
-  margin-bottom: 10px;
-  font-size: 16px;
-  font-family: "Lato", "sans-serif";
-}
-.modal-body-input-select {
-  width: 100%;
-  height: 30px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  padding: 5px;
-  margin-bottom: 10px;
-}
-.modal-body-input-select option {
-  font-family: "Lato", sans-serif;
-  font-size: 16px;
-  color: #000;
-  font-weight: 500;
-}
-.modal-close {
-  width: 30px;
-  height: 30px;
-  background-color: #43ba6e;
-  color: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: all 0.3s ease;
-}
-.modal-close:hover {
-  background-color: #357abd;
-}
-.enroll-btn {
-  background-color: #4a90e2;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
-}
+
 .search-container input:focus {
-  outline: none;
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+    background: white;
 }
-.search-container button {
-  width: 100px;
-  height: 30px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+
+.enroll-btn {
+    height: 40px;
+    padding: 0 20px;
+    background: #142f5a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.enroll-btn:hover {
+    background: #1e4a8a;
+}
+
+/* ── Modal ── */
+.enroll-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.enroll-modal-content {
+    background: white;
+    border-radius: 14px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(16px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+}
+
+.enroll-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.enroll-modal-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+}
+
+.enroll-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: #6b7280;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+
+.enroll-modal-close:hover {
+    color: #111827;
+}
+
+.enroll-modal-form {
+    padding: 20px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.enroll-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.enroll-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #374151;
+    font-family: 'Poppins', sans-serif;
+}
+
+.enroll-field input,
+.enroll-field select {
+    height: 40px;
+    padding: 0 12px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-family: 'Lato', sans-serif;
+    color: #111827;
+    background: #f9fafb;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.enroll-field input:focus,
+.enroll-field select:focus {
+    outline: none;
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+    background: white;
+}
+
+.enroll-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.enroll-submit-btn {
+    height: 44px;
+    background: #142f5a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-top: 4px;
+}
+
+.enroll-submit-btn:hover:not(:disabled) {
+    background: #1e4a8a;
+}
+
+.enroll-submit-btn:disabled {
+    background: #7a96be;
+    cursor: not-allowed;
 }

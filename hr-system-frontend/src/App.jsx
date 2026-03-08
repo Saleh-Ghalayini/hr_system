@@ -1,48 +1,54 @@
 // App.jsx
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { Suspense, lazy } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "./Layout";
-import Dashboard from "./components/Dashboard";
-import Attendance from "./pages/Attendance";
-import TrainingLayout from "./pages/Training/Layout";
-import Payroll from "./pages/Payroll";
-import Performance from "./pages/Performance";
-import Onboarding from "./pages/Onboarding";
-import Reports from "./pages/Reports";
+import ErrorBoundary from "./components/ErrorBoundary";
 
+// Eagerly loaded (always needed)
 import Login from "./pages/Auth/Login";
+import Dashboard from "./components/Dashboard";
 
-import Enrollments from "./pages/Training/Enrollments";
-import CourseCatalog from "./pages/Training/CourseCatalog";
+// Lazy loaded — layout wrappers
+const Attendance = lazy(() => import("./pages/Attendance"));
+const TrainingLayout = lazy(() => import("./pages/Training/Layout"));
+const Payroll = lazy(() => import("./pages/Payroll"));
+const Performance = lazy(() => import("./pages/Performance"));
+const Onboarding = lazy(() => import("./pages/Onboarding"));
+const Reports = lazy(() => import("./pages/Reports"));
+const Profile = lazy(() => import("./pages/profile"));
 
-import JobInfo from "./pages/Profile/pages/JobInfo";
-import BasicInfo from "./pages/Profile/pages/BasicInfo";
-import Salary from "./pages/Profile/pages/Salary";
-import Profile from "./pages/profile";
-import EmpPerfo from "./pages/Performance/pages/EmpPerfo";
-import EmpRate from "./pages/Performance/pages/EmpRate";
-
-import Salaries from "./pages/Payroll/Salaries";
-
-import InsuranceAndTax from "./pages/Payroll/InsurancesAndTax";
-import LeaveRequests from "./pages/Attendance/LeaveRequests";
-
-import AttendanceRecords from "./pages/Attendance/AttendanceRecords";
-
-import AdminRate from "./pages/Performance/pages/AdminRate";
-import AdminAverage from "./pages/Performance/pages/AdminAverage";
-import NewHire from "./pages/Onboarding/NewHire";
-import SalaryReports from "./pages/Reports/SalaryReports";
-import PaymentHistory from "./pages/Reports/PaymentHistory";
-import TaxSettings from "./pages/Reports/TaxSettings";
-
+// Lazy loaded — leaf pages
+const Enrollments = lazy(() => import("./pages/Training/Enrollments"));
+const CourseCatalog = lazy(() => import("./pages/Training/CourseCatalog"));
+const JobInfo = lazy(() => import("./pages/Profile/pages/JobInfo"));
+const BasicInfo = lazy(() => import("./pages/Profile/pages/BasicInfo"));
+const Salary = lazy(() => import("./pages/Profile/pages/Salary"));
+const EmpPerfo = lazy(() => import("./pages/Performance/pages/EmpPerfo"));
+const EmpRate = lazy(() => import("./pages/Performance/pages/EmpRate"));
+const AdminRate = lazy(() => import("./pages/Performance/pages/AdminRate"));
+const AdminAverage = lazy(() => import("./pages/Performance/pages/AdminAverage"));
+const Salaries = lazy(() => import("./pages/Payroll/Salaries"));
+const InsuranceAndTax = lazy(() => import("./pages/Payroll/InsurancesAndTax"));
+const LeaveRequests = lazy(() => import("./pages/Attendance/LeaveRequests"));
+const AttendanceRecords = lazy(() => import("./pages/Attendance/AttendanceRecords"));
+const AttendanceReports = lazy(() => import("./pages/Attendance/AttendanceReports"));
+const NewHire = lazy(() => import("./pages/Onboarding/NewHire"));
+const Documents = lazy(() => import("./pages/Onboarding/Documents"));
+const Checklist = lazy(() => import("./pages/Onboarding/Checklist"));
+const SalaryReports = lazy(() => import("./pages/Reports/SalaryReports"));
+const PaymentHistory = lazy(() => import("./pages/Reports/PaymentHistory"));
+const TaxSettings = lazy(() => import("./pages/Reports/TaxSettings"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ErrorBoundary>
+        <Suspense fallback={<div className="loading-spinner" />}>
         <Routes>
           <Route path="/login" element={<Login />} />
 
@@ -72,8 +78,8 @@ function App() {
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />
               <Route path="new-hires" element={<NewHire />} />
-              <Route path="documents" element={<h1>documents</h1>} />
-              <Route path="checklist" element={<h1>checklist</h1>} />
+              <Route path="documents" element={<Documents />} />
+              <Route path="checklist" element={<Checklist />} />
             </Route>
             <Route path="performance/*" element={<Performance />}>
               <Route
@@ -81,7 +87,6 @@ function App() {
                 element={<Navigate to="performance-reviews" replace />}
               />
               <Route path="performance-reviews" element={<EmpPerfo />} />
-
               <Route path="employee-ratings" element={<EmpRate />} />
               <Route path="rate-employee" element={<AdminRate />} />
               <Route path="average-rate" element={<AdminAverage />} />
@@ -98,7 +103,7 @@ function App() {
               <Route path="leave-requests" element={<LeaveRequests />} />
               <Route
                 path="attendance-reports"
-                element={<h1>attendance-reports</h1>}
+                element={<AttendanceReports />}
               />
             </Route>
             <Route path="reports/*" element={<Reports />}>
@@ -108,7 +113,11 @@ function App() {
               <Route path="tax-settings" element={<TaxSettings />} />
             </Route>
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
+        </ErrorBoundary>
+        <ToastContainer position="bottom-right" autoClose={3000} />
       </AuthProvider>
     </BrowserRouter>
   );

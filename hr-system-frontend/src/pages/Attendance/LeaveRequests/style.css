@@ -226,18 +226,20 @@
 }
 
 .view-btn {
-  background-color: #2196F3;
+  background-color: #142f5a;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 6px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 13px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
   transition: background-color 0.2s;
 }
 
 .view-btn:hover {
-  background-color: #1976D2;
+  background-color: #1e4a8a;
 }
 
 .status-update-form {
@@ -276,7 +278,7 @@
 }
 
 .update-btn {
-  background-color: #2196F3;
+  background-color: #142f5a;
   color: white;
   border: none;
   padding: 10px;
@@ -289,10 +291,10 @@
 }
 
 .update-btn:hover {
-  background-color: #1976D2;
+  background-color: #1e4a8a;
 }
 
 .update-btn:disabled {
-  background-color: #90CAF9;
+  background-color: #7a96be;
   cursor: not-allowed;
 }
