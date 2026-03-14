@@ -1,6 +1,6 @@
 .course-catalog-container {
   padding: 20px;
-  background-color: #f5f6fa;
+  background-color: #f5f7fa;
   min-height: 100vh;
 }
 
@@ -31,11 +31,11 @@
 }
 
 .search-container input:focus {
-  border-color: #4a90e2;
+  border-color: #142f5a;
 }
 
 .course-btn {
-  background-color: #4a90e2;
+  background-color: #142f5a;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
@@ -45,7 +45,7 @@
 }
 
 .course-btn:hover {
-  background-color: #357abd;
+  background-color: #1e4a8a;
 }
 
 /* Modal Styles */
@@ -60,6 +60,12 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal-content {
@@ -69,7 +75,13 @@
   max-width: 500px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .modal-header {
@@ -129,11 +141,11 @@
 
 .modal-body-input input:focus,
 .modal-body-input textarea:focus {
-  border-color: #4a90e2;
+  border-color: #142f5a;
 }
 
 .modal-body-input button {
-  background-color: #4a90e2;
+  background-color: #142f5a;
   color: white;
   border: none;
   padding: 12px;
@@ -144,7 +156,7 @@
 }
 
 .modal-body-input button:hover {
-  background-color: #357abd;
+  background-color: #1e4a8a;
 }
 
 .modal-body-input button:disabled {

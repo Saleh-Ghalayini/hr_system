@@ -71,6 +71,13 @@ const Enrollments = () => {
 
   useEffect(() => { fetchEnrollments(); }, [fetchEnrollments]);
 
+  useEffect(() => {
+    if (!modal) return;
+    const handleEsc = (e) => { if (e.key === "Escape") setModal(false); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [modal]);
+
   const filterData = useCallback((searchValue) => {
     const transformed = transformEnrollmentData(enrollments);
     if (!searchValue.trim()) return transformed;

@@ -10,25 +10,25 @@ const SummaryCards = ({ users, leaves, courses, enrollments }) => {
   return (
     <Grid container>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper className="summary-card">
+        <Paper className="dashboard-card">
           <Typography variant="h6">Total Employees</Typography>
           <Typography variant="h3">{users?.length || 0}</Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper className="summary-card">
+        <Paper className="dashboard-card">
           <Typography variant="h6">Active Leaves</Typography>
           <Typography variant="h3">{leaves?.filter(leave => leave?.status === 'approved').length || 0}</Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper className="summary-card">
+        <Paper className="dashboard-card">
           <Typography variant="h6">Total Courses</Typography>
           <Typography variant="h3">{Array.isArray(courses) ? courses.length : 0}</Typography>
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6} md={3}>
-        <Paper className="summary-card">
+        <Paper className="dashboard-card">
           <Typography variant="h6">Active Enrollments</Typography>
           <Typography variant="h3">{activeEnrollmentsCount}</Typography>
         </Paper>

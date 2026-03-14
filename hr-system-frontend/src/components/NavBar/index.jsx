@@ -47,6 +47,13 @@ const NavBar = () => {
         getUrl();
     }, []);
 
+    // Refresh avatar when user uploads a new photo from BasicInfo
+    useEffect(() => {
+        const onPhotoUpdate = (e) => setProfile(e.detail || '/logo.png');
+        window.addEventListener('photo-updated', onPhotoUpdate);
+        return () => window.removeEventListener('photo-updated', onPhotoUpdate);
+    }, []);
+
     return (
         <nav>
             <div className="nav-title poppins">{title}</div>

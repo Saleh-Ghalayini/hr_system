@@ -3,7 +3,7 @@ import Input from "../../../components/Input";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const BasicInfo = () => {
   const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
@@ -36,9 +36,14 @@ const BasicInfo = () => {
     try {
       const response = await request({ method: "POST", path: "profile/photo", data: { image: base64Image } });
       if (response.success) {
+        const photoUrl = response.data?.photo_url;
         toast.success("Photo updated successfully!");
         setBase64Image("");
-        getBasicInfo();
+        if (photoUrl) {
+          setPreviewUrl(photoUrl);
+          // Notify other components (e.g. NavBar) that the photo was updated
+          window.dispatchEvent(new CustomEvent("photo-updated", { detail: photoUrl }));
+        }
       } else {
         toast.error("Failed to upload photo.");
       }
@@ -93,7 +98,6 @@ const BasicInfo = () => {
 
   return (
     <div className="profilebody">
-      <ToastContainer />
       <div className="containerP">
 
         {/* Photo card */}

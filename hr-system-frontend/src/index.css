@@ -20,7 +20,7 @@
 }
 
 body {
-  background-color: #E4E9EF;
+  background-color: #f5f7fa;
   min-height: 100vh;
 }
 
@@ -95,7 +95,7 @@ body {
   color: #FFFFFF;
   border-radius: 8px;
   text-align: center;
-  background-color: #069855;
+  background-color: #142f5a;
   font-family: 'Poppins';
   font-weight: 600;
   font-size: 0.8125rem; /*13px*/
@@ -106,7 +106,7 @@ body {
 }
 
 .primary-btn:hover {
-  background-color: #089151;
+  background-color: #1e4a8a;
 }
 
 .primary-btn:active {
@@ -121,19 +121,20 @@ body {
   color: #BA5143;
 }
 
-.status-green {
-  background-color: #E6F5EE;
-  border: 0.5px solid #069855;
+/* ── Page title utilities ── */
+.page-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #142f5a;
+  margin: 0;
 }
 
-.status-red {
-  background-color: #FDF4F4;
-  border: 0.5px solid #D62525;
-}
-
-.status-yellow {
-  background-color: #FBF5E8;
-  border: 0.5px solid #D39C1D;
+.page-subtitle {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 4px 0 0;
 }
 
 .title {

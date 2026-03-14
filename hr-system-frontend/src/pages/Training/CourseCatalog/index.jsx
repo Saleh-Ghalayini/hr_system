@@ -169,10 +169,17 @@ const CourseCatalog = () => {
     return () => debouncedFilter.cancel?.();
   }, [search, debouncedFilter]);
 
+  useEffect(() => {
+    if (!modal) return;
+    const handleEsc = (e) => { if (e.key === "Escape") setModal(false); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [modal]);
+
   return (
     <div className="course-catalog-container">
       {modal && (
-        <div className="course-modal">
+        <div className="course-modal" onClick={(e) => { if (e.target === e.currentTarget) setModal(false); }}>
           <div className="modal-content">
             <div className="modal-header">
               <h2>Add New Course</h2>

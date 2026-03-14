@@ -143,6 +143,13 @@ const LeaveRequests = () => {
   }, []);
 
   useEffect(() => {
+    if (!showModal) return;
+    const handleEsc = (e) => { if (e.key === "Escape") handleCloseModal(); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [showModal]);
+
+  useEffect(() => {
     filterData();
   }, [filterData, search, statusFilter]);
 
@@ -200,7 +207,7 @@ const LeaveRequests = () => {
       />
 
       {showModal && selectedRequest && (
-        <div className="modal">
+        <div className="modal" onClick={(e) => { if (e.target === e.currentTarget) handleCloseModal(); }}>
           <div className="modal-content">
             <div className="modal-header">
               <h2>Leave Request Details</h2>

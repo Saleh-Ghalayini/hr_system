@@ -349,3 +349,28 @@
 .modal-close-btn:hover {
     background: #1e4a8a;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .login-page {
+        flex-direction: column;
+    }
+
+    .login-left {
+        flex: 0 0 auto;
+        padding: 32px 24px;
+        min-height: auto;
+    }
+
+    .login-features {
+        display: none;
+    }
+
+    .login-right {
+        padding: 32px 20px;
+    }
+
+    .login-form-wrapper {
+        max-width: 100%;
+    }
+}

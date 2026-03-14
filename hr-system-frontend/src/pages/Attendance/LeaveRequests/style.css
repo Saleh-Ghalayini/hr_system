@@ -56,6 +56,12 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .modal-content {
@@ -66,7 +72,13 @@
   max-width: 900px;
   max-height: 85vh;
   overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
 }
 
 .modal-header {
@@ -171,7 +183,7 @@
 .balance-item strong {
   display: block;
   font-size: 24px;
-  color: #2196F3;
+  color: #142f5a;
 }
 
 .status-actions {
@@ -196,21 +208,21 @@
 }
 
 .approve-btn {
-  background-color: #4CAF50;
+  background-color: #069855;
   color: white;
 }
 
 .approve-btn:hover {
-  background-color: #43A047;
+  background-color: #057a45;
 }
 
 .reject-btn {
-  background-color: #f44336;
+  background-color: #d62525;
   color: white;
 }
 
 .reject-btn:hover {
-  background-color: #E53935;
+  background-color: #b91c1c;
 }
 
 .approve-btn:disabled, .reject-btn:disabled {
@@ -273,8 +285,8 @@
 
 .status-select:focus {
   outline: none;
-  border-color: #2196F3;
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
 }
 
 .update-btn {
@@ -297,4 +309,15 @@
 .update-btn:disabled {
   background-color: #7a96be;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    width: 95%;
+    max-height: 90vh;
+  }
 }

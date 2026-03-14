@@ -31,12 +31,9 @@ select {
     background-color: #ffffff;
 }
 
-.border-rad-eight {
-    border-radius: 6px;
-}
-
-.select:focus {
-    outline: none;
-    border-color: #142f5a;
-    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+.input-label select:disabled {
+    background-color: #e9ecef;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #e9ecef;
 }
