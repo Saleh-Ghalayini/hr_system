@@ -10,7 +10,7 @@ const useLeaves = () => {
     const fetchLeaves = async () => {
       try {
         const data = await dashboardService.getLeaveRequests();
-        setLeaves(data);
+        setLeaves(Array.isArray(data) ? data : []);
       } catch (err) {
         setError(err);
       } finally {

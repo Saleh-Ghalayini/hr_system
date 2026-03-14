@@ -24,7 +24,8 @@ const BasicInfo = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    setPreviewUrl(URL.createObjectURL(file));
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl((prev) => { if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev); return objectUrl; });
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => setBase64Image(reader.result);

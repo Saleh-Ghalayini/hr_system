@@ -13,7 +13,8 @@ const useUsers = () => {
           method: "GET",
           path: "admin/users",
         });
-        setUsers(Array.isArray(response.data) ? response.data : []);
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+        setUsers(list);
       } catch (err) {
         setError(err);
         setUsers([]);

@@ -38,7 +38,7 @@ const CourseCatalog = () => {
         method: "GET",
         path: "admin/courses",
       });
-      const data = Array.isArray(response.data) ? response.data : [];
+      const data = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
       setCourses(data);
       setFilteredData(transformCourseData(data));
     } catch (error) {

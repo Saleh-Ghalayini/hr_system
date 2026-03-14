@@ -2,8 +2,7 @@ import Table from "../../../components/Table";
 import "./style.css";
 import React, { useState, useEffect, useCallback } from "react";
 import { request } from "../../../common/request";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 const AttendanceRecords = () => {
     const [longitude, setLongitude] = useState(null);
@@ -83,7 +82,7 @@ const AttendanceRecords = () => {
         setLoading(true);
         try {
             const response = await request({ method: "GET", path: "admin/attendance/all" });
-            const records = Array.isArray(response.data) ? response.data : [];
+            const records = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
             setRawRecords(records);
             setAttendance(transformRecords(records));
         } catch {
@@ -108,8 +107,7 @@ const AttendanceRecords = () => {
     useEffect(() => { fetchAllUsersAttendances(); }, []);
 
     return (
-        <>
-            <div className="attendance-records-container">
+        <div className="attendance-records-container">
                 <div className="filter-container">
                     <div className="filter-inputs">
                         <span className="filter-label">Filter:</span>
@@ -157,8 +155,6 @@ const AttendanceRecords = () => {
                         : undefined}
                 />
             </div>
-            <ToastContainer position="bottom-right" autoClose={3000} />
-        </>
     );
 };
 

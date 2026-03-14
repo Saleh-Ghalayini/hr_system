@@ -16,7 +16,7 @@ class AuthController extends Controller
     {
         $users = User::with('jobDetail:id,user_id,title,employment_type,employment_status,employee_level,work_location,hiring_date')
             ->select('id', 'first_name', 'last_name', 'email', 'position', 'gender', 'role', 'created_at')
-            ->get();
+            ->paginate(200);
 
         return $this->success($users);
     }

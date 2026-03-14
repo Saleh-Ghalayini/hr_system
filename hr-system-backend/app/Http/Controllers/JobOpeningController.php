@@ -26,7 +26,7 @@ class JobOpeningController extends Controller
         $openings = JobOpening::withCount('applications')
             ->with('postedBy:id,first_name,last_name')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(200);
 
         return $this->success($openings);
     }

@@ -20,7 +20,7 @@ class AdminEnrollmentController extends Controller
         $enrollments = Enrollment::with([
             'user:id,first_name,last_name,email',
             'course:id,course_name,duration_hours',
-        ])->orderByDesc('created_at')->get();
+        ])->orderByDesc('created_at')->paginate(200);
 
         return $this->success($enrollments);
     }

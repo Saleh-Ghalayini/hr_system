@@ -17,7 +17,7 @@ class PayrollController extends Controller
             'insurance:id,type,cost',
             'baseSalary:id,position,salary',
             'tax:id,label,rate',
-        ])->orderBy('fullname')->get();
+        ])->orderBy('fullname')->paginate(200);
 
         return $this->success($payrolls);
     }

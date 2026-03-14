@@ -51,8 +51,9 @@ const LeaveRequests = () => {
         method: "GET",
         path: "admin/leave/requests",
       });
-      setLeaveRequests(response.data);
-      setFilteredData(response.data);
+      const list = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+      setLeaveRequests(list);
+      setFilteredData(list);
     } catch (error) {
       setError("Failed to fetch leave requests");
     } finally {

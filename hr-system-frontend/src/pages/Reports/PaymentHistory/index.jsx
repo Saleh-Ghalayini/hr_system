@@ -12,7 +12,7 @@ const PaymentHistory = () => {
     const fetch = async () => {
       try {
         const response = await request({ method: "GET", path: "admin/payroll" });
-        setPayrolls(Array.isArray(response.data) ? response.data : []);
+        setPayrolls(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
       } catch {
         toast.error("Failed to load payment history.");
       } finally {

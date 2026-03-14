@@ -134,12 +134,12 @@ class AttendanceService
         ];
     }
 
-    public function getAllUsersAttendance(array $filters): \Illuminate\Support\Collection
+    public function getAllUsersAttendance(array $filters): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         $query = Attendance::query();
         $this->applyDateFilters($query, $filters);
 
-        return $query->orderByDesc('date')->get();
+        return $query->orderByDesc('date')->paginate(500);
     }
 
     public function findUserByName(string $firstName, string $lastName): ?User

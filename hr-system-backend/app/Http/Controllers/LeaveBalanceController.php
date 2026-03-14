@@ -14,7 +14,7 @@ class LeaveBalanceController extends Controller
     public function getLeaveBalances()
     {
         $leaveBalances = LeaveBalance::with('user:id,first_name,last_name,email')
-            ->get();
+            ->paginate(200);
 
         return $this->success($leaveBalances);
     }

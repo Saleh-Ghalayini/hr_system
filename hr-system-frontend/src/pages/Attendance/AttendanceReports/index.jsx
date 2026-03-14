@@ -13,7 +13,7 @@ const AttendanceReports = () => {
             setLoading(true);
             try {
                 const response = await request({ method: "GET", path: "admin/attendance/all" });
-                setRecords(Array.isArray(response.data) ? response.data : []);
+                setRecords(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
             } catch {
                 // silently fail
             } finally {

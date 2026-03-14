@@ -17,7 +17,8 @@ const TaxSettings = () => {
           request({ method: "GET", path: "admin/payroll" }),
           request({ method: "GET", path: "admin/insurances" }),
         ]);
-        setPayrolls(Array.isArray(payrollRes.data) ? payrollRes.data : []);
+        const pd = payrollRes.data;
+        setPayrolls(Array.isArray(pd) ? pd : (pd?.data ?? []));
         setInsurances(Array.isArray(insuranceRes.data) ? insuranceRes.data : []);
       } catch {
         toast.error("Failed to load tax and insurance settings.");

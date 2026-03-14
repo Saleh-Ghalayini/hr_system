@@ -31,7 +31,7 @@ const Enrollments = () => {
     const fetchCourses = async () => {
       try {
         const response = await request({ method: "GET", path: "admin/courses" });
-        setCourses(Array.isArray(response.data) ? response.data : []);
+        setCourses(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
       } catch { /* silently fail */ }
     };
     fetchCourses();
@@ -41,7 +41,7 @@ const Enrollments = () => {
     const fetchUsers = async () => {
       try {
         const response = await request({ method: "GET", path: "admin/users" });
-        setUsers(Array.isArray(response.data) ? response.data : []);
+        setUsers(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
       } catch { /* silently fail */ }
     };
     fetchUsers();
@@ -62,7 +62,7 @@ const Enrollments = () => {
     setLoading(true);
     try {
       const response = await request({ method: "GET", path: "admin/enrollments" });
-      const data = Array.isArray(response.data) ? response.data : [];
+      const data = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
       setEnrollments(data);
       setFilteredData(transformEnrollmentData(data));
     } catch { /* silently fail */ }

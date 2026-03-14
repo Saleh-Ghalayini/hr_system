@@ -12,6 +12,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
 
+  React.useEffect(() => {
+    if (!showForgot) return;
+    const handleEsc = (e) => { if (e.key === "Escape") setShowForgot(false); };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [showForgot]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");

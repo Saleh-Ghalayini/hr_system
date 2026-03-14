@@ -41,7 +41,7 @@ class LeaveRequestController extends Controller
     {
         $leaveRequests = LeaveRequest::with('user:id,first_name,last_name,email')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(200);
 
         return $this->success($leaveRequests);
     }

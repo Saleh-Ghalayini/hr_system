@@ -52,7 +52,7 @@ const AdminRate = () => {
         method: "GET",
         path: "admin/users",
       });
-      setUsers(Array.isArray(response.data) ? response.data : []);
+      setUsers(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
     } catch {
       toast.error("Failed to load users.");
     }
@@ -79,7 +79,7 @@ const AdminRate = () => {
               }}
             >
               <div className="user-image">
-                <img src="/logo.png" alt="" />
+                <img src="/logo.png" alt="User avatar" />
               </div>
               <div className="name">
                 {user.first_name} {user.last_name}

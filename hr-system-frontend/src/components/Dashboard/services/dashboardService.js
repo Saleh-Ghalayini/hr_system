@@ -1,12 +1,14 @@
 import { request } from "../../../common/request";
 
+const toArray = (data) => Array.isArray(data) ? data : (data?.data ?? []);
+
 export const dashboardService = {
   getLeaveRequests: async () => {
     const response = await request({
       method: "GET",
       path: "admin/leave/requests",
     });
-    return response.data;
+    return toArray(response.data);
   },
 
   getCourses: async () => {
@@ -14,7 +16,7 @@ export const dashboardService = {
       method: "GET",
       path: "admin/courses",
     });
-    return response.data;
+    return toArray(response.data);
   },
 
   getEnrollments: async () => {
@@ -22,6 +24,6 @@ export const dashboardService = {
       method: "GET",
       path: "admin/enrollments",
     });
-    return response.data;
+    return toArray(response.data);
   },
 };

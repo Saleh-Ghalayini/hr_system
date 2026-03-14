@@ -17,7 +17,7 @@ const Salaries = () => {
           method: "GET",
           path: "admin/payroll",
         });
-        const raw = Array.isArray(response.data) ? response.data : [];
+        const raw = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
         setSalaryData(raw.map((p) => ({
           ...p,
           insurance: p.insurance?.type ?? "—",

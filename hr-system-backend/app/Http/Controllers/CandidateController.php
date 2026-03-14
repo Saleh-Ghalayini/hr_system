@@ -14,7 +14,7 @@ class CandidateController extends Controller
     {
         $candidates = Candidate::withCount('applications')
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(200);
 
         return $this->success($candidates);
     }

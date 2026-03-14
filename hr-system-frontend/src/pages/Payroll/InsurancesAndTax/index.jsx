@@ -31,6 +31,13 @@ const InsuranceAndTax = () => {
     fetchInsurance();
   }, []);
 
+  useEffect(() => {
+    if (!trigger) return;
+    const handleEsc = (e) => { if (e.key === "Escape") { setTrigger(false); setValue(""); } };
+    document.addEventListener("keydown", handleEsc);
+    return () => document.removeEventListener("keydown", handleEsc);
+  }, [trigger]);
+
   const updateInsurance = async () => {
     try {
       const response = await request({
