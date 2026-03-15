@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import InsuranceCard from "../../../components/InsuranceCard";
 import { request } from "../../../common/request";
 import Button from "../../../components/Button";
+import { toast } from "react-toastify";
 import "./styles.css";
 
 const InsuranceAndTax = () => {
@@ -21,7 +22,7 @@ const InsuranceAndTax = () => {
       });
       setInsuranceData(Array.isArray(response.data) ? response.data : []);
     } catch {
-      // silently fail — shows empty
+      toast.error("Failed to load insurance plans.");
     } finally {
       setLoading(false);
     }
@@ -52,7 +53,7 @@ const InsuranceAndTax = () => {
         fetchInsurance();
       }
     } catch {
-      // silently fail
+      toast.error("Failed to update insurance plan.");
     }
   };
 

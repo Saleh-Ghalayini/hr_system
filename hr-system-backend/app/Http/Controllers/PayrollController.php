@@ -4,22 +4,31 @@ namespace App\Http\Controllers;
 
 use App\Models\Payroll;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class PayrollController extends Controller
 {
     use ApiResponse;
 
-    public function getPayrolls()
+    public function getPayrolls(Request $request)
     {
-        $payrolls = Payroll::with([
+        $query = Payroll::with([
             'user:id,first_name,last_name,email,position',
             'insurance:id,type,cost',
             'baseSalary:id,position,salary',
             'tax:id,label,rate',
-        ])->orderBy('fullname')->paginate(200);
+        ])->orderBy('fullname');
 
-        return $this->success($payrolls);
+        if ($search = $request->query('search')) {
+            $query->where('fullname', 'like', "%$search%");
+        }
+
+        if ($month = $request->query('month')) {
+            $query->where('month', $month);
+        }
+
+        return $this->success($query->paginate(20));
     }
 
     public function getMyPayroll()

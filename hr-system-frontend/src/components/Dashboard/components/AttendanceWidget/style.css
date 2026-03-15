@@ -1,0 +1,149 @@
+.att-widget {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.05);
+  height: 100%;
+  animation: fadeUp 0.3s 0.1s ease both;
+}
+
+.att-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.att-widget-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: 'Poppins', sans-serif;
+  margin: 0 0 4px;
+}
+
+.att-widget-date {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-family: 'Lato', sans-serif;
+  margin: 0;
+}
+
+.att-rate-badge {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-family: 'Poppins', sans-serif;
+  color: var(--rate-color, #069855);
+  background: color-mix(in srgb, var(--rate-color, #069855) 10%, white);
+  border-radius: 10px;
+  padding: 6px 12px;
+  line-height: 1;
+}
+
+/* Progress bar */
+.att-progress-track {
+  display: flex;
+  height: 8px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f1f5f9;
+  margin-bottom: 20px;
+  gap: 2px;
+}
+
+.att-progress-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.att-fill-ontime { background: #069855; }
+.att-fill-late   { background: #d39c1d; }
+.att-fill-absent { background: #f1f5f9; }
+
+/* Stats */
+.att-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.att-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.att-stat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.att-stat-num {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: 'Poppins', sans-serif;
+  line-height: 1;
+}
+
+.att-stat-lbl {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  font-family: 'Lato', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* Avatar row */
+.att-who {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 16px;
+}
+
+.att-who-label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 10px;
+}
+
+.att-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.att-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+  cursor: default;
+  transition: transform 0.15s;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.att-avatar:hover {
+  transform: scale(1.15);
+  z-index: 1;
+}
+
+.att-avatar-more {
+  background: #e2e8f0;
+  color: #64748b;
+  font-size: 0.65rem;
+}

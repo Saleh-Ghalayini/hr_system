@@ -1,130 +1,169 @@
-export const preparePositionData = (users) => {
-  const positions = users ? [...new Set(users.map(user => user?.position || 'Unassigned'))] : [];
-  const counts = positions.map(position => users.filter(user => user?.position === position).length);
-  
-  // Sort by count in descending order
-  const sortedIndices = counts.map((_, index) => index).sort((a, b) => counts[b] - counts[a]);
-  const sortedPositions = sortedIndices.map(index => positions[index]);
-  const sortedCounts = sortedIndices.map(index => counts[index]);
+// Brand palette
+const NAV  = '#142f5a';
+const MINT = '#28eea7';
+const GRN  = '#069855';
+const AMB  = '#d39c1d';
+const RED  = '#d62525';
+const PUR  = '#7c3aed';
+const TEA  = '#0891b2';
+const SLT  = '#64748b';
 
-  const colors = [
-    'rgba(59, 130, 246, 0.8)',
-    'rgba(16, 185, 129, 0.8)',
-    'rgba(245, 158, 11, 0.8)',
-    'rgba(239, 68, 68, 0.8)',
-    'rgba(139, 92, 246, 0.8)',
-    'rgba(236, 72, 153, 0.8)',
-    'rgba(20, 184, 166, 0.8)',
-    'rgba(234, 179, 8, 0.8)',
+const PALETTE = [NAV, GRN, AMB, RED, PUR, TEA, MINT, SLT];
+const alpha = (hex, a) => hex + Math.round(a * 255).toString(16).padStart(2, '0');
+
+// ── Position Doughnut ──────────────────────────────────────────────────────────
+export const preparePositionData = (users) => {
+  const raw = users ?? [];
+  const posMap = {};
+  raw.forEach(u => {
+    const p = u?.position || 'Unassigned';
+    posMap[p] = (posMap[p] ?? 0) + 1;
+  });
+  const entries = Object.entries(posMap).sort((a, b) => b[1] - a[1]);
+  const labels = entries.map(([p]) => p);
+  const data   = entries.map(([, c]) => c);
+  const bg     = PALETTE.slice(0, labels.length).map(c => alpha(c, 0.85));
+  const border = PALETTE.slice(0, labels.length);
+
+  return {
+    labels,
+    datasets: [{
+      label: 'Employees',
+      data,
+      backgroundColor: bg,
+      borderColor: border,
+      borderWidth: 2,
+      hoverOffset: 6,
+    }],
+  };
+};
+
+// ── Leave Status Doughnut ──────────────────────────────────────────────────────
+export const prepareLeaveData = (leaves) => {
+  const raw = leaves ?? [];
+  const approved = raw.filter(l => l?.status === 'approved').length;
+  const pending  = raw.filter(l => l?.status === 'pending').length;
+  const rejected = raw.filter(l => l?.status === 'rejected').length;
+
+  return {
+    labels: ['Approved', 'Pending', 'Rejected'],
+    datasets: [{
+      data: [approved, pending, rejected],
+      backgroundColor: [alpha(GRN, 0.85), alpha(AMB, 0.85), alpha(RED, 0.85)],
+      borderColor:     [GRN, AMB, RED],
+      borderWidth: 2,
+      hoverOffset: 6,
+    }],
+  };
+};
+
+// ── Course Duration Horizontal Bar ────────────────────────────────────────────
+export const prepareCourseData = (courses) => {
+  const raw = Array.isArray(courses) ? courses : [];
+  const sorted = [...raw]
+    .map(c => ({ name: c?.course_name || 'Unnamed', duration: c?.duration_hours || 0 }))
+    .sort((a, b) => b.duration - a.duration);
+
+  return {
+    labels: sorted.map(c => c.name),
+    datasets: [{
+      label: 'Duration (hrs)',
+      data: sorted.map(c => c.duration),
+      backgroundColor: alpha(NAV, 0.75),
+      borderColor: NAV,
+      borderWidth: 1,
+      borderRadius: 4,
+    }],
+  };
+};
+
+// ── Enrollment Status Horizontal Bar ─────────────────────────────────────────
+export const prepareEnrollmentData = (enrollments) => {
+  const raw = enrollments ?? [];
+  const counts = [
+    raw.filter(e => e?.status === 'enrolled' || e?.status === 'active').length,
+    raw.filter(e => e?.status === 'in_progress').length,
+    raw.filter(e => e?.status === 'completed').length,
+    raw.filter(e => e?.status === 'terminated').length,
   ];
 
   return {
-    labels: sortedPositions,
+    labels: ['Enrolled', 'In Progress', 'Completed', 'Terminated'],
     datasets: [{
-      label: 'Employees by Position',
-      data: sortedCounts,
-      backgroundColor: colors.slice(0, sortedPositions.length),
-      borderColor: colors.slice(0, sortedPositions.length).map(color => color.replace('0.8', '1')),
-      borderWidth: 1,
-      borderRadius: 6,
-    }],
-  };
-};
-
-export const prepareLeaveData = (leaves) => {
-  const statuses = ['approved', 'pending', 'rejected'];
-  const statusLabels = ['Approved', 'Pending', 'Rejected'];
-  
-  return {
-    labels: ['Leave Requests'],
-    datasets: statuses.map((status, index) => ({
-      label: statusLabels[index],
-      data: [leaves ? leaves.filter(leave => leave?.status === status).length : 0],
-      backgroundColor: [
-        'rgba(16, 185, 129, 0.8)',
-        'rgba(245, 158, 11, 0.8)',
-        'rgba(239, 68, 68, 0.8)',
-      ][index],
-      borderColor: [
-        'rgba(16, 185, 129, 1)',
-        'rgba(59, 130, 246, 1)',
-        'rgba(239, 68, 68, 1)',
-      ][index],
-      borderWidth: 1,
-    })),
-  };
-};
-
-export const prepareCourseData = (courses) => {
-  const courseData = Array.isArray(courses) 
-    ? courses.map(course => ({
-        name: course?.course_name || 'Unnamed Course',
-        duration: course?.duration_hours || 0
-      }))
-    : [];
-
-  // Sort by duration in descending order
-  courseData.sort((a, b) => b.duration - a.duration);
-
-  return {
-    labels: courseData.map(course => course.name),
-    datasets: [{
-      label: 'Course Duration (Hours)',
-      data: courseData.map(course => course.duration),
-      backgroundColor: 'rgba(59, 130, 246, 0.2)',
-      borderColor: 'rgba(59, 130, 246, 1)',
-      borderWidth: 2,
-      fill: true,
-      tension: 0.4,
-    }],
-  };
-};
-
-export const prepareEnrollmentData = (enrollments) => {
-  const statuses = ['active', 'completed', 'in_progress', 'terminated'];
-  const statusLabels = ['Active', 'Completed', 'In Progress', 'Terminated'];
-  
-  const counts = statuses.map(status => 
-    enrollments ? enrollments.filter(enroll => 
-      status === 'active' ? enroll?.status === 'active' || enroll?.status === 'enrolled' : enroll?.status === status
-    ).length : 0
-  );
-
-  return {
-    labels: statusLabels,
-    datasets: [{
-      label: 'Enrollment Status',
+      label: 'Enrollments',
       data: counts,
       backgroundColor: [
-        'rgba(59, 130, 246, 0.2)',
-        'rgba(16, 185, 129, 0.2)',
-        'rgba(245, 158, 11, 0.2)',
-        'rgba(239, 68, 68, 0.2)',
+        alpha(TEA, 0.8),
+        alpha(AMB, 0.8),
+        alpha(GRN, 0.8),
+        alpha(RED, 0.8),
       ],
-      borderColor: [
-        'rgba(59, 130, 246, 1)',
-        'rgba(16, 185, 129, 1)',
-        'rgba(245, 158, 11, 1)',
-        'rgba(239, 68, 68, 1)',
-      ],
-      borderWidth: 2,
-      pointBackgroundColor: [
-        'rgba(59, 130, 246, 1)',
-        'rgba(16, 185, 129, 1)',
-        'rgba(245, 158, 11, 1)',
-        'rgba(239, 68, 68, 1)',
-      ],
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: [
-        'rgba(59, 130, 246, 1)',
-        'rgba(16, 185, 129, 1)',
-        'rgba(245, 158, 11, 1)',
-        'rgba(239, 68, 68, 1)',
-      ],
+      borderColor: [TEA, AMB, GRN, RED],
+      borderWidth: 1,
+      borderRadius: 4,
     }],
   };
 };
+
+// ── Attendance Trend Line (last 7 weeks) ──────────────────────────────────────
+export const prepareAttendanceTrendData = (trend) => {
+  if (!Array.isArray(trend) || trend.length === 0) {
+    return { labels: [], datasets: [] };
+  }
+
+  // Group by ISO week (Mon–Sun)
+  const weekMap = {};
+  trend.forEach(rec => {
+    const d = new Date(rec.date);
+    // Get Monday of the week
+    const day = d.getDay() || 7;
+    const mon = new Date(d);
+    mon.setDate(d.getDate() - day + 1);
+    const key = mon.toISOString().slice(0, 10);
+    if (!weekMap[key]) weekMap[key] = { present: 0, late: 0 };
+    weekMap[key].present++;
+    if (rec.time_in_status === 'Late') weekMap[key].late++;
+  });
+
+  const weeks = Object.keys(weekMap).sort().slice(-7);
+  const labels = weeks.map(w => {
+    const d = new Date(w);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  });
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Present',
+        data: weeks.map(w => weekMap[w].present),
+        borderColor: GRN,
+        backgroundColor: alpha(GRN, 0.12),
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: GRN,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+      {
+        label: 'Late',
+        data: weeks.map(w => weekMap[w].late),
+        borderColor: AMB,
+        backgroundColor: alpha(AMB, 0.10),
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: AMB,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      },
+    ],
+  };
+};
+
+// ── Chart Options ─────────────────────────────────────────────────────────────
+const baseFont = { family: 'Lato', size: 12 };
 
 export const getChartOptions = () => ({
   responsive: true,
@@ -132,133 +171,62 @@ export const getChartOptions = () => ({
   plugins: {
     legend: {
       position: 'bottom',
-      labels: {
-        boxWidth: 12,
-        padding: 15,
-        font: {
-          family: 'Lato',
-          size: 12,
-        },
-      },
+      labels: { boxWidth: 12, padding: 16, font: baseFont },
     },
     tooltip: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: 'rgba(15,23,42,0.85)',
       padding: 12,
-      titleFont: {
-        family: 'Lato',
-        size: 14,
-        weight: 700,
-      },
-      bodyFont: {
-        family: 'Lato',
-        size: 13,
-      },
+      titleFont: { ...baseFont, size: 13, weight: 700 },
+      bodyFont: baseFont,
+      cornerRadius: 8,
     },
   },
-  animation: {
-    animateScale: true,
-    animateRotate: true,
-  },
+  animation: { animateScale: true, animateRotate: true },
 });
 
-export const getDoughnutOptions = (baseOptions) => ({
-  ...baseOptions,
-//   cutout: '60%',
+export const getDoughnutOptions = (base) => ({
+  ...base,
+  cutout: '62%',
   plugins: {
-    ...baseOptions.plugins,
-    legend: {
-      ...baseOptions.plugins.legend,
-      position: 'right',
-    },
+    ...base.plugins,
+    legend: { ...base.plugins.legend, position: 'right' },
   },
 });
 
-export const getStackedBarOptions = (baseOptions) => ({
-  ...baseOptions,
+export const getHBarOptions = (base, yTitle = '') => ({
+  ...base,
+  indexAxis: 'y',
   scales: {
     x: {
-      stacked: true,
-      ticks: {
-        font: {
-          family: 'Lato',
-          size: 11,
-        },
-      },
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.05)' },
+      ticks: { font: { ...baseFont, size: 11 } },
     },
     y: {
-      stacked: true,
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Count',
-        font: {
-          family: 'Lato',
-          size: 12,
-          weight: 600,
-        },
-      },
-      ticks: {
-        font: {
-          family: 'Lato',
-          size: 11,
-        },
-      },
+      ticks: { font: { ...baseFont, size: 11 } },
+      title: yTitle ? { display: true, text: yTitle, font: baseFont } : undefined,
     },
   },
+  plugins: { ...base.plugins, legend: { display: false } },
 });
 
-export const getLineChartOptions = (baseOptions) => ({
-  ...baseOptions,
+export const getTrendLineOptions = (base) => ({
+  ...base,
   scales: {
-    y: {
-      beginAtZero: true,
-      title: {
-        display: true,
-        text: 'Duration (Hours)',
-        font: {
-          family: 'Lato',
-          size: 12,
-          weight: 600,
-        },
-      },
-      ticks: {
-        font: {
-          family: 'Lato',
-          size: 11,
-        },
-      },
-    },
     x: {
-      ticks: {
-        font: {
-          family: 'Lato',
-          size: 11,
-        },
-        maxRotation: 45,
-        minRotation: 45,
-      },
+      grid: { color: 'rgba(0,0,0,0.04)' },
+      ticks: { font: { ...baseFont, size: 11 } },
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: 'rgba(0,0,0,0.04)' },
+      ticks: { font: { ...baseFont, size: 11 }, stepSize: 1 },
+      title: { display: true, text: 'Check-ins', font: baseFont },
     },
   },
 });
 
-export const getRadarChartOptions = (baseOptions) => ({
-  ...baseOptions,
-  scales: {
-    r: {
-      beginAtZero: true,
-      ticks: {
-        font: {
-          family: 'Lato',
-          size: 11,
-        },
-      },
-      pointLabels: {
-        font: {
-          family: 'Lato',
-          size: 12,
-          weight: 600,
-        },
-      },
-    },
-  },
-});
+// Keep for backwards-compat (unused but exported)
+export const getStackedBarOptions = (base) => getHBarOptions(base);
+export const getLineChartOptions  = (base) => getTrendLineOptions(base);
+export const getRadarChartOptions = (base) => base;

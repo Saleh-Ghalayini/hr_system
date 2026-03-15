@@ -129,6 +129,7 @@ const SalaryReports = () => {
           placeholder="Search by employee or position..."
           value={search}
           onChange={(e) => handleSearch(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { setCurrentPage(1); } }}
         />
         <select
           className="report-select"

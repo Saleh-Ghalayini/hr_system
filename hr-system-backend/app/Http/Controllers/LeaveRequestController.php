@@ -8,6 +8,7 @@ use App\Services\LeaveService;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Leave\CreateLeaveRequest;
 use App\Http\Requests\Leave\UpdateLeaveStatusRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LeaveRequestController extends Controller
@@ -37,13 +38,25 @@ class LeaveRequestController extends Controller
         return $this->created($leaveRequest, 'Leave request submitted successfully.');
     }
 
-    public function getLeaveRequests()
+    public function getLeaveRequests(Request $request)
     {
-        $leaveRequests = LeaveRequest::with('user:id,first_name,last_name,email')
-            ->orderByDesc('created_at')
-            ->paginate(200);
+        $query = LeaveRequest::with('user:id,first_name,last_name,email')
+            ->orderByDesc('created_at');
 
-        return $this->success($leaveRequests);
+        if ($search = $request->query('search')) {
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                  ->orWhere('last_name',  'like', "%$search%")
+                  ->orWhere('email',       'like', "%$search%");
+            });
+        }
+
+        if ($statuses = $request->query('status')) {
+            $list = is_array($statuses) ? $statuses : [$statuses];
+            $query->whereIn('status', $list);
+        }
+
+        return $this->success($query->paginate(15));
     }
 
     public function getLeaveRequestsByUser()

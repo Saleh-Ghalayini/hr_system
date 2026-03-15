@@ -13,7 +13,7 @@ class CourseController extends Controller
 
     public function index()
     {
-        return $this->success(Course::withCount('enrollments')->get());
+        return $this->success(Course::withCount('enrollments')->paginate(200));
     }
 
     public function store(CourseRequest $request)

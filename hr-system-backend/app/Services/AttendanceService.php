@@ -139,7 +139,15 @@ class AttendanceService
         $query = Attendance::query();
         $this->applyDateFilters($query, $filters);
 
-        return $query->orderByDesc('date')->paginate(500);
+        if (!empty($filters['full_name'])) {
+            $query->where('full_name', 'like', '%' . $filters['full_name'] . '%');
+        }
+
+        if (!empty($filters['status'])) {
+            $query->where('time_in_status', $filters['status']);
+        }
+
+        return $query->orderByDesc('date')->paginate(20);
     }
 
     public function findUserByName(string $firstName, string $lastName): ?User

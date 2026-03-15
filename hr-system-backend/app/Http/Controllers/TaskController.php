@@ -45,6 +45,10 @@ class TaskController extends Controller
 
     public function update(TaskRequest $request, Task $task)
     {
+        if (Auth::user()->role !== 'admin' && $task->created_by !== Auth::id()) {
+            return $this->forbidden('You can only update tasks you created.');
+        }
+
         $task->update($request->validated());
 
         return $this->success($task, 'Task updated successfully.');
@@ -52,6 +56,10 @@ class TaskController extends Controller
 
     public function destroy(Task $task)
     {
+        if (Auth::user()->role !== 'admin' && $task->created_by !== Auth::id()) {
+            return $this->forbidden('You can only delete tasks you created.');
+        }
+
         $task->delete();
 
         return $this->success(null, 'Task deleted successfully.');

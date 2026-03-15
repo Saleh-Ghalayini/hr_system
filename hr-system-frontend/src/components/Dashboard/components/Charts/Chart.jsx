@@ -1,5 +1,4 @@
 import React from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
 import { Pie, Bar, Doughnut, Line, Radar } from 'react-chartjs-2';
 
 const chartComponents = {
@@ -10,26 +9,22 @@ const chartComponents = {
   radar:    Radar,
 };
 
-const Chart = ({
-  title,
-  data,
-  options,
-  type = 'bar',
-  height = '300px',
-}) => {
+const Chart = ({ data, options, type = 'bar', bare = false }) => {
   const ChartComponent = chartComponents[type] ?? Bar;
 
-  return (
+  // bare=true: just the chart canvas, no wrapper (parent controls sizing)
+  if (bare) {
+    return <ChartComponent data={data} options={options} />;
+  }
 
-    <Grid item xs={12} md={6} xl={6} >
-      <Paper className="chart-container">
-        <Typography variant="h6">{title}</Typography>
-        <div className="chart-wrapper" style={{ height}}>
-          <ChartComponent data={data} options={options} />
-        </div>
-      </Paper>
-    </Grid>
+  // Legacy: full card wrapper (kept for any external usage)
+  return (
+    <div className="chart-container">
+      <div className="chart-wrapper">
+        <ChartComponent data={data} options={options} />
+      </div>
+    </div>
   );
 };
 
-export default Chart; 
+export default Chart;

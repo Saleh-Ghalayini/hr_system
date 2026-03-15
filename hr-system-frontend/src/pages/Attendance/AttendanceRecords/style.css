@@ -91,3 +91,95 @@
 .check-btn.checked-in:hover {
     background: #b91c1c;
 }
+
+/* Filter inputs */
+.filter-text-input,
+.filter-date-input {
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e0;
+    padding: 0 10px;
+    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filter-text-input:focus,
+.filter-date-input:focus {
+    border-color: #142f5a;
+    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+
+/* Status multi-select dropdown */
+.status-dropdown {
+    position: relative;
+}
+
+.status-dropdown-btn {
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: border-color 0.2s;
+}
+
+.status-dropdown-btn:hover {
+    border-color: #142f5a;
+}
+
+.dropdown-arrow {
+    font-size: 10px;
+    color: #6b7280;
+}
+
+.status-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    z-index: 100;
+    min-width: 140px;
+    padding: 6px 0;
+    animation: dropdownIn 0.12s ease;
+}
+
+@keyframes dropdownIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.status-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-family: 'Lato', sans-serif;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.15s;
+}
+
+.status-option:hover {
+    background: #f5f7fa;
+}
+
+.status-option input[type="checkbox"] {
+    accent-color: #142f5a;
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}

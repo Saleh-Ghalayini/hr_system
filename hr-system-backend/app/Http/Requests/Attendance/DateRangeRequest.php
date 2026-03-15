@@ -12,6 +12,8 @@ class DateRangeRequest extends BaseFormRequest
             'start_date' => 'sometimes|date_format:Y-m-d',
             'end_date'   => 'sometimes|date_format:Y-m-d|after_or_equal:start_date',
             'date'       => 'sometimes|date_format:Y-m-d',
+            'full_name'  => 'sometimes|string|max:100',
+            'status'     => 'sometimes|string|in:On-time,Late',
         ];
     }
 }

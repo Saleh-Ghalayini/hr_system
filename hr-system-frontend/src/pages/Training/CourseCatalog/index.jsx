@@ -237,15 +237,8 @@ const CourseCatalog = () => {
                 />
                 <button
                   type="submit"
-                  className="course-btn"
+                  className="course-btn course-modal-submit-btn"
                   disabled={loading}
-                  style={{
-                    width: "100%",
-                    height: "30px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                    padding: "5px",
-                  }}
                 >
                   {loading ? "Creating Course..." : "Add Course"}
                 </button>

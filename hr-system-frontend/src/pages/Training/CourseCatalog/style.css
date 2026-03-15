@@ -94,19 +94,19 @@
 
 .modal-header h2 {
   margin: 0;
-  color: #333;
+  color: #142f5a;
   font-size: 1.5rem;
 }
 
 .modal-close {
   cursor: pointer;
   font-size: 1.5rem;
-  color: #666;
+  color: #6b7280;
   transition: color 0.3s ease;
 }
 
 .modal-close:hover {
-  color: #333;
+  color: #142f5a;
 }
 
 .modal-body {
@@ -121,7 +121,7 @@
 
 .modal-body-input span {
   font-weight: 500;
-  color: #333;
+  color: #374151;
 }
 
 .modal-body-input input,
@@ -160,34 +160,40 @@
 }
 
 .modal-body-input button:disabled {
-  background-color: #ccc;
+  background-color: #9ca3af;
   cursor: not-allowed;
 }
 
-/* Table Styles */
-table {
+.course-modal-submit-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+}
+
+/* Table Styles — scoped to avoid global bleed */
+.course-catalog-main-container table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
 }
 
-th {
-  background-color: #f8f9fa;
+.course-catalog-main-container th {
+  background-color: #f5f7fa;
   padding: 12px;
   text-align: left;
   font-weight: 600;
-  color: #333;
+  color: #374151;
   border-bottom: 2px solid #e1e1e1;
 }
 
-td {
+.course-catalog-main-container td {
   padding: 12px;
   border-bottom: 1px solid #e1e1e1;
-  color: #666;
+  color: #374151;
 }
 
-tr:hover {
-  background-color: #f8f9fa;
+.course-catalog-main-container tr:hover {
+  background-color: #f5f7fa;
 }
 
 /* Responsive Design */

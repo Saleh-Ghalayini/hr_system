@@ -20,7 +20,7 @@ const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="table-animate-rows">
               {data.length === 0 ? (
                 <tr>
                   <td

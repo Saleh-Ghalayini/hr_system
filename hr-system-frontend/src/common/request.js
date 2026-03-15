@@ -9,13 +9,14 @@ export const authHeaders = () => ({
     headers: { Authorization: `Bearer ${getToken()}` },
 });
 
-export const request = async ({ method, path, data, headers }) => {
+export const request = async ({ method, path, data, params, headers }) => {
     const token = getToken();
     try {
         const response = await axios({
             method,
             url: baseApi + path,
             data,
+            params,
             headers: {
                 ...headers,
                 Authorization: `Bearer ${token}`,

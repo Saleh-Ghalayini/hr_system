@@ -10,34 +10,30 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-  RadialLinearScale,
 } from "chart.js";
-import {
-  Grid,
-  Typography,
-  Container,
-} from "@mui/material";
 import "./style.css";
-import useUsers from "../../hooks/useUsers";
-import useLeaves from "./hooks/useLeaves";
-import useCourses from "./hooks/useCourses";
+import useUsers       from "../../hooks/useUsers";
+import useLeaves      from "./hooks/useLeaves";
+import useCourses     from "./hooks/useCourses";
 import useEnrollments from "./hooks/useEnrollments";
-import SummaryCards from "./components/SummaryCards";
-import Chart from "./components/Charts/Chart";
+import useAttendance  from "./hooks/useAttendance";
+import usePayroll     from "./hooks/usePayroll";
+import SummaryCards   from "./components/SummaryCards";
+import AttendanceWidget from "./components/AttendanceWidget";
+import Chart          from "./components/Charts/Chart";
+import Loading        from "../../assets/loader/loading";
 import {
   preparePositionData,
   prepareLeaveData,
   prepareCourseData,
   prepareEnrollmentData,
+  prepareAttendanceTrendData,
   getChartOptions,
   getDoughnutOptions,
-  getStackedBarOptions,
-  getLineChartOptions,
-  getRadarChartOptions,
+  getHBarOptions,
+  getTrendLineOptions,
 } from "./utils/chartData";
-import Loading from "../../assets/loader/loading";
 
-// Register ChartJS components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -47,77 +43,123 @@ ChartJS.register(
   Legend,
   ArcElement,
   PointElement,
-  LineElement,
-  RadialLinearScale
+  LineElement
 );
 
 const Dashboard = () => {
-  const [users, usersLoading, usersError] = useUsers();
-  const [leaves, leavesLoading, leavesError] = useLeaves();
-  const [courses, coursesLoading, coursesError] = useCourses();
-  const [enrollments, enrollmentsLoading, enrollmentsError] = useEnrollments();
+  const [users,       usersLoading]       = useUsers();
+  const [leaves,      leavesLoading]      = useLeaves();
+  const [courses,     coursesLoading]     = useCourses();
+  const [enrollments, enrollmentsLoading] = useEnrollments();
+  const [attendanceToday, attendanceTrend, attendanceLoading] = useAttendance();
+  const [payroll,     payrollLoading]     = usePayroll();
 
   const isLoading =
-    usersLoading || leavesLoading || coursesLoading || enrollmentsLoading;
-  const hasError =
-    usersError || leavesError || coursesError || enrollmentsError;
+    usersLoading || leavesLoading || coursesLoading ||
+    enrollmentsLoading || attendanceLoading || payrollLoading;
 
-  const chartOptions = getChartOptions();
+  const base = getChartOptions();
 
-  if (isLoading) {
-    return <Loading />;
-  }
-
-  if (hasError) {
-    return (
-      <div className="dashboard-error">
-        <p>Error loading dashboard data. Please refresh the page.</p>
-      </div>
-    );
-  }
+  if (isLoading) return <Loading />;
 
   return (
-    <Container maxWidth="lg" className="dashboard-container">
-      <Typography variant="h4" component="h1" gutterBottom>
-        HR Dashboard Overview
-      </Typography>
+    <div className="dash-page">
+      {/* Header */}
+      <div className="dash-header">
+        <h1 className="dash-title">HR Dashboard</h1>
+        <p className="dash-subtitle">
+          {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+        </p>
+      </div>
+
+      {/* KPI Cards */}
       <SummaryCards
         users={users}
         leaves={leaves}
         courses={courses}
         enrollments={enrollments}
+        attendanceToday={attendanceToday}
+        payroll={payroll}
       />
 
-      <Grid container spacing={4}>
-        <Chart
-          title="Employee Position Distribution"
-          data={preparePositionData(users)}
-          options={getDoughnutOptions(chartOptions)}
-          type="doughnut"
-        />
+      {/* Row 1: Attendance widget + Leave doughnut */}
+      <div className="dash-row dash-row--60-40">
+        <div className="dash-widget">
+          <AttendanceWidget
+            attendanceToday={attendanceToday}
+            totalEmployees={users?.length ?? 0}
+          />
+        </div>
+        <div className="dash-chart-card">
+          <h3 className="dash-chart-title">Leave Requests</h3>
+          <div className="dash-chart-wrap">
+            <Chart
+              title=""
+              data={prepareLeaveData(leaves)}
+              options={getDoughnutOptions(base)}
+              type="doughnut"
+              bare
+            />
+          </div>
+        </div>
+      </div>
 
-        <Chart
-          title="Leave Request Status"
-          data={prepareLeaveData(leaves)}
-          options={getStackedBarOptions(chartOptions)}
-          type="bar"
-        />
+      {/* Row 2: Position doughnut + Enrollment bars */}
+      <div className="dash-row dash-row--50-50">
+        <div className="dash-chart-card">
+          <h3 className="dash-chart-title">Position Distribution</h3>
+          <div className="dash-chart-wrap">
+            <Chart
+              title=""
+              data={preparePositionData(users)}
+              options={getDoughnutOptions(base)}
+              type="doughnut"
+              bare
+            />
+          </div>
+        </div>
+        <div className="dash-chart-card">
+          <h3 className="dash-chart-title">Enrollment Status</h3>
+          <div className="dash-chart-wrap">
+            <Chart
+              title=""
+              data={prepareEnrollmentData(enrollments)}
+              options={getHBarOptions(base)}
+              type="bar"
+              bare
+            />
+          </div>
+        </div>
+      </div>
 
-        <Chart
-          title="Course Duration Overview"
-          data={prepareCourseData(courses)}
-          options={getLineChartOptions(chartOptions)}
-          type="line"
-        />
+      {/* Row 3: Attendance trend (full width) */}
+      <div className="dash-chart-card dash-chart-card--full">
+        <h3 className="dash-chart-title">Weekly Attendance Trend</h3>
+        <div className="dash-chart-wrap dash-chart-wrap--tall">
+          <Chart
+            title=""
+            data={prepareAttendanceTrendData(attendanceTrend)}
+            options={getTrendLineOptions(base)}
+            type="line"
+            bare
+          />
+        </div>
+      </div>
 
-        <Chart
-          title="Enrollment Status Distribution"
-          data={prepareEnrollmentData(enrollments)}
-          options={getRadarChartOptions(chartOptions)}
-          type="radar"
-        />
-      </Grid>
-    </Container>
+      {/* Row 4: Course durations (full width) */}
+      <div className="dash-chart-card dash-chart-card--full">
+        <h3 className="dash-chart-title">Course Durations</h3>
+        <div className="dash-chart-wrap">
+          <Chart
+            title=""
+            data={prepareCourseData(courses)}
+            options={getHBarOptions(base, "Hours")}
+            type="bar"
+            bare
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 

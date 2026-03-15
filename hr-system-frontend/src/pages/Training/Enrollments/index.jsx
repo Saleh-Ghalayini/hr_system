@@ -32,7 +32,9 @@ const Enrollments = () => {
       try {
         const response = await request({ method: "GET", path: "admin/courses" });
         setCourses(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
-      } catch { /* silently fail */ }
+      } catch {
+        toast.error("Failed to load courses.");
+      }
     };
     fetchCourses();
   }, []);
@@ -42,7 +44,9 @@ const Enrollments = () => {
       try {
         const response = await request({ method: "GET", path: "admin/users" });
         setUsers(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
-      } catch { /* silently fail */ }
+      } catch {
+        toast.error("Failed to load users.");
+      }
     };
     fetchUsers();
   }, []);
@@ -65,8 +69,9 @@ const Enrollments = () => {
       const data = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
       setEnrollments(data);
       setFilteredData(transformEnrollmentData(data));
-    } catch { /* silently fail */ }
-    finally { setLoading(false); }
+    } catch {
+      toast.error("Failed to load enrollments.");
+    } finally { setLoading(false); }
   }, []);
 
   useEffect(() => { fetchEnrollments(); }, [fetchEnrollments]);

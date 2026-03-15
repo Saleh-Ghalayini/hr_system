@@ -1,40 +1,85 @@
 import React from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
-import '../../style.css';
+import './style.css';
 
-const SummaryCards = ({ users, leaves, courses, enrollments }) => {
-  const activeEnrollmentsCount = Array.isArray(enrollments) 
-    ? enrollments.filter(e => e?.status === 'active' || e?.status === 'enrolled').length 
+const KpiCard = ({ icon, label, value, sub, accent }) => (
+  <div className="kpi-card" style={{ '--accent': accent }}>
+    <div className="kpi-icon">{icon}</div>
+    <div className="kpi-body">
+      <div className="kpi-value">{value}</div>
+      <div className="kpi-label">{label}</div>
+      {sub && <div className="kpi-sub">{sub}</div>}
+    </div>
+  </div>
+);
+
+const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, payroll }) => {
+  const totalEmployees = users?.length ?? 0;
+
+  const pendingLeaves = (leaves ?? []).filter(l => l?.status === 'pending').length;
+  const approvedLeaves = (leaves ?? []).filter(l => l?.status === 'approved').length;
+
+  const totalCourses = (courses ?? []).length;
+  const completedEnrollments = (enrollments ?? []).filter(e => e?.status === 'completed').length;
+  const totalEnrollments = (enrollments ?? []).length;
+  const completionRate = totalEnrollments > 0
+    ? Math.round((completedEnrollments / totalEnrollments) * 100)
     : 0;
 
+  // Today's attendance
+  const presentToday = (attendanceToday ?? []).length;
+  const lateToday = (attendanceToday ?? []).filter(a => a?.time_in_status === 'Late').length;
+  const attendanceRate = totalEmployees > 0
+    ? Math.round((presentToday / totalEmployees) * 100)
+    : 0;
+
+  // Current month payroll total
+  const thisMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  const monthPayroll = (payroll ?? [])
+    .filter(p => p?.month?.startsWith(thisMonth))
+    .reduce((sum, p) => sum + Number(p?.total ?? 0), 0);
+  const payrollDisplay = monthPayroll > 0
+    ? `$${monthPayroll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
+    : '—';
+
   return (
-    <Grid container>
-      <Grid item xs={12} sm={6} md={3}>
-        <Paper className="dashboard-card">
-          <Typography variant="h6">Total Employees</Typography>
-          <Typography variant="h3">{users?.length || 0}</Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <Paper className="dashboard-card">
-          <Typography variant="h6">Active Leaves</Typography>
-          <Typography variant="h3">{leaves?.filter(leave => leave?.status === 'approved').length || 0}</Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <Paper className="dashboard-card">
-          <Typography variant="h6">Total Courses</Typography>
-          <Typography variant="h3">{Array.isArray(courses) ? courses.length : 0}</Typography>
-        </Paper>
-      </Grid>
-      <Grid item xs={12} sm={6} md={3}>
-        <Paper className="dashboard-card">
-          <Typography variant="h6">Active Enrollments</Typography>
-          <Typography variant="h3">{activeEnrollmentsCount}</Typography>
-        </Paper>
-      </Grid>
-    </Grid>
+    <div className="kpi-row">
+      <KpiCard
+        icon="👥"
+        label="Total Employees"
+        value={totalEmployees}
+        sub={`${users?.filter(u => u?.role === 'employee').length ?? 0} employees · ${users?.filter(u => u?.role === 'manager').length ?? 0} managers`}
+        accent="#142f5a"
+      />
+      <KpiCard
+        icon="✅"
+        label="Present Today"
+        value={presentToday}
+        sub={`${attendanceRate}% attendance rate · ${lateToday} late`}
+        accent="#069855"
+      />
+      <KpiCard
+        icon="🕐"
+        label="Pending Leaves"
+        value={pendingLeaves}
+        sub={`${approvedLeaves} approved this period`}
+        accent="#d39c1d"
+      />
+      <KpiCard
+        icon="🎓"
+        label="Course Completion"
+        value={`${completionRate}%`}
+        sub={`${completedEnrollments} of ${totalEnrollments} enrollments · ${totalCourses} courses`}
+        accent="#7c3aed"
+      />
+      <KpiCard
+        icon="💰"
+        label="Monthly Payroll"
+        value={payrollDisplay}
+        sub={`${(payroll ?? []).filter(p => p?.month?.startsWith(thisMonth)).length} records this month`}
+        accent="#0891b2"
+      />
+    </div>
   );
 };
 
-export default SummaryCards; 
+export default SummaryCards;

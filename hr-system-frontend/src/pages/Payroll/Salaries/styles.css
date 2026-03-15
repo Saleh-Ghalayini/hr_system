@@ -1,0 +1,48 @@
+.salaries-filter-bar {
+  background: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  flex-wrap: wrap;
+}
+
+.salaries-search-input {
+  height: 36px;
+  flex: 1;
+  min-width: 180px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.salaries-search-input:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+
+.salaries-month-input {
+  height: 36px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  padding: 0 10px;
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  background: #fff;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.salaries-month-input:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
