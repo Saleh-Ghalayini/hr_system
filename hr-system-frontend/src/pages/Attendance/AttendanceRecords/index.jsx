@@ -70,6 +70,17 @@ const AttendanceRecords = () => {
         { key: 'hours worked', label: "Hours Worked" },
     ];
 
+    const fmtHours = (h) => {
+        const num = parseFloat(h);
+        if (isNaN(num) || num < 0) return "—";
+        const hrs  = Math.floor(num);
+        const mins = Math.round((num - hrs) * 60);
+        if (hrs === 0 && mins === 0) return "0h";
+        if (mins === 0) return `${hrs}h`;
+        if (hrs === 0) return `${mins}m`;
+        return `${hrs}h ${mins}m`;
+    };
+
     const transformRecords = (records) => {
         const todayStr = new Date().toISOString().split("T")[0];
         const yest = new Date();
@@ -88,7 +99,7 @@ const AttendanceRecords = () => {
                 "check-out time": item.check_out || "—",
                 "location status": item.loc_in_status || "—",
                 status: item.time_in_status || "—",
-                "hours worked": item.working_hours || "0 hrs",
+                "hours worked": fmtHours(item.working_hours),
             };
         });
     };
