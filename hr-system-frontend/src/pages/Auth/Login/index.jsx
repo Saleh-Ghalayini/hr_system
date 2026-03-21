@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuthContext } from "../../../context/AuthContext";
+import { request } from "../../../common/request";
 import "./style.css";
 
 const Login = () => {
@@ -12,12 +13,27 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showForgot, setShowForgot] = useState(false);
 
+  // Forgot password state
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+
   React.useEffect(() => {
     if (!showForgot) return;
-    const handleEsc = (e) => { if (e.key === "Escape") setShowForgot(false); };
+    const handleEsc = (e) => {
+      if (e.key === "Escape") closeForgot();
+    };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
   }, [showForgot]);
+
+  const closeForgot = () => {
+    setShowForgot(false);
+    setForgotEmail("");
+    setForgotError("");
+    setForgotSuccess(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,8 +60,44 @@ const Login = () => {
     const result = await login(email, password, rememberMe);
     if (result && !result.success) {
       setError(result.message || "Login failed. Please try again.");
+      setLoading(false);
     }
-    setLoading(false);
+    // on success, navigate("/dashboard") unmounts the component — no setLoading needed
+  };
+
+  const handleForgotSubmit = async (e) => {
+    e.preventDefault();
+    setForgotError("");
+
+    if (!forgotEmail.trim()) {
+      setForgotError("Email is required.");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(forgotEmail)) {
+      setForgotError("Please enter a valid email address.");
+      return;
+    }
+
+    setForgotLoading(true);
+    try {
+      const data = await request({
+        method: "POST",
+        path: "guest/forgot-password",
+        data: { email: forgotEmail },
+      });
+      if (data.success) {
+        setForgotSuccess(true);
+      } else {
+        setForgotError(data.message || "Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      const msg = err.response?.data?.errors?.email?.[0]
+        || err.response?.data?.message
+        || "No account found with that email address.";
+      setForgotError(msg);
+    } finally {
+      setForgotLoading(false);
+    }
   };
 
   return (
@@ -150,17 +202,49 @@ const Login = () => {
 
       {/* Forgot password modal */}
       {showForgot && (
-        <div className="modal-overlay" onClick={() => setShowForgot(false)}>
+        <div className="modal-overlay" onClick={closeForgot}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <h3>Reset Password</h3>
-            <p>
-              To reset your password, please contact your HR administrator or
-              system admin. They will send you a temporary password to your
-              registered email address.
-            </p>
-            <button className="modal-close-btn" onClick={() => setShowForgot(false)}>
-              Got it
-            </button>
+            {forgotSuccess ? (
+              <>
+                <div className="forgot-success-icon">✓</div>
+                <h3>Password Sent!</h3>
+                <p>
+                  A new password has been sent to <strong>{forgotEmail}</strong>.
+                  Please check your inbox and log in with your new password.
+                </p>
+                <button className="modal-close-btn" onClick={closeForgot}>
+                  Back to Login
+                </button>
+              </>
+            ) : (
+              <>
+                <h3>Reset Password</h3>
+                <p>Enter your email address and we'll send you a new password.</p>
+                <form onSubmit={handleForgotSubmit} className="forgot-form">
+                  <div className="login-field">
+                    <label>Email address</label>
+                    <input
+                      type="email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                    />
+                  </div>
+                  {forgotError && <p className="login-error">{forgotError}</p>}
+                  <button
+                    type="submit"
+                    className="modal-close-btn"
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? <span className="btn-spinner" /> : "Send New Password"}
+                  </button>
+                </form>
+                <button className="forgot-cancel-btn" onClick={closeForgot}>
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

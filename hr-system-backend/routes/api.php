@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProjectController;
@@ -19,7 +20,7 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\User\UserController as AdminUserController;
 
-Route::get('/health', fn () => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
+Route::get('/health', fn() => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
 
 Route::prefix('v1')->group(function () {
 
@@ -29,6 +30,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('guest')->group(function () {
         Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1');
         Route::post('/register', [AuthController::class, 'addUser']);
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:3,1');
 
         // Candidates can view open positions and apply without an account
         Route::get('/job-openings', [JobOpeningController::class, 'publicIndex']);
@@ -98,6 +100,9 @@ Route::prefix('v1')->group(function () {
         // ADMIN ONLY
         // ─────────────────────────────────────────────────────────────
         Route::middleware('AdminMiddleware')->prefix('admin')->group(function () {
+
+            // Dashboard summary (single endpoint for all dashboard data)
+            Route::get('/dashboard/summary', [DashboardController::class, 'summary']);
 
             // Users
             Route::get('/users', [AuthController::class, 'getAllUsers']);

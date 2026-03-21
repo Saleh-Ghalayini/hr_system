@@ -2,7 +2,6 @@ import React from "react";
 import "./style.css";
 import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuthContext } from "../../context/AuthContext";
 
 const icons = [
   { id: "Dashboard",   path: "/dashboard",   icon: "famicons:home",                  label: "Dashboard"   },
@@ -12,22 +11,13 @@ const icons = [
   { id: "Performance", path: "/performance", icon: "mdi:speedometer",                label: "Performance" },
   { id: "Payroll",     path: "/payroll",     icon: "bx:money-withdraw",              label: "Payroll"     },
   { id: "Reports",     path: "/reports",     icon: "carbon:report",                  label: "Reports"     },
-  { id: "Logout",                            icon: "mage:logout",                    label: "Logout"      },
 ];
 
 const CustomIcon = ({ activeIconId, collapsed }) => {
   const location = useLocation();
-  const { logout } = useAuthContext();
 
   const isActive = (path) =>
     location.pathname.startsWith(path) || activeIconId === path;
-
-  const renderContent = (iconData) => (
-    <>
-      <Icon icon={iconData.icon} width="22" height="22" color="white" className="nav-icon" />
-      {!collapsed && <span className="nav-label">{iconData.label}</span>}
-    </>
-  );
 
   return (
     <div className="nav-items">
@@ -37,18 +27,13 @@ const CustomIcon = ({ activeIconId, collapsed }) => {
           className="nav-item-wrapper"
           title={collapsed ? iconData.label : ""}
         >
-          {iconData.path ? (
-            <Link
-              to={iconData.path}
-              className={`nav-item ${isActive(iconData.path) ? "active" : ""}`}
-            >
-              {renderContent(iconData)}
-            </Link>
-          ) : (
-            <div className="nav-item logout-item" onClick={logout}>
-              {renderContent(iconData)}
-            </div>
-          )}
+          <Link
+            to={iconData.path}
+            className={`nav-item ${isActive(iconData.path) ? "active" : ""}`}
+          >
+            <Icon icon={iconData.icon} width="22" height="22" color="white" className="nav-icon" />
+            {!collapsed && <span className="nav-label">{iconData.label}</span>}
+          </Link>
         </div>
       ))}
     </div>

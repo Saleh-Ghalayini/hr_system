@@ -6,7 +6,9 @@ use App\Models\User;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Requests\Auth\ForgotPasswordRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -90,5 +92,61 @@ class AuthController extends Controller
         Auth::logout();
 
         return $this->success(null, 'Logout successful.');
+    }
+
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        $user = User::where('email', $request->email)->first();
+
+        $newPassword = $this->generatePassword();
+        $user->update(['password' => bcrypt($newPassword)]);
+
+        Mail::raw(
+            "Hello {$user->first_name},\n\n"
+            . "Your HR System password has been reset.\n\n"
+            . "Your new temporary password is:\n\n"
+            . "    {$newPassword}\n\n"
+            . "Please log in and change your password as soon as possible.\n\n"
+            . "Best regards,\n"
+            . "HR System",
+            function ($message) use ($user) {
+                $message->to($user->email, "{$user->first_name} {$user->last_name}")
+                        ->subject('Your New HR System Password');
+            }
+        );
+
+        return $this->success(null, 'A new password has been sent to your email address.');
+    }
+
+    private function generatePassword(int $length = 12): string
+    {
+        $upper   = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $lower   = 'abcdefghjkmnpqrstuvwxyz';
+        $digits  = '23456789';
+        $special = '!@#$%&*';
+
+        // Guarantee at least one character from each group
+        $chars = [
+            $upper[$this->rand($upper)],
+            $upper[$this->rand($upper)],
+            $lower[$this->rand($lower)],
+            $lower[$this->rand($lower)],
+            $digits[$this->rand($digits)],
+            $digits[$this->rand($digits)],
+            $special[$this->rand($special)],
+        ];
+
+        $all = $upper . $lower . $digits . $special;
+        for ($i = count($chars); $i < $length; $i++) {
+            $chars[] = $all[random_int(0, strlen($all) - 1)];
+        }
+
+        shuffle($chars);
+        return implode('', $chars);
+    }
+
+    private function rand(string $pool): int
+    {
+        return random_int(0, strlen($pool) - 1);
     }
 }

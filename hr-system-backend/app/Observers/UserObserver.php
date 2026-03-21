@@ -24,7 +24,7 @@ class UserObserver
                     'base_salary_id' => $baseSalary?->id,
                     'insurance_id'   => $user->insurance_id,
                     'extra_leaves'   => 0,
-                    'month'          => now()->format('M'),
+                    'month'          => now()->format('F Y'),
                     'total'          => $baseSalary?->salary ?? 0,
                 ]);
 

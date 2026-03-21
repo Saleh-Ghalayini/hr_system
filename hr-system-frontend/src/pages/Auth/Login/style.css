@@ -346,8 +346,53 @@
     transition: background 0.2s;
 }
 
-.modal-close-btn:hover {
+.modal-close-btn:hover:not(:disabled) {
     background: #1e4a8a;
+}
+
+.modal-close-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.forgot-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.forgot-cancel-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Lato', sans-serif;
+    padding: 8px 0 0;
+    text-align: center;
+}
+
+.forgot-cancel-btn:hover {
+    color: #142f5a;
+}
+
+.forgot-success-icon {
+    width: 48px;
+    height: 48px;
+    background: #28eea7;
+    color: #0d2347;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 auto 16px;
 }
 
 /* ── Responsive ── */

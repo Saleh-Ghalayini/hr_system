@@ -32,10 +32,10 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
     ? Math.round((presentToday / totalEmployees) * 100)
     : 0;
 
-  // Current month payroll total
-  const thisMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+  // Current month payroll total — month stored as "March 2026" (F Y format)
+  const thisMonthLabel = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
   const monthPayroll = (payroll ?? [])
-    .filter(p => p?.month?.startsWith(thisMonth))
+    .filter(p => p?.month === thisMonthLabel)
     .reduce((sum, p) => sum + Number(p?.total ?? 0), 0);
   const payrollDisplay = monthPayroll > 0
     ? `$${monthPayroll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
@@ -47,7 +47,7 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
         icon="👥"
         label="Total Employees"
         value={totalEmployees}
-        sub={`${users?.filter(u => u?.role === 'employee').length ?? 0} employees · ${users?.filter(u => u?.role === 'manager').length ?? 0} managers`}
+        sub={`${users?.filter(u => u?.role === 'user').length ?? 0} employees · ${users?.filter(u => u?.role === 'manager').length ?? 0} managers`}
         accent="#142f5a"
       />
       <KpiCard
@@ -75,7 +75,7 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
         icon="💰"
         label="Monthly Payroll"
         value={payrollDisplay}
-        sub={`${(payroll ?? []).filter(p => p?.month?.startsWith(thisMonth)).length} records this month`}
+        sub={`${(payroll ?? []).filter(p => p?.month === thisMonthLabel).length} records this month`}
         accent="#0891b2"
       />
     </div>

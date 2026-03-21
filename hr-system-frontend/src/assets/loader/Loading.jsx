@@ -1,16 +1,9 @@
-import { Box, CircularProgress, Typography } from '@mui/material'
-import React from 'react'
+import React from 'react';
 
-const Loading = () => {
-  return (
-    <Box className="loading">
-        <CircularProgress size={40} />
-        <Typography variant="body1" style={{ marginTop: 16, marginLeft: 16 }}>
-          Loading ...
-        </Typography>
+const Loading = () => (
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1, height: '100%', minHeight: '200px' }}>
+    <div className="loading-spinner" />
+  </div>
+);
 
-      </Box>
-  )
-}
-
-export default Loading
+export default Loading;

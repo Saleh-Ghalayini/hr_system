@@ -25,10 +25,14 @@ export const request = async ({ method, path, data, params, headers }) => {
         return response.data;
     } catch (error) {
         if (error.response?.status === 401) {
-            localStorage.removeItem('token');
-            sessionStorage.removeItem('token');
-            window.location.href = '/login';
-            return;
+            const url = error.config?.url || '';
+            if (!url.includes('guest/login')) {
+                localStorage.removeItem('token');
+                sessionStorage.removeItem('token');
+                window.location.href = '/login';
+                return;
+            }
+            throw error;
         }
         throw error;
     }

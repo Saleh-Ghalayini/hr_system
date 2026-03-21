@@ -12,6 +12,7 @@ use App\Models\TeamPerformance;
 use App\Models\EmployeePerformance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class PerformanceController extends Controller
 {
@@ -28,23 +29,26 @@ class PerformanceController extends Controller
 
     public function getLastTeamRate()
     {
-        $user = Auth::user();
+        $userId = Auth::id();
 
-        $latestRates = TeamPerformance::where('user_id', $user->id)
-            ->with('type:id,name')
+        // Subquery: latest row ID per type for this user
+        $latestIds = TeamPerformance::selectRaw('MAX(id) as id')
+            ->where('user_id', $userId)
+            ->groupBy('type_id');
+
+        $latestRates = TeamPerformance::with('type:id,name')
+            ->whereIn('id', $latestIds)
             ->orderBy('type_id')
-            ->orderByDesc('created_at')
-            ->get()
-            ->unique('type_id')
-            ->sortBy('type_id')
-            ->values();
+            ->get();
 
         return $this->success($latestRates);
     }
 
     public function getTypes()
     {
-        return $this->success(PerformanceType::all());
+        return $this->success(
+            Cache::remember('performance_types', 3600, fn () => PerformanceType::all())
+        );
     }
 
     public function rateEmployee(RateEmployeeRequest $request)
@@ -58,14 +62,15 @@ class PerformanceController extends Controller
     {
         $userId = Auth::id();
 
-        $latestRatings = EmployeePerformance::where('user_id', $userId)
-            ->with('type:id,name')
+        // Subquery: latest row ID per type for this user
+        $latestIds = EmployeePerformance::selectRaw('MAX(id) as id')
+            ->where('user_id', $userId)
+            ->groupBy('type_id');
+
+        $latestRatings = EmployeePerformance::with('type:id,name')
+            ->whereIn('id', $latestIds)
             ->orderBy('type_id')
-            ->orderByDesc('created_at')
-            ->get()
-            ->unique('type_id')
-            ->sortBy('type_id')
-            ->values();
+            ->get();
 
         return $this->success([
             'ratings' => $latestRatings,

@@ -47,14 +47,3 @@
     user-select: none;
 }
 
-.logout-item {
-    margin-top: 8px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 12px;
-    color: rgba(255, 120, 120, 0.85);
-}
-
-.logout-item:hover {
-    background: rgba(255, 80, 80, 0.15);
-    color: #ff8080;
-}

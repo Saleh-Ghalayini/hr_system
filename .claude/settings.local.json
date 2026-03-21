@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(php artisan route:list --path=api)"
+      "Bash(php artisan route:list --path=api)",
+      "Bash(php artisan:*)",
+      "Bash(php artisan tinker --execute=\":*)",
+      "Bash(grep -v \"^\\\\s*$\")"
     ]
   }
 }

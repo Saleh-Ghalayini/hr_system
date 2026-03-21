@@ -12,16 +12,10 @@ import {
   LineElement,
 } from "chart.js";
 import "./style.css";
-import useUsers       from "../../hooks/useUsers";
-import useLeaves      from "./hooks/useLeaves";
-import useCourses     from "./hooks/useCourses";
-import useEnrollments from "./hooks/useEnrollments";
-import useAttendance  from "./hooks/useAttendance";
-import usePayroll     from "./hooks/usePayroll";
-import SummaryCards   from "./components/SummaryCards";
-import AttendanceWidget from "./components/AttendanceWidget";
-import Chart          from "./components/Charts/Chart";
-import Loading        from "../../assets/loader/loading";
+import useDashboardSummary from "./hooks/useDashboardSummary";
+import SummaryCards        from "./components/SummaryCards";
+import AttendanceWidget    from "./components/AttendanceWidget";
+import Chart               from "./components/Charts/Chart";
 import {
   preparePositionData,
   prepareLeaveData,
@@ -46,21 +40,24 @@ ChartJS.register(
   LineElement
 );
 
-const Dashboard = () => {
-  const [users,       usersLoading]       = useUsers();
-  const [leaves,      leavesLoading]      = useLeaves();
-  const [courses,     coursesLoading]     = useCourses();
-  const [enrollments, enrollmentsLoading] = useEnrollments();
-  const [attendanceToday, attendanceTrend, attendanceLoading] = useAttendance();
-  const [payroll,     payrollLoading]     = usePayroll();
+const SectionSpinner = () => (
+  <div className="dash-section-spinner">
+    <div className="loading-spinner" />
+  </div>
+);
 
-  const isLoading =
-    usersLoading || leavesLoading || coursesLoading ||
-    enrollmentsLoading || attendanceLoading || payrollLoading;
+const Dashboard = () => {
+  const [summary, loading] = useDashboardSummary();
 
   const base = getChartOptions();
 
-  if (isLoading) return <Loading />;
+  const users          = summary?.users          ?? [];
+  const leaves         = summary?.leaves         ?? [];
+  const courses        = summary?.courses        ?? [];
+  const enrollments    = summary?.enrollments    ?? [];
+  const attendanceToday = summary?.attendance_today ?? [];
+  const attendanceTrend = summary?.attendance_trend ?? [];
+  const payroll        = summary?.payroll        ?? [];
 
   return (
     <div className="dash-page">
@@ -73,33 +70,33 @@ const Dashboard = () => {
       </div>
 
       {/* KPI Cards */}
-      <SummaryCards
-        users={users}
-        leaves={leaves}
-        courses={courses}
-        enrollments={enrollments}
-        attendanceToday={attendanceToday}
-        payroll={payroll}
-      />
+      {loading ? (
+        <div className="kpi-skeleton-row">
+          {[...Array(5)].map((_, i) => <div key={i} className="kpi-skeleton" />)}
+        </div>
+      ) : (
+        <SummaryCards
+          users={users}
+          leaves={leaves}
+          courses={courses}
+          enrollments={enrollments}
+          attendanceToday={attendanceToday}
+          payroll={payroll}
+        />
+      )}
 
       {/* Row 1: Attendance widget + Leave doughnut */}
       <div className="dash-row dash-row--60-40">
         <div className="dash-widget">
-          <AttendanceWidget
-            attendanceToday={attendanceToday}
-            totalEmployees={users?.length ?? 0}
-          />
+          {loading
+            ? <div className="dash-chart-card"><SectionSpinner /></div>
+            : <AttendanceWidget attendanceToday={attendanceToday} totalEmployees={users.length} />
+          }
         </div>
         <div className="dash-chart-card">
           <h3 className="dash-chart-title">Leave Requests</h3>
           <div className="dash-chart-wrap">
-            <Chart
-              title=""
-              data={prepareLeaveData(leaves)}
-              options={getDoughnutOptions(base)}
-              type="doughnut"
-              bare
-            />
+            {loading ? <SectionSpinner /> : <Chart data={prepareLeaveData(leaves)} options={getDoughnutOptions(base)} type="doughnut" bare />}
           </div>
         </div>
       </div>
@@ -109,25 +106,13 @@ const Dashboard = () => {
         <div className="dash-chart-card">
           <h3 className="dash-chart-title">Position Distribution</h3>
           <div className="dash-chart-wrap">
-            <Chart
-              title=""
-              data={preparePositionData(users)}
-              options={getDoughnutOptions(base)}
-              type="doughnut"
-              bare
-            />
+            {loading ? <SectionSpinner /> : <Chart data={preparePositionData(users)} options={getDoughnutOptions(base)} type="doughnut" bare />}
           </div>
         </div>
         <div className="dash-chart-card">
           <h3 className="dash-chart-title">Enrollment Status</h3>
           <div className="dash-chart-wrap">
-            <Chart
-              title=""
-              data={prepareEnrollmentData(enrollments)}
-              options={getHBarOptions(base)}
-              type="bar"
-              bare
-            />
+            {loading ? <SectionSpinner /> : <Chart data={prepareEnrollmentData(enrollments)} options={getHBarOptions(base)} type="bar" bare />}
           </div>
         </div>
       </div>
@@ -136,13 +121,7 @@ const Dashboard = () => {
       <div className="dash-chart-card dash-chart-card--full">
         <h3 className="dash-chart-title">Weekly Attendance Trend</h3>
         <div className="dash-chart-wrap dash-chart-wrap--tall">
-          <Chart
-            title=""
-            data={prepareAttendanceTrendData(attendanceTrend)}
-            options={getTrendLineOptions(base)}
-            type="line"
-            bare
-          />
+          {loading ? <SectionSpinner /> : <Chart data={prepareAttendanceTrendData(attendanceTrend)} options={getTrendLineOptions(base)} type="line" bare />}
         </div>
       </div>
 
@@ -150,13 +129,7 @@ const Dashboard = () => {
       <div className="dash-chart-card dash-chart-card--full">
         <h3 className="dash-chart-title">Course Durations</h3>
         <div className="dash-chart-wrap">
-          <Chart
-            title=""
-            data={prepareCourseData(courses)}
-            options={getHBarOptions(base, "Hours")}
-            type="bar"
-            bare
-          />
+          {loading ? <SectionSpinner /> : <Chart data={prepareCourseData(courses)} options={getHBarOptions(base, "Hours")} type="bar" bare />}
         </div>
       </div>
     </div>

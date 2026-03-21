@@ -20,10 +20,6 @@ return new class extends Migration
             $table->index(['user_id', 'status']);
         });
 
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->index(['user_id', 'course_id']);
-        });
-
         Schema::table('employees_performance', function (Blueprint $table) {
             $table->index(['user_id', 'type_id']);
         });
@@ -50,10 +46,6 @@ return new class extends Migration
 
         Schema::table('leave_requests', function (Blueprint $table) {
             $table->dropIndex(['user_id', 'status']);
-        });
-
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->dropIndex(['user_id', 'course_id']);
         });
 
         Schema::table('employees_performance', function (Blueprint $table) {
