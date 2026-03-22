@@ -1,16 +1,23 @@
-.input-label {
-    gap: 3px;
+.select-wrapper {
     padding: 6px;
 }
 
-.input-label label,
-select {
+.select-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.select-label {
+    font-family: 'Lato', sans-serif;
+    font-size: 1rem;
+    color: #374151;
     align-self: flex-start;
 }
 
-.input-label select {
+.select-input {
     height: 40px;
-    max-width: 330px;
+    width: 100%;
     border: 1px solid #cbd5e0;
     background-color: #f5f7fa;
     font-size: 0.85rem;
@@ -21,17 +28,22 @@ select {
     border-radius: 6px;
     cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s;
-    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
 }
 
-.input-label select:focus {
+.select-input:focus {
     outline: none;
     border-color: #142f5a;
     box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
     background-color: #ffffff;
 }
 
-.input-label select:disabled {
+.select-input:disabled {
     background-color: #e9ecef;
     color: #9ca3af;
     cursor: not-allowed;

@@ -1,13 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import Input from "../../../components/Input";
+import Select from "../../../components/Select";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 
+const GENDER_OPTIONS = [
+  { value: "", label: "— Select gender —" },
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "other", label: "Other" },
+];
+
 const BasicInfo = () => {
   const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
-  const [base64Image, setBase64Image] = useState("");
   const [previewUrl, setPreviewUrl] = useState("/logo.png");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -21,38 +28,46 @@ const BasicInfo = () => {
 
   const set = (key) => (e) => setBasicInfo((p) => ({ ...p, [key]: e.target.value }));
 
-  const handleImageChange = (event) => {
+  const handleImageSelect = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    // Validate size (2 MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image exceeds the 2 MB size limit.");
+      return;
+    }
+
+    // Show preview immediately
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl((prev) => { if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev); return objectUrl; });
+
+    // Convert to base64 and upload automatically
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = () => setBase64Image(reader.result);
-  };
-
-  const uploadImg = async () => {
-    if (!base64Image) { toast.info("Please select a photo first."); return; }
-    setUploading(true);
-    try {
-      const response = await request({ method: "POST", path: "profile/photo", data: { image: base64Image } });
-      if (response.success) {
-        const photoUrl = response.data?.photo_url;
-        toast.success("Photo updated successfully!");
-        setBase64Image("");
-        if (photoUrl) {
-          setPreviewUrl(photoUrl);
-          // Notify other components (e.g. NavBar) that the photo was updated
-          window.dispatchEvent(new CustomEvent("photo-updated", { detail: photoUrl }));
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      setUploading(true);
+      try {
+        const response = await request({ method: "POST", path: "profile/photo", data: { image: base64Image } });
+        if (response.success) {
+          const photoUrl = response.data?.photo_url;
+          toast.success("Photo updated!");
+          if (photoUrl) {
+            setPreviewUrl(photoUrl);
+            window.dispatchEvent(new CustomEvent("photo-updated", { detail: photoUrl }));
+          }
+        } else {
+          toast.error("Failed to upload photo.");
         }
-      } else {
+      } catch {
         toast.error("Failed to upload photo.");
+      } finally {
+        setUploading(false);
+        // Reset file input so the same file can be re-selected
+        if (fileRef.current) fileRef.current.value = "";
       }
-    } catch {
-      toast.error("Failed to upload photo.");
-    } finally {
-      setUploading(false);
-    }
+    };
   };
 
   const getBasicInfo = async () => {
@@ -86,7 +101,7 @@ const BasicInfo = () => {
           gender: basicInfo.gender, address: basicInfo.Address,
         },
       });
-      if (response.success) toast.success("Profile saved successfully!");
+      if (response.success) toast.success("Profile saved!");
       else toast.error("Failed to save changes.");
     } catch {
       toast.error("Failed to save changes.");
@@ -113,20 +128,14 @@ const BasicInfo = () => {
                 type="file"
                 accept="image/*"
                 style={{ display: "none" }}
-                onChange={handleImageChange}
+                onChange={handleImageSelect}
               />
               <Button
-                text="Choose Photo"
+                text={uploading ? "Uploading..." : "Change Photo"}
                 className=""
                 onClick={() => fileRef.current?.click()}
+                disabled={uploading}
               />
-              {base64Image && (
-                <Button
-                  text={uploading ? "Uploading…" : "Upload Photo"}
-                  className=""
-                  onClick={uploadImg}
-                />
-              )}
               <p className="photo-hint">JPG, PNG or GIF — max 2 MB</p>
             </div>
           </div>
@@ -146,15 +155,19 @@ const BasicInfo = () => {
               value={basicInfo.contactNumber} onChange={set("contactNumber")} />
             <Input type="date" label="Date of Birth"
               value={basicInfo.dob} onChange={set("dob")} />
-            <Input type="text" label="Gender" placeholder="Gender"
-              value={basicInfo.gender} onChange={set("gender")} />
+            <Select
+              label="Gender"
+              value={basicInfo.gender}
+              onChange={set("gender")}
+              options={GENDER_OPTIONS}
+            />
             <Input type="text" label="Email" placeholder="you@example.com"
               value={basicInfo.email} onChange={set("email")} />
             <Input type="text" label="Address" placeholder="Address"
               value={basicInfo.Address} onChange={set("Address")} />
           </div>
           <div className="form-actions">
-            <Button text={saving ? "Saving…" : "Save Changes"} onClick={updateBasicInfo} />
+            <Button text={saving ? "Saving..." : "Save Changes"} onClick={updateBasicInfo} />
           </div>
         </div>
 

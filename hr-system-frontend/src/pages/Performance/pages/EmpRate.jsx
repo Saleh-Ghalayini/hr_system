@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 const EmpRate = () => {
     const [rateValue, setValue] = useState({
         teamwork: 5,
-        comunication: 5,
+        communication: 5,
         problemhandling: 5,
         collaboration: 5,
         creativity: 5,
@@ -27,7 +27,7 @@ const EmpRate = () => {
                 const data = response.data;
                 setValue({
                     teamwork: data[0].rate,
-                    comunication: data[1].rate,
+                    communication: data[1].rate,
                     problemhandling: data[2].rate,
                     collaboration: data[3].rate,
                     creativity: data[4].rate,
@@ -48,7 +48,7 @@ const EmpRate = () => {
                     type_ids: [1, 2, 3, 4, 5, 6],
                     rate: [
                         rateValue.teamwork,
-                        rateValue.comunication,
+                        rateValue.communication,
                         rateValue.problemhandling,
                         rateValue.collaboration,
                         rateValue.creativity,
@@ -91,10 +91,10 @@ const EmpRate = () => {
                         <Input
                             label={"Communication"}
                             type={"number"}
-                            value={rateValue.comunication}
+                            value={rateValue.communication}
                             onChange={(e) => {
                                 const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
-                                setValue({ ...rateValue, comunication: val });
+                                setValue({ ...rateValue, communication: val });
                             }}
                             placeholder={"Rate 1~10"}
                         />
@@ -155,7 +155,7 @@ const EmpRate = () => {
                         label={"Rates"}
                         numircalData={[
                             rateValue.teamwork,
-                            rateValue.comunication,
+                            rateValue.communication,
                             rateValue.problemhandling,
                             rateValue.collaboration,
                             rateValue.creativity,

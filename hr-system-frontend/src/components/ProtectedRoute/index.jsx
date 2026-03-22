@@ -6,7 +6,7 @@ const ProtectedRoute = () => {
   const { token, loading } = useAuthContext();
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return <div className="loading-spinner" />;
   }
 
   return token ? <Outlet /> : <Navigate to="/login" replace />;

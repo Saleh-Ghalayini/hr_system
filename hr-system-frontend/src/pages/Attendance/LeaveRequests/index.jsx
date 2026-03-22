@@ -278,11 +278,11 @@ const LeaveRequests = () => {
                       <div className="info-grid">
                         <div className="info-item">
                           <label>Status</label>
-                          <span>{selectedRequest.status.toUpperCase()}</span>
+                          <span style={{textTransform:'capitalize'}}>{selectedRequest.status}</span>
                         </div>
                         <div className="info-item">
                           <label>Leave Type</label>
-                          <span>{selectedRequest.leave_type}</span>
+                          <span style={{textTransform:'capitalize'}}>{selectedRequest.leave_type}</span>
                         </div>
                         <div className="info-item">
                           <label>Start Date</label>

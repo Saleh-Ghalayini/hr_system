@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import { request } from "../../../common/request";
@@ -17,8 +17,20 @@ const NewHire = () => {
     address: "",
     position: "",
     gender: "",
-    insurance_id: 1,
+    insurance_id: "",
   });
+  const [insurances, setInsurances] = useState([]);
+
+  useEffect(() => {
+    const fetchInsurances = async () => {
+      try {
+        const response = await request({ method: "GET", path: "admin/insurances" });
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+        setInsurances(list);
+      } catch { /* fallback: user picks manually */ }
+    };
+    fetchInsurances();
+  }, []);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -52,6 +64,7 @@ const NewHire = () => {
     if (!formData.address.trim()) newErrors.address = "Address is required";
     if (!formData.position.trim()) newErrors.position = "Position is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
+    if (!formData.insurance_id) newErrors.insurance_id = "Insurance plan is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -245,6 +258,25 @@ const NewHire = () => {
                 <option value="other">Other</option>
               </select>
               {errors.gender && <span className="error-message">{errors.gender}</span>}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="insurance_id">Insurance Plan</label>
+              <select
+                id="insurance_id"
+                name="insurance_id"
+                value={formData.insurance_id}
+                onChange={handleChange}
+                className={errors.insurance_id ? "error" : ""}
+              >
+                <option value="">Select Insurance</option>
+                {insurances.map((ins) => (
+                  <option key={ins.id} value={ins.id}>
+                    {ins.type} — ${ins.cost}/mo
+                  </option>
+                ))}
+              </select>
+              {errors.insurance_id && <span className="error-message">{errors.insurance_id}</span>}
             </div>
           </div>
 

@@ -16,7 +16,7 @@
 }
 
 .sidebar-expanded {
-    width: 220px;
+    width: 160px;
 }
 
 .sidebar-body {
@@ -47,4 +47,14 @@
 
 .sidebar-toggle:hover {
     background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Responsive: auto-collapse on small screens ── */
+@media (max-width: 768px) {
+    .sidebar-expanded {
+        width: 64px;
+    }
+    .sidebar-expanded .nav-label {
+        display: none;
+    }
 }

@@ -1,65 +1,72 @@
 .course-catalog-container {
   padding: 20px;
-  background-color: #f5f7fa;
-  min-height: 100vh;
+  min-height: 0;
 }
 
 .course-catalog-main-container {
   background-color: white;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   padding: 20px;
-  margin-top: 20px;
 }
 
 .search-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  gap: 15px;
+  margin-bottom: 16px;
+  gap: 12px;
 }
 
 .search-container input {
   flex: 1;
-  padding: 10px 15px;
-  border: 1px solid #e1e1e1;
-  border-radius: 5px;
-  font-size: 14px;
+  height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: 'Lato', sans-serif;
   outline: none;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #f9fafb;
 }
 
 .search-container input:focus {
   border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+  background: white;
 }
 
 .course-btn {
+  height: 40px;
+  padding: 0 20px;
   background-color: #142f5a;
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .course-btn:hover {
   background-color: #1e4a8a;
 }
 
-/* Modal Styles */
+/* Modal */
 .course-modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 10000;
   animation: fadeIn 0.15s ease;
 }
 
@@ -68,9 +75,9 @@
   to   { opacity: 1; }
 }
 
-.modal-content {
+.course-modal .modal-content {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 14px;
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
@@ -84,145 +91,135 @@
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-.modal-header {
-  padding: 20px;
-  border-bottom: 1px solid #e1e1e1;
+.course-modal .modal-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #e9ecef;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.modal-header h2 {
+.course-modal .modal-header h2 {
   margin: 0;
   color: #142f5a;
-  font-size: 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-close {
   cursor: pointer;
-  font-size: 1.5rem;
-  color: #6b7280;
-  transition: color 0.3s ease;
+  font-size: 1.3rem;
+  color: #9ca3af;
+  transition: color 0.2s;
+  padding: 4px;
+  line-height: 1;
 }
 
 .modal-close:hover {
-  color: #142f5a;
+  color: #374151;
 }
 
 .modal-body {
-  padding: 20px;
+  padding: 20px 24px 24px;
 }
 
 .modal-body-input {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 14px;
 }
 
 .modal-body-input span {
-  font-weight: 500;
+  font-weight: 600;
   color: #374151;
+  font-size: 0.82rem;
+  font-family: 'Poppins', sans-serif;
 }
 
 .modal-body-input input,
 .modal-body-input textarea {
-  padding: 10px;
-  border: 1px solid #e1e1e1;
-  border-radius: 5px;
-  font-size: 14px;
+  padding: 10px 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: 'Lato', sans-serif;
   outline: none;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #f9fafb;
+  color: #111827;
 }
 
 .modal-body-input textarea {
-  min-height: 100px;
+  min-height: 80px;
   resize: vertical;
 }
 
 .modal-body-input input:focus,
 .modal-body-input textarea:focus {
   border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+  background: white;
 }
 
 .modal-body-input button {
+  height: 42px;
   background-color: #142f5a;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: 'Poppins', sans-serif;
+  transition: background-color 0.2s;
+  margin-top: 4px;
 }
 
-.modal-body-input button:hover {
+.modal-body-input button:hover:not(:disabled) {
   background-color: #1e4a8a;
 }
 
 .modal-body-input button:disabled {
-  background-color: #9ca3af;
+  background-color: #7a96be;
   cursor: not-allowed;
 }
 
 .course-modal-submit-btn {
   width: 100%;
-  padding: 10px;
-  border: none;
 }
 
-/* Table Styles — scoped to avoid global bleed */
-.course-catalog-main-container table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
+.error-message {
+  background-color: #fef2f2;
+  color: #dc2626;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-family: 'Lato', sans-serif;
+  border: 1px solid #fca5a5;
 }
 
-.course-catalog-main-container th {
-  background-color: #f5f7fa;
-  padding: 12px;
-  text-align: left;
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 2px solid #e1e1e1;
-}
-
-.course-catalog-main-container td {
-  padding: 12px;
-  border-bottom: 1px solid #e1e1e1;
-  color: #374151;
-}
-
-.course-catalog-main-container tr:hover {
-  background-color: #f5f7fa;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
   .search-container {
     flex-direction: column;
   }
-
   .search-container input {
     width: 100%;
   }
-
   .course-btn {
     width: 100%;
-    text-align: center;
+    justify-content: center;
   }
-
-  .modal-content {
+  .course-modal .modal-content {
     width: 95%;
-    margin: 10px;
   }
 }
 
-.error-message {
-  background-color: #ffebee;
-  color: #c62828;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 15px;
-  font-size: 14px;
-  border: 1px solid #ffcdd2;
+@media (max-width: 480px) {
+  .course-catalog-container {
+    padding: 12px;
+  }
+  .course-catalog-main-container {
+    padding: 12px;
+  }
 }

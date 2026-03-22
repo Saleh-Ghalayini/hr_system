@@ -9,7 +9,7 @@ const AdminRate = () => {
   const [users, setUsers] = useState([]);
   const [rateValue, setValue] = useState({
     teamwork: 5,
-    comunication: 5,
+    communication: 5,
     problemhandling: 5,
     collaboration: 5,
     creativity: 5,
@@ -27,7 +27,7 @@ const AdminRate = () => {
           type_ids: [1, 2, 3, 4, 5, 6],
           rate: [
             rateValue.teamwork,
-            rateValue.comunication,
+            rateValue.communication,
             rateValue.problemhandling,
             rateValue.collaboration,
             rateValue.creativity,
@@ -73,7 +73,7 @@ const AdminRate = () => {
                 const next = userid === user.id ? null : user.id;
                 setUserId(next);
                 if (next !== null) {
-                  setValue({ teamwork: 5, comunication: 5, problemhandling: 5, collaboration: 5, creativity: 5, reliability: 5 });
+                  setValue({ teamwork: 5, communication: 5, problemhandling: 5, collaboration: 5, creativity: 5, reliability: 5 });
                   setComment("");
                 }
               }}
@@ -105,10 +105,10 @@ const AdminRate = () => {
               <Input
                 label={"Communication"}
                 type={"number"}
-                value={rateValue.comunication}
+                value={rateValue.communication}
                 onChange={(e) => {
                   const val = Math.min(10, Math.max(1, Number(e.target.value) || 1));
-                  setValue({ ...rateValue, comunication: val });
+                  setValue({ ...rateValue, communication: val });
                 }}
                 placeholder={"Rate 1~10"}
               />

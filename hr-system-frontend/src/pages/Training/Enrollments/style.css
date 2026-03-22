@@ -65,7 +65,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 9999;
+    z-index: 10000;
     animation: fadeIn 0.15s ease;
 }
 
@@ -189,4 +189,31 @@
 .enroll-submit-btn:disabled {
     background: #7a96be;
     cursor: not-allowed;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: column;
+    }
+    .search-container input {
+        width: 100%;
+    }
+    .enroll-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    .enroll-modal-content {
+        width: 95%;
+        max-width: unset;
+    }
+    .enroll-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .enrollments-container {
+        padding: 12px;
+    }
 }

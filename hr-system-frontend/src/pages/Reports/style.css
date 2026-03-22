@@ -359,3 +359,50 @@
   background: #f0fdf4;
   color: #069855;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .report-page {
+    padding: 16px;
+  }
+  .report-filters {
+    flex-direction: column;
+  }
+  .report-search {
+    min-width: unset;
+    width: 100%;
+  }
+  .report-select {
+    width: 100%;
+  }
+  .month-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 14px 16px;
+  }
+  .month-card-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .month-card-body {
+    padding: 0 12px 16px;
+    overflow-x: auto;
+  }
+  .settings-cards {
+    flex-direction: column;
+  }
+  .settings-card {
+    max-width: unset;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-page {
+    padding: 12px;
+  }
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+}

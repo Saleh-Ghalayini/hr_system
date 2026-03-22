@@ -5,6 +5,15 @@ import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 const PAGE_SIZE = 10;
 
+const formatDate = (dateStr) => {
+  if (!dateStr) return "--";
+  try {
+    return new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "2-digit", month: "short", year: "numeric",
+    });
+  } catch { return dateStr; }
+};
+
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -54,11 +63,11 @@ const Enrollments = () => {
   const transformEnrollmentData = (data) =>
     data.map((enrollment) => ({
       id: enrollment.id,
-      date: enrollment.start_date,
-      AssignedTo: `${enrollment.user?.first_name ?? ""} ${enrollment.user?.last_name ?? ""}`.trim() || "—",
-      CourseName: enrollment.course?.course_name || "—",
-      DueDate: enrollment.end_date,
-      status: enrollment.status,
+      date: formatDate(enrollment.start_date),
+      AssignedTo: `${enrollment.user?.first_name ?? ""} ${enrollment.user?.last_name ?? ""}`.trim() || "--",
+      CourseName: enrollment.course?.course_name || "--",
+      DueDate: formatDate(enrollment.end_date),
+      status: enrollment.status ? enrollment.status.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase()) : "--",
       certificate: enrollment.status === "completed" ? "Yes" : "No",
     }));
 

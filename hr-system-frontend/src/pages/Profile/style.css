@@ -179,16 +179,13 @@
     width: 100%;
 }
 
-.select {
-    height: 40px;
-    max-width: 330px;
-    border: 1px solid #cbd5e0;
-    background-color: #f5f7fa;
-    font-size: 0.85rem;
-    font-weight: 500;
-    padding: 5px 10px;
-    color: #2d3748;
-    border-radius: 6px;
+/* Select in input-grid should fill its cell */
+.input-grid .select-wrapper {
+    width: 100%;
+}
+
+.input-grid .select-input {
+    max-width: 100%;
 }
 
 .photo-container {

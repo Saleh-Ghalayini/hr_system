@@ -1,11 +1,39 @@
 import React, { useEffect, useState } from "react";
 import Input from "../../../components/Input";
+import Select from "../../../components/Select";
 import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
-const LEVEL_OPTIONS = ["junior", "mid-senior", "senior"];
+const LEVEL_OPTIONS = [
+  { value: "", label: "-- Select level --" },
+  { value: "junior", label: "Junior" },
+  { value: "mid-senior", label: "Mid-Senior" },
+  { value: "senior", label: "Senior" },
+];
+
+const TYPE_OPTIONS = [
+  { value: "", label: "-- Select type --" },
+  { value: "Full-time", label: "Full-time" },
+  { value: "Part-time", label: "Part-time" },
+  { value: "Contract", label: "Contract" },
+  { value: "Intern", label: "Intern" },
+];
+
+const STATUS_OPTIONS = [
+  { value: "", label: "-- Select status --" },
+  { value: "Active", label: "Active" },
+  { value: "On Leave", label: "On Leave" },
+  { value: "Terminated", label: "Terminated" },
+];
+
+const LOCATION_OPTIONS = [
+  { value: "", label: "-- Select location --" },
+  { value: "On-site", label: "On-site" },
+  { value: "Remote", label: "Remote" },
+  { value: "Hybrid", label: "Hybrid" },
+];
 
 const JobInfo = () => {
   const [jobDetails, setJobDetails] = useState({
@@ -22,7 +50,7 @@ const JobInfo = () => {
       const response = await request({
         method: "PUT", path: "profile/job-details", data: { ...jobDetails },
       });
-      if (response.success) toast.success("Job details saved successfully!");
+      if (response.success) toast.success("Job details saved!");
       else toast.error("Failed to save changes.");
     } catch {
       toast.error("Failed to save changes.");
@@ -51,41 +79,25 @@ const JobInfo = () => {
 
   return (
     <div className="profilebody">
-      <ToastContainer />
       <div className="containerP">
         <div className="profile-card">
           <p className="profile-card-title">Job Information</p>
           <div className="input-grid">
             <Input type="text" label="Job Title" placeholder="e.g. Software Developer"
               value={jobDetails.title} onChange={set("title")} />
-            <Input type="text" label="Work Location" placeholder="e.g. On-site"
-              value={jobDetails.work_location} onChange={set("work_location")} />
-            <Input type="text" label="Employment Type" placeholder="e.g. Full-time"
-              value={jobDetails.employment_type} onChange={set("employment_type")} />
-
-            {/* Employee Level — native select styled to match Input */}
-            <div className="input-label flex flex-dir-col align-center">
-              <label className="small-text label">Employee Level</label>
-              <select
-                value={jobDetails.employee_level}
-                onChange={set("employee_level")}
-              >
-                <option value="">— Select level —</option>
-                {LEVEL_OPTIONS.map((v) => (
-                  <option key={v} value={v}>
-                    {v.charAt(0).toUpperCase() + v.slice(1)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+            <Select label="Work Location" value={jobDetails.work_location}
+              onChange={set("work_location")} options={LOCATION_OPTIONS} />
+            <Select label="Employment Type" value={jobDetails.employment_type}
+              onChange={set("employment_type")} options={TYPE_OPTIONS} />
+            <Select label="Employee Level" value={jobDetails.employee_level}
+              onChange={set("employee_level")} options={LEVEL_OPTIONS} />
             <Input type="date" label="Date of Hiring"
               value={jobDetails.hiring_date} onChange={set("hiring_date")} />
-            <Input type="text" label="Employment Status" placeholder="e.g. Active"
-              value={jobDetails.employment_status} onChange={set("employment_status")} />
+            <Select label="Employment Status" value={jobDetails.employment_status}
+              onChange={set("employment_status")} options={STATUS_OPTIONS} />
           </div>
           <div className="form-actions">
-            <Button text={saving ? "Saving…" : "Save Changes"} onClick={updateJobDetails} />
+            <Button text={saving ? "Saving..." : "Save Changes"} onClick={updateJobDetails} />
           </div>
         </div>
       </div>

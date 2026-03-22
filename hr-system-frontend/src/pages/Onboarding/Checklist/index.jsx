@@ -17,11 +17,25 @@ const CHECKLIST_ITEMS = [
 ];
 
 const CATEGORIES = ["Day 1", "Week 1", "Month 1"];
+const STORAGE_KEY = "hr_onboarding_checklist";
+
+const loadChecked = () => {
+    try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+};
 
 const Checklist = () => {
-    const [checked, setChecked] = useState({});
+    const [checked, setChecked] = useState(loadChecked);
 
-    const toggle = (id) => setChecked(p => ({ ...p, [id]: !p[id] }));
+    const toggle = (id) => {
+        setChecked(prev => {
+            const next = { ...prev, [id]: !prev[id] };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+            return next;
+        });
+    };
 
     const total = CHECKLIST_ITEMS.length;
     const done = Object.values(checked).filter(Boolean).length;

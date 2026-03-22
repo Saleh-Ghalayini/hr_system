@@ -1,35 +1,74 @@
-ul {
-  list-style: none;
-}
-
-li.activate {
-  border-bottom-style: solid;
-  border-color: #28eea7;
-}
-
-a {
-  padding: 0 1em;
-  text-decoration: none;
-}
-a:hover {
-  color: #142f5a;
-  text-decoration: none !important;
-}
-
 .subnavbar {
   width: 100%;
-
   background-color: #ffffff;
-
-  height: 35px;
-  justify-content: start;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   position: sticky;
-  top: 80px;
-  z-index: 9999999;
+  top: 64px;
+  z-index: 900;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 0 8px;
 }
 
-li {
-  text-overflow: ellipsis;
-  overflow: hidden;
+.subnavbar ul {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.subnavbar li {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.subnavbar li.activate {
+  border-bottom-color: #142f5a;
+}
+
+.subnavbar li a {
+  padding: 0 16px;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #6b7280;
+  transition: color 0.15s;
   white-space: nowrap;
+  line-height: 42px;
+}
+
+.subnavbar li a:hover {
+  color: #142f5a;
+  text-decoration: none;
+}
+
+.subnavbar li.activate a {
+  color: #142f5a;
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .subnavbar {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .subnavbar::-webkit-scrollbar {
+    display: none;
+  }
+  .subnavbar li a {
+    padding: 0 10px;
+    font-size: 0.75rem;
+  }
 }

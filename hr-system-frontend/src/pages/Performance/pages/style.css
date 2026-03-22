@@ -189,3 +189,31 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
     min-height: 320px;
 }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .performnce-container {
+        padding: 12px;
+    }
+    .chart, .rate-comment, .piechart, .average-chart {
+        width: 100%;
+        min-width: unset;
+        min-height: 280px;
+    }
+    .inputs-container {
+        width: 100%;
+        min-width: unset;
+    }
+    .user {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfobody {
+        padding: 12px;
+    }
+    .chart, .rate-comment, .piechart, .average-chart {
+        min-height: 220px;
+    }
+}

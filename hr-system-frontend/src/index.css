@@ -181,8 +181,19 @@ body {
   border-top-color: #142f5a;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
-  margin: 40px auto;
+  margin: 80px auto;
   display: block;
+  /* Ensure centering in any container */
+  flex-shrink: 0;
+  align-self: center;
+  justify-self: center;
+}
+
+/* When spinner is the only child in a flex/grid parent */
+.main-content > .loading-spinner,
+.page-wrapper > .loading-spinner,
+.profilebody > .loading-spinner {
+  margin-top: calc(30vh - 20px);
 }
 
 @keyframes spin {

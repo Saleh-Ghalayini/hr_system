@@ -5,13 +5,12 @@
 }
 
 .input-label label,
-input {
+.input-label input {
     align-self: flex-start;
 }
 
 .input-label input {
     height: 40px;
-    max-width: 330px;
     border: 1px solid #cbd5e0;
     background-color: #f5f7fa;
     font-size: 0.85rem;

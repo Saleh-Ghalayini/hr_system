@@ -57,4 +57,16 @@
     justify-content: center;
     align-items: center;
   }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .tableHeader {
+      padding: 10px 10px;
+      font-size: 0.72rem;
+    }
+    .tableCell {
+      padding: 10px 10px;
+      font-size: 0.8rem;
+    }
+  }
   
