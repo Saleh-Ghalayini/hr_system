@@ -9,6 +9,8 @@ class JobDetailSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('job_details')->count() > 0) { return; }
+
         $now = now();
 
         // user_id => [title, employment_type, employment_status, employee_level, work_location, hiring_date]

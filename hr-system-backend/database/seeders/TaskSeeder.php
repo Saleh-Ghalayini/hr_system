@@ -9,6 +9,8 @@ class TaskSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('tasks')->count() > 0) { return; }
+
         $now = now();
 
         /*

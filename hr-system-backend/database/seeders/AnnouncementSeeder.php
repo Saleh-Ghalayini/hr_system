@@ -9,8 +9,12 @@ class AnnouncementSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('announcements')->count() > 0) {
+            return;
+        }
+
         $now = now();
-        $adminId = 1;
+        $adminId = DB::table('users')->where('role', 'admin')->value('id') ?? 1;
 
         DB::table('announcements')->insert([
             [

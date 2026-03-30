@@ -9,6 +9,8 @@ class RecruitmentSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('job_openings')->count() > 0) { return; }
+
         $now = now();
 
         // ── Job Openings ──────────────────────────────────────────────

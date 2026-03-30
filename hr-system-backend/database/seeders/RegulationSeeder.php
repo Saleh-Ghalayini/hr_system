@@ -9,6 +9,8 @@ class RegulationSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('regulations')->count() > 0) { return; }
+
         $now = now();
 
         // ── Regulation 1: Lebanese Labor Law ─────────────────────────

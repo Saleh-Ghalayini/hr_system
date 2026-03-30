@@ -9,6 +9,8 @@ class PerformanceSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('teams_performance')->count() > 0) { return; }
+
         $now = now();
 
         /*

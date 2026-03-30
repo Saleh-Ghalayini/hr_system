@@ -1,4 +1,4 @@
-.holidays-container { padding: 24px; max-width: 800px; margin: 0 auto; }
+.holidays-container { padding: 24px; }
 
 .holidays-header {
   display: flex;
@@ -95,7 +95,7 @@
 
 .holiday-form { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
 .hol-form-group { display: flex; flex-direction: column; gap: 6px; }
-.hol-form-group label { font-size: 13px; font-weight: 600; color: #374151; font-family: 'Poppins', sans-serif; }
+.hol-form-group label { font-size: 13px; font-weight: 600; color: #374151; font-family: 'Lato', sans-serif; }
 .hol-form-group input, .hol-form-group select {
   padding: 9px 12px;
   border: 1px solid #cbd5e0;

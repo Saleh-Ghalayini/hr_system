@@ -9,6 +9,8 @@ class CourseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('courses')->count() > 0) { return; }
+
         $now = now();
 
         DB::table('courses')->insert([

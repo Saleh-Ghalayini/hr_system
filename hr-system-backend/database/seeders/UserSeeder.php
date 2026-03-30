@@ -4,12 +4,24 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Skip if users already exist (idempotent re-run safety)
+        if (User::count() > 0) {
+            $this->command->info('UserSeeder: users already exist, skipping.');
+            return;
+        }
+
+        // Look up insurance IDs by type so this seeder works with any auto-increment state
+        $haf  = DB::table('insurances')->where('type', 'HAF')->value('id');
+        $gna  = DB::table('insurances')->where('type', 'GNA')->value('id');
+        $rlda = DB::table('insurances')->where('type', 'RLDA')->value('id');
+
         // ─── ID 1: Admin ─────────────────────────────────────────────
         $admin = User::create([
             'first_name'    => 'Admin',
@@ -22,7 +34,7 @@ class UserSeeder extends Seeder
             'address'       => 'Beirut, Hamra',
             'position'      => 'Executive',
             'gender'        => 'male',
-            'insurance_id'  => 3,   // RLDA $100
+            'insurance_id'  => $rlda,
             'role'          => 'admin',
         ]);
 
@@ -38,7 +50,7 @@ class UserSeeder extends Seeder
             'address'       => 'Tripoli, Downtown',
             'position'      => 'Senior',
             'gender'        => 'female',
-            'insurance_id'  => 2,   // GNA $70
+            'insurance_id'  => $gna,
             'role'          => 'manager',
             'manager_id'    => $admin->id,
         ]);
@@ -55,7 +67,7 @@ class UserSeeder extends Seeder
             'address'       => 'Tyre, Main St',
             'position'      => 'Junior',
             'gender'        => 'male',
-            'insurance_id'  => 2,   // GNA $70
+            'insurance_id'  => $gna,
             'role'          => 'user',
             'manager_id'    => $manager1->id,
         ]);
@@ -72,7 +84,7 @@ class UserSeeder extends Seeder
             'address'       => 'Beirut, Achrafieh',
             'position'      => 'Senior',
             'gender'        => 'female',
-            'insurance_id'  => 1,   // HAF $50
+            'insurance_id'  => $haf,
             'role'          => 'user',
             'manager_id'    => $manager1->id,
         ]);
@@ -89,7 +101,7 @@ class UserSeeder extends Seeder
             'address'       => 'Sidon, Riad El Solh',
             'position'      => 'Junior',
             'gender'        => 'male',
-            'insurance_id'  => 1,   // HAF $50
+            'insurance_id'  => $haf,
             'role'          => 'user',
             'manager_id'    => $manager1->id,
         ]);
@@ -106,7 +118,7 @@ class UserSeeder extends Seeder
             'address'       => 'Jounieh, Centre',
             'position'      => 'Junior',
             'gender'        => 'female',
-            'insurance_id'  => 2,   // GNA $70
+            'insurance_id'  => $gna,
             'role'          => 'user',
             'manager_id'    => $manager1->id,
         ]);
@@ -123,7 +135,7 @@ class UserSeeder extends Seeder
             'address'       => 'Baabda, Main Road',
             'position'      => 'Intern',
             'gender'        => 'male',
-            'insurance_id'  => 1,   // HAF $50
+            'insurance_id'  => $haf,
             'role'          => 'user',
             'manager_id'    => $manager1->id,
         ]);
@@ -140,7 +152,7 @@ class UserSeeder extends Seeder
             'address'       => 'Beirut, Verdun',
             'position'      => 'Senior',
             'gender'        => 'female',
-            'insurance_id'  => 2,   // GNA $70
+            'insurance_id'  => $gna,
             'role'          => 'manager',
             'manager_id'    => $admin->id,
         ]);
@@ -157,7 +169,7 @@ class UserSeeder extends Seeder
             'address'       => 'Nabatieh, Bazar',
             'position'      => 'Junior',
             'gender'        => 'male',
-            'insurance_id'  => 1,   // HAF $50
+            'insurance_id'  => $haf,
             'role'          => 'user',
             'manager_id'    => $manager2->id,
         ]);
@@ -174,7 +186,7 @@ class UserSeeder extends Seeder
             'address'       => 'Zahle, El Muallem',
             'position'      => 'Intern',
             'gender'        => 'female',
-            'insurance_id'  => 1,   // HAF $50
+            'insurance_id'  => $haf,
             'role'          => 'user',
             'manager_id'    => $manager2->id,
         ]);

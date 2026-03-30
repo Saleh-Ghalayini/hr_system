@@ -9,6 +9,8 @@ class LeaveBalanceSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('leave_balances')->count() === 0) { return; }
+
         $now = now();
 
         // Balances use leave type names as keys (annual=15 max, sick=15, casual=10, other=5)

@@ -9,6 +9,10 @@ class HolidaySeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('holidays')->count() > 0) {
+            return;
+        }
+
         $now = now();
 
         $holidays = [

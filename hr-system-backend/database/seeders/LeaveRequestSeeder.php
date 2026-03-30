@@ -9,6 +9,8 @@ class LeaveRequestSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('leave_requests')->count() > 0) { return; }
+
         $now = now();
 
         DB::table('leave_requests')->insert([

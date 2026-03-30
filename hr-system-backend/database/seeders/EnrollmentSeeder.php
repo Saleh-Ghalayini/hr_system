@@ -9,6 +9,8 @@ class EnrollmentSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('enrollments')->count() > 0) { return; }
+
         $now = now();
 
         /*

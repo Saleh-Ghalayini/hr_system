@@ -9,8 +9,9 @@ class TaxSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('taxes')->insert([
-            ['rate' => 11, 'label' => 'Standard Income Tax', 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        DB::table('taxes')->updateOrInsert(
+            ['label' => 'Standard Income Tax'],
+            ['rate' => 11, 'created_at' => now(), 'updated_at' => now()]
+        );
     }
 }

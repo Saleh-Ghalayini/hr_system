@@ -9,6 +9,8 @@ class ProjectSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('projects')->count() > 0) { return; }
+
         DB::table('projects')->insert([
             [
                 'name'        => 'HR System Migration',

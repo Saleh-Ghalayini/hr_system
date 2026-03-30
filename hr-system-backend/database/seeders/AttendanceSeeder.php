@@ -10,6 +10,8 @@ class AttendanceSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('attendances')->count() > 0) { return; }
+
         $now = now();
 
         // Employees to generate attendance for (all except admin)

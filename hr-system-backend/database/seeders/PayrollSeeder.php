@@ -9,6 +9,8 @@ class PayrollSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('payrolls')->count() > 0) { return; }
+
         $now = now();
 
         /*

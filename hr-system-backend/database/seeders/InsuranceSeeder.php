@@ -9,10 +9,17 @@ class InsuranceSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('insurances')->insert([
-            ['type' => 'HAF',  'cost' => 50,  'old_cost' => 50,  'created_at' => now(), 'updated_at' => now()],
-            ['type' => 'GNA',  'cost' => 70,  'old_cost' => 70,  'created_at' => now(), 'updated_at' => now()],
-            ['type' => 'RLDA', 'cost' => 100, 'old_cost' => 100, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $plans = [
+            ['type' => 'HAF',  'cost' => 50,  'old_cost' => 50],
+            ['type' => 'GNA',  'cost' => 70,  'old_cost' => 70],
+            ['type' => 'RLDA', 'cost' => 100, 'old_cost' => 100],
+        ];
+
+        foreach ($plans as $plan) {
+            DB::table('insurances')->updateOrInsert(
+                ['type' => $plan['type']],
+                array_merge($plan, ['created_at' => now(), 'updated_at' => now()])
+            );
+        }
     }
 }

@@ -9,11 +9,18 @@ class LeaveTypeSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('leave_types')->insert([
-            ['name' => 'annual',  'max_days' => 15, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'sick',    'max_days' => 15, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'casual',  'max_days' => 10, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'other',   'max_days' => 5,  'created_at' => now(), 'updated_at' => now()],
-        ]);
+        $types = [
+            ['name' => 'annual',  'max_days' => 15],
+            ['name' => 'sick',    'max_days' => 15],
+            ['name' => 'casual',  'max_days' => 10],
+            ['name' => 'other',   'max_days' => 5],
+        ];
+
+        foreach ($types as $type) {
+            DB::table('leave_types')->updateOrInsert(
+                ['name' => $type['name']],
+                array_merge($type, ['created_at' => now(), 'updated_at' => now()])
+            );
+        }
     }
 }
