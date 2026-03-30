@@ -39,5 +39,11 @@ class DatabaseSeeder extends Seeder
 
         // ── 7. Regulations + requirements ─────────────────────────────
         $this->call(RegulationSeeder::class);
+
+        // ── 8. New feature modules (B2) ────────────────────────────────
+        $this->call(AttendanceSettingSeeder::class);
+        $this->call(AnnouncementSeeder::class);
+        $this->call(HolidaySeeder::class);
+        $this->call(MessageSeeder::class);
     }
 }

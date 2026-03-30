@@ -6,7 +6,9 @@
       "Bash(php artisan tinker --execute=\":*)",
       "Bash(grep -v \"^\\\\s*$\")",
       "Bash(npm run:*)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(find /c/Users/Admin/Desktop/hr_system -type f -name *leave*)",
+      "Bash(find /c/Users/Admin/Desktop/hr_system/hr-system-frontend/src/pages -type f -name *.jsx -o -name *.js)"
     ]
   }
 }

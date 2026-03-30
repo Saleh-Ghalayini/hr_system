@@ -1,9 +1,12 @@
 import React from 'react';
+import { Icon } from '@iconify/react';
 import './style.css';
 
 const KpiCard = ({ icon, label, value, sub, accent }) => (
   <div className="kpi-card" style={{ '--accent': accent }}>
-    <div className="kpi-icon">{icon}</div>
+    <div className="kpi-icon">
+      <Icon icon={icon} width="26" height="26" color={accent} />
+    </div>
     <div className="kpi-body">
       <div className="kpi-value">{value}</div>
       <div className="kpi-label">{label}</div>
@@ -44,35 +47,35 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
   return (
     <div className="kpi-row">
       <KpiCard
-        icon="👥"
+        icon="mdi:account-group-outline"
         label="Total Employees"
         value={totalEmployees}
         sub={`${users?.filter(u => u?.role === 'user').length ?? 0} employees · ${users?.filter(u => u?.role === 'manager').length ?? 0} managers`}
         accent="#142f5a"
       />
       <KpiCard
-        icon="✅"
+        icon="mdi:check-circle-outline"
         label="Present Today"
         value={presentToday}
         sub={`${attendanceRate}% attendance rate · ${lateToday} late`}
         accent="#069855"
       />
       <KpiCard
-        icon="🕐"
+        icon="mdi:clock-outline"
         label="Pending Leaves"
         value={pendingLeaves}
         sub={`${approvedLeaves} approved this period`}
         accent="#d39c1d"
       />
       <KpiCard
-        icon="🎓"
+        icon="mdi:school-outline"
         label="Course Completion"
         value={`${completionRate}%`}
         sub={`${completedEnrollments} of ${totalEnrollments} enrollments · ${totalCourses} courses`}
         accent="#7c3aed"
       />
       <KpiCard
-        icon="💰"
+        icon="mdi:cash-multiple"
         label="Monthly Payroll"
         value={payrollDisplay}
         sub={`${(payroll ?? []).filter(p => p?.month === thisMonthLabel).length} records this month`}

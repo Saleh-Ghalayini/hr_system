@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Attendance;
-use Illuminate\Support\Facades\Log;
 
 class AttendanceService
 {
@@ -27,12 +26,6 @@ class AttendanceService
         ));
 
         $distance = $angle * 6371000;
-
-        Log::info('Attendance location check', [
-            'distance_m' => round($distance, 2),
-            'user_lat'   => $latitude,
-            'user_lon'   => $longitude,
-        ]);
 
         return $distance >= 100 ? 'Review needed' : 'Approved';
     }

@@ -117,11 +117,11 @@ const NavBar = () => {
                                 {/* Actions */}
                                 <div className="profile-dropdown-items">
                                     <button className="profile-dropdown-item" onClick={handleSettings}>
-                                        <Icon icon="ic:baseline-settings" width="17" height="17" />
+                                        <Icon icon="mdi:cog-outline" width="17" height="17" />
                                         <span>Settings</span>
                                     </button>
                                     <button className="profile-dropdown-item" onClick={handleNotifications}>
-                                        <Icon icon="bi:bell-fill" width="16" height="16" />
+                                        <Icon icon="mdi:bell-outline" width="16" height="16" />
                                         <span>Notifications</span>
                                     </button>
                                 </div>
@@ -130,7 +130,7 @@ const NavBar = () => {
 
                                 <div className="profile-dropdown-items">
                                     <button className="profile-dropdown-item profile-dropdown-logout" onClick={handleLogout}>
-                                        <Icon icon="mage:logout" width="17" height="17" />
+                                        <Icon icon="mdi:logout" width="17" height="17" />
                                         <span>Logout</span>
                                     </button>
                                 </div>
@@ -151,7 +151,7 @@ const NavBar = () => {
                             </button>
                         </div>
                         <div className="notif-modal-body">
-                            <Icon icon="bi:bell-slash" width="40" height="40" color="#d1d5db" />
+                            <Icon icon="mdi:bell-off-outline" width="40" height="40" color="#d1d5db" />
                             <p>No notifications yet</p>
                         </div>
                     </div>

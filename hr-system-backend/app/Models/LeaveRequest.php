@@ -18,11 +18,15 @@ class LeaveRequest extends Model
         'end_date',
         'status',
         'reason',
+        'document_path',
+        'is_half_day',
+        'half_day_period',
     ];
 
     protected $casts = [
-        'start_date' => 'date',
-        'end_date' => 'date',
+        'start_date'  => 'date',
+        'end_date'    => 'date',
+        'is_half_day' => 'boolean',
     ];
 
     public function user(): BelongsTo

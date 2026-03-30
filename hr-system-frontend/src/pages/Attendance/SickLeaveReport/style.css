@@ -1,0 +1,73 @@
+.sick-report-container { padding: 24px; }
+.sick-report-header { margin-bottom: 20px; }
+.sick-report-header h1 { font-size: 22px; color: #142f5a; margin: 0 0 4px; font-family: 'Poppins', sans-serif; font-weight: 700; }
+.sick-report-header p { font-size: 14px; color: #6b7280; margin: 0; font-family: 'Lato', sans-serif; }
+
+.sick-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.sick-stat-card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  border-top: 3px solid #e5e7eb;
+  border: 1px solid #e5e7eb;
+}
+.sick-stat-card.approved { border-top-color: #28eea7; }
+.sick-stat-card.pending { border-top-color: #d39c1d; }
+.sick-stat-card.doc { border-top-color: #0369a1; }
+.stat-val { display: block; font-size: 28px; font-weight: 800; color: #142f5a; }
+.stat-label { display: block; font-size: 13px; color: #6b7280; margin-top: 2px; }
+
+.sick-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.sick-filters input, .sick-filters select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.sick-filters input:focus, .sick-filters select:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+.secondary-btn {
+  padding: 8px 16px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  background: white;
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  cursor: pointer;
+  color: #374151;
+  transition: border-color 0.2s, background 0.15s;
+}
+.secondary-btn:hover { border-color: #142f5a; background: #f8fafc; }
+
+.doc-link { display: inline-flex; align-items: center; gap: 4px; color: #0369a1; font-size: 13px; text-decoration: none; }
+.doc-link:hover { text-decoration: underline; }
+.no-doc { font-size: 13px; color: #9ca3af; }
+
+@media (max-width: 768px) {
+  .sick-stats-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .sick-stats-row { grid-template-columns: 1fr 1fr; }
+}

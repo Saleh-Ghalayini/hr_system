@@ -18,6 +18,13 @@ class Payroll extends Model
         'insurance_id',
         'tax_id',
         'extra_leaves',
+        'overtime_hours',
+        'overtime_rate',
+        'bonus',
+        'allowances',
+        'deductions',
+        'notes',
+        'status',
         'month',
         'total',
     ];

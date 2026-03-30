@@ -4,13 +4,17 @@ import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
 
 const icons = [
-  { id: "Dashboard",   path: "/dashboard",   icon: "famicons:home",                  label: "Dashboard"   },
-  { id: "Attendance",  path: "/attendance",  icon: "lucide:calendar-check",          label: "Attendance"  },
-  { id: "Onboarding",  path: "/onboarding",  icon: "fluent-mdl2:onboarding",         label: "Onboarding"  },
-  { id: "Training",    path: "/training",    icon: "fluent:learning-app-16-filled",  label: "Training"    },
-  { id: "Performance", path: "/performance", icon: "mdi:speedometer",                label: "Performance" },
-  { id: "Payroll",     path: "/payroll",     icon: "bx:money-withdraw",              label: "Payroll"     },
-  { id: "Reports",     path: "/reports",     icon: "carbon:report",                  label: "Reports"     },
+  { id: "Dashboard",    path: "/dashboard",    icon: "mdi:home-outline",               label: "Dashboard"    },
+  { id: "Attendance",   path: "/attendance",   icon: "mdi:calendar-check-outline",     label: "Attendance"   },
+  { id: "Onboarding",   path: "/onboarding",   icon: "mdi:account-plus-outline",       label: "Onboarding"   },
+  { id: "Training",     path: "/training",     icon: "mdi:school-outline",             label: "Training"     },
+  { id: "Performance",  path: "/performance",  icon: "mdi:chart-line",                 label: "Performance"  },
+  { id: "Payroll",      path: "/payroll",      icon: "mdi:cash-multiple",              label: "Payroll"      },
+  { id: "Reports",      path: "/reports",      icon: "mdi:chart-bar",                  label: "Reports"      },
+  { id: "Messages",     path: "/messages",     icon: "mdi:email-outline",              label: "Messages"     },
+  { id: "Announcements",path: "/announcements",icon: "mdi:bullhorn-outline",           label: "Announce"     },
+  { id: "Holidays",     path: "/holidays",     icon: "mdi:calendar-star-outline",      label: "Holidays"     },
+  { id: "Directory",    path: "/directory",    icon: "mdi:account-group-outline",      label: "Directory"    },
 ];
 
 const CustomIcon = ({ activeIconId, collapsed }) => {

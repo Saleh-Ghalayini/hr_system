@@ -96,7 +96,7 @@ class PayrollTest extends TestCase
 
     public function test_payroll_total_matches_base_salary_for_position(): void
     {
-        $baseSalary = BaseSalary::where('position', 'Junior')->first();
+        $baseSalary = BaseSalary::firstOrCreate(['position' => 'Junior'], ['salary' => 1200]);
         $user       = $this->createUser(['position' => 'Junior']);
 
         $payroll = Payroll::where('user_id', $user->id)->first();

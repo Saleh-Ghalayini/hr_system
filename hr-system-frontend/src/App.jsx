@@ -20,7 +20,7 @@ const Onboarding = lazy(() => import("./pages/Onboarding"));
 const Reports = lazy(() => import("./pages/Reports"));
 const Profile = lazy(() => import("./pages/profile"));
 
-// Lazy loaded — leaf pages
+// Lazy loaded — leaf pages (existing)
 const Enrollments = lazy(() => import("./pages/Training/Enrollments"));
 const CourseCatalog = lazy(() => import("./pages/Training/CourseCatalog"));
 const JobInfo = lazy(() => import("./pages/Profile/pages/JobInfo"));
@@ -43,6 +43,16 @@ const PaymentHistory = lazy(() => import("./pages/Reports/PaymentHistory"));
 const TaxSettings = lazy(() => import("./pages/Reports/TaxSettings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// Lazy loaded — NEW pages
+const Messages = lazy(() => import("./pages/Messages"));
+const Announcements = lazy(() => import("./pages/Announcements"));
+const Holidays = lazy(() => import("./pages/Holidays"));
+const EmployeeDirectory = lazy(() => import("./pages/Directory"));
+const MyLeave = lazy(() => import("./pages/Attendance/MyLeave"));
+const SickLeaveReport = lazy(() => import("./pages/Attendance/SickLeaveReport"));
+const AttendanceSettings = lazy(() => import("./pages/Attendance/AttendanceSettings"));
+const PayrollDetails = lazy(() => import("./pages/Payroll/PayrollDetails"));
+
 function App() {
   return (
     <BrowserRouter>
@@ -62,6 +72,7 @@ function App() {
               <Route path="enrollments" element={<Enrollments />} />
               <Route path="catalog" element={<CourseCatalog />} />
             </Route>
+
             {/* Profile section */}
             <Route path="profile/*" element={<Profile />}>
               <Route index element={<Navigate to="basicinfo" replace />} />
@@ -69,50 +80,58 @@ function App() {
               <Route path="jobdetails" element={<JobInfo />} />
               <Route path="salary" element={<Salary />} />
             </Route>
+
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>
               <Route index element={<Navigate to="salaries" replace />} />
               <Route path="salaries" element={<Salaries />} />
+              <Route path="payroll-details" element={<PayrollDetails />} />
               <Route path="insandtax" element={<InsuranceAndTax />} />
             </Route>
+
+            {/* Onboarding */}
             <Route path="onboarding/*" element={<Onboarding />}>
               <Route index element={<Navigate to="new-hires" replace />} />
               <Route path="new-hires" element={<NewHire />} />
               <Route path="documents" element={<Documents />} />
               <Route path="checklist" element={<Checklist />} />
             </Route>
+
+            {/* Performance */}
             <Route path="performance/*" element={<Performance />}>
-              <Route
-                index
-                element={<Navigate to="performance-reviews" replace />}
-              />
+              <Route index element={<Navigate to="performance-reviews" replace />} />
               <Route path="performance-reviews" element={<EmpPerfo />} />
               <Route path="employee-ratings" element={<EmpRate />} />
               <Route path="rate-employee" element={<AdminRate />} />
               <Route path="average-rate" element={<AdminAverage />} />
             </Route>
+
+            {/* Attendance */}
             <Route path="attendance/*" element={<Attendance />}>
-              <Route
-                index
-                element={<Navigate to="attendance-records" replace />}
-              />
-              <Route
-                path="attendance-records"
-                element={<AttendanceRecords />}
-              />
+              <Route index element={<Navigate to="attendance-records" replace />} />
+              <Route path="attendance-records" element={<AttendanceRecords />} />
               <Route path="leave-requests" element={<LeaveRequests />} />
-              <Route
-                path="attendance-reports"
-                element={<AttendanceReports />}
-              />
+              <Route path="my-leave" element={<MyLeave />} />
+              <Route path="sick-leave-report" element={<SickLeaveReport />} />
+              <Route path="attendance-reports" element={<AttendanceReports />} />
+              <Route path="settings" element={<AttendanceSettings />} />
             </Route>
+
+            {/* Reports */}
             <Route path="reports/*" element={<Reports />}>
               <Route index element={<Navigate to="salary-reports" replace />} />
               <Route path="salary-reports" element={<SalaryReports />} />
               <Route path="payment-history" element={<PaymentHistory />} />
               <Route path="tax-settings" element={<TaxSettings />} />
             </Route>
+
+            {/* NEW standalone pages */}
+            <Route path="messages" element={<Messages />} />
+            <Route path="announcements" element={<Announcements />} />
+            <Route path="holidays" element={<Holidays />} />
+            <Route path="directory" element={<EmployeeDirectory />} />
           </Route>
+
           <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>

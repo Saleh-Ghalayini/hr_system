@@ -19,6 +19,10 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\User\UserController as AdminUserController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\AttendanceSettingController;
 
 Route::get('/health', fn() => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
 
@@ -65,9 +69,26 @@ Route::prefix('v1')->group(function () {
 
         // Payroll (own)
         Route::get('/profile/payroll', [PayrollController::class, 'getMyPayroll']);
+        Route::get('/profile/payroll/history', [PayrollController::class, 'getMyPayrollHistory']);
 
         // Enrollments (own)
         Route::get('/enrollments/my', [UserController::class, 'enrollments']);
+
+        // Messages (all authenticated users)
+        Route::get('/messages/inbox', [MessageController::class, 'inbox']);
+        Route::get('/messages/sent', [MessageController::class, 'sent']);
+        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount']);
+        Route::get('/messages/users', [MessageController::class, 'users']);
+        Route::post('/messages', [MessageController::class, 'store']);
+        Route::get('/messages/{message}', [MessageController::class, 'show']);
+        Route::put('/messages/{message}/read', [MessageController::class, 'markRead']);
+        Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
+
+        // Announcements (read — all roles)
+        Route::get('/announcements', [AnnouncementController::class, 'index']);
+
+        // Holidays (read — all roles)
+        Route::get('/holidays', [HolidayController::class, 'index']);
 
         // Performance (self-rate team, view own ratings)
         Route::get('/performance/types', [PerformanceController::class, 'getTypes']);
@@ -122,6 +143,8 @@ Route::prefix('v1')->group(function () {
 
             // Payroll
             Route::get('/payroll', [PayrollController::class, 'getPayrolls']);
+            Route::put('/payroll/{payroll}', [PayrollController::class, 'update']);
+            Route::post('/payroll/generate', [PayrollController::class, 'generate']);
 
             // Insurance
             Route::get('/insurances', [InsuranceController::class, 'getInsurances']);
@@ -141,6 +164,27 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('job-openings', JobOpeningController::class)->except(['index']);
             Route::get('/job-openings/{jobOpening}/applications', [JobApplicationController::class, 'index']);
             Route::put('/job-applications/{application}', [JobApplicationController::class, 'updateStatus']);
+
+            // CV upload for candidates
+            Route::post('/candidates/{candidate}/cv', [CandidateController::class, 'uploadCv']);
+
+            // Sick leave report
+            Route::get('/leave/sick-report', [LeaveRequestController::class, 'sickLeaveReport']);
+
+            // Attendance settings
+            Route::get('/attendance-settings', [AttendanceSettingController::class, 'show']);
+            Route::put('/attendance-settings', [AttendanceSettingController::class, 'update']);
+
+            // Announcements (admin CRUD)
+            Route::get('/announcements', [AnnouncementController::class, 'adminIndex']);
+            Route::post('/announcements', [AnnouncementController::class, 'store']);
+            Route::put('/announcements/{announcement}', [AnnouncementController::class, 'update']);
+            Route::delete('/announcements/{announcement}', [AnnouncementController::class, 'destroy']);
+
+            // Holidays (admin CRUD)
+            Route::post('/holidays', [HolidayController::class, 'store']);
+            Route::put('/holidays/{holiday}', [HolidayController::class, 'update']);
+            Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy']);
 
             // Regulations
             Route::apiResource('regulations', RegulationController::class);

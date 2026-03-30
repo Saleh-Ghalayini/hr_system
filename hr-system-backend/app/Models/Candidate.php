@@ -16,6 +16,9 @@ class Candidate extends Model
         'email',
         'phone',
         'resume_path',
+        'cv_path',
+        'linkedin_url',
+        'notes',
     ];
 
     public function applications(): HasMany

@@ -1,0 +1,122 @@
+.holidays-container { padding: 24px; max-width: 800px; margin: 0 auto; }
+
+.holidays-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.holidays-header h1 { margin: 0 0 4px; font-size: 22px; color: #142f5a; font-family: 'Poppins', sans-serif; font-weight: 700; }
+.holidays-sub { margin: 0; font-size: 13px; color: #9ca3af; font-family: 'Lato', sans-serif; }
+
+.holidays-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.year-nav { display: flex; align-items: center; gap: 4px; background: white; border: 1px solid #cbd5e0; border-radius: 8px; padding: 4px; }
+.year-btn { background: none; border: none; cursor: pointer; padding: 4px 6px; border-radius: 6px; color: #374151; display: flex; align-items: center; transition: background 0.15s; }
+.year-btn:hover { background: #f8fafc; }
+.year-label { font-size: 15px; font-weight: 700; color: #142f5a; padding: 0 8px; min-width: 48px; text-align: center; font-family: 'Poppins', sans-serif; }
+
+.holiday-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  align-items: center;
+}
+.filter-chip { padding: 6px 14px; border: 1px solid #cbd5e0; border-radius: 20px; background: white; font-size: 13px; font-family: 'Lato', sans-serif; color: #374151; cursor: pointer; transition: all 0.2s; }
+.filter-chip:hover { border-color: #142f5a; color: #142f5a; }
+.filter-chip.active { background: #142f5a; color: white; border-color: #142f5a; }
+
+.holidays-loading, .holidays-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px; color: #9ca3af; gap: 12px;
+}
+
+.holidays-calendar { display: flex; flex-direction: column; gap: 24px; }
+
+.month-group {}
+.month-heading { font-size: 14px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid #e5e7eb; }
+
+.holiday-list { display: flex; flex-direction: column; gap: 8px; }
+
+.holiday-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left: 4px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
+.holiday-item:hover { box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+.holiday-item.type-public { border-left-color: #28eea7; }
+.holiday-item.type-company { border-left-color: #142f5a; }
+.holiday-item.past { opacity: 0.55; }
+
+.holiday-date-badge {
+  min-width: 52px;
+  text-align: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  padding: 8px;
+}
+.hd-day { display: block; font-size: 20px; font-weight: 800; color: #142f5a; line-height: 1; }
+.hd-weekday { display: block; font-size: 11px; color: #6b7280; text-transform: uppercase; margin-top: 2px; }
+
+.holiday-info { flex: 1; min-width: 0; }
+.holiday-name-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.holiday-name { font-size: 15px; font-weight: 600; color: #111827; font-family: 'Poppins', sans-serif; }
+.recurring-badge { display: inline-flex; align-items: center; gap: 3px; background: #dbeafe; color: #1e40af; font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 7px; }
+.holiday-type-badge { font-size: 11px; font-weight: 600; border-radius: 4px; padding: 2px 7px; text-transform: capitalize; }
+.holiday-type-badge.type-public { background: #dcfce7; color: #166534; }
+.holiday-type-badge.type-company { background: #e0e7ff; color: #3730a3; }
+.holiday-desc { margin: 4px 0 0; font-size: 13px; color: #6b7280; }
+
+.holiday-actions { display: flex; gap: 6px; }
+.hol-action-btn { background: none; border: 1px solid #d1d5db; border-radius: 6px; padding: 5px; cursor: pointer; color: #6b7280; display: flex; align-items: center; transition: all 0.2s; }
+.hol-action-btn:hover { background: #f3f4f6; }
+.hol-action-btn.delete { color: #d62525; border-color: #fca5a5; }
+.hol-action-btn.delete:hover { background: #fef2f2; }
+
+/* Modal */
+.holidays-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.holidays-modal { background: white; border-radius: 12px; width: 100%; max-width: 460px; max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid #e5e7eb; }
+.modal-header h2 { margin: 0; font-size: 18px; color: #142f5a; }
+.close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #9ca3af; }
+
+.holiday-form { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.hol-form-group { display: flex; flex-direction: column; gap: 6px; }
+.hol-form-group label { font-size: 13px; font-weight: 600; color: #374151; font-family: 'Poppins', sans-serif; }
+.hol-form-group input, .hol-form-group select {
+  padding: 9px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.hol-form-group input:focus, .hol-form-group select:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+.hol-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hol-form-check { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #374151; }
+.hol-form-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.cancel-btn { padding: 9px 20px; border: 1px solid #cbd5e0; border-radius: 8px; background: white; font-size: 14px; font-family: 'Lato', sans-serif; cursor: pointer; color: #374151; transition: background 0.15s; }
+.cancel-btn:hover { background: #f8fafc; }
+
+@media (max-width: 480px) {
+  .hol-form-row { grid-template-columns: 1fr; }
+  .holidays-header { flex-direction: column; }
+}

@@ -1,0 +1,119 @@
+.payroll-details-container { padding: 24px; }
+
+.pd-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.pd-header h1 { font-size: 22px; color: #142f5a; margin: 0; font-family: 'Poppins', sans-serif; font-weight: 700; }
+.pd-generate-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pd-generate-row label { font-size: 14px; color: #374151; font-family: 'Lato', sans-serif; }
+.pd-generate-row input {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.pd-generate-row input:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+
+.pd-filters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: white;
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.pd-filters input, .pd-filters select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.pd-filters input:focus, .pd-filters select:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+
+.edit-payroll-btn {
+  padding: 5px 12px;
+  background: #142f5a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.edit-payroll-btn:hover { background: #1a3d72; }
+
+.payroll-status { font-size: 12px; font-weight: 700; border-radius: 4px; padding: 2px 8px; text-transform: capitalize; }
+.status-green { background: #dcfce7; color: #166534; }
+.status-blue  { background: #dbeafe; color: #1e40af; }
+.status-gray  { background: #f3f4f6; color: #6b7280; }
+
+/* Modal */
+.pd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.pd-modal { background: white; border-radius: 12px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
+.pd-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px 16px; border-bottom: 1px solid #e5e7eb; }
+.pd-modal-header h2 { margin: 0; font-size: 18px; color: #142f5a; }
+.close-btn { background: none; border: none; font-size: 22px; cursor: pointer; color: #9ca3af; }
+.pd-modal-body { padding: 20px 24px; }
+
+.pd-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.pd-form-group { display: flex; flex-direction: column; gap: 6px; }
+.pd-form-group.full-width { grid-column: 1 / -1; }
+.pd-form-group label { font-size: 13px; font-weight: 600; color: #374151; font-family: 'Poppins', sans-serif; }
+.pd-form-group input, .pd-form-group select, .pd-form-group textarea {
+  padding: 9px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+}
+.pd-form-group input:focus, .pd-form-group select:focus, .pd-form-group textarea:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.08);
+}
+
+.pd-form-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #0369a1;
+  margin: 14px 0;
+}
+
+.pd-modal-actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px; }
+.cancel-btn { padding: 9px 20px; border: 1px solid #d1d5db; border-radius: 8px; background: white; font-size: 14px; cursor: pointer; }
+.cancel-btn:hover { background: #f3f4f6; }
+
+@media (max-width: 480px) {
+  .pd-form-grid { grid-template-columns: 1fr; }
+  .pd-header { flex-direction: column; }
+}
