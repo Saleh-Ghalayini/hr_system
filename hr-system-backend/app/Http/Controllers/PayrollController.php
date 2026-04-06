@@ -77,8 +77,8 @@ class PayrollController extends Controller
             'baseSalary:id,position,salary',
             'tax:id,label,rate',
         ])->where('user_id', Auth::id())
-          ->orderByDesc('month')
-          ->get();
+            ->orderByDesc('month')
+            ->get();
 
         return $this->success($payrolls);
     }
@@ -162,13 +162,13 @@ class PayrollController extends Controller
 
         return round(
             $base
-            - $insurance
-            - $taxAmount
-            - $leaveDeduct
-            - $payroll->deductions
-            + $payroll->bonus
-            + $payroll->allowances
-            + $overtimePay,
+                - $insurance
+                - $taxAmount
+                - $leaveDeduct
+                - $payroll->deductions
+                + $payroll->bonus
+                + $payroll->allowances
+                + $overtimePay,
             2
         );
     }

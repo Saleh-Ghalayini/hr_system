@@ -51,9 +51,17 @@ class UserController extends Controller
         }
 
         $userData = $user->only([
-            'id', 'first_name', 'last_name', 'email', 'position',
-            'gender', 'date_of_birth', 'nationality', 'phone_number',
-            'address', 'profile_url',
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'position',
+            'gender',
+            'date_of_birth',
+            'nationality',
+            'phone_number',
+            'address',
+            'profile_url',
         ]);
 
         // Return a date-only value to avoid timezone shifting in date inputs.
