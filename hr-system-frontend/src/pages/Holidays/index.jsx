@@ -28,13 +28,16 @@ const Holidays = () => {
   const fetchHolidays = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await request({ method: "GET", path: "holidays", params: { year } });
-      setHolidays(Array.isArray(res.data) ? res.data : []);
-      // If we can fetch admin page, user is admin
+      // Try admin endpoint first; success means user is admin
       try {
-        await request({ method: "GET", path: "admin/announcements", params: { page: 1 } });
+        const res = await request({ method: "GET", path: "admin/holidays", params: { year } });
+        setHolidays(Array.isArray(res.data) ? res.data : []);
         setIsAdmin(true);
-      } catch { setIsAdmin(false); }
+      } catch {
+        const res = await request({ method: "GET", path: "holidays", params: { year } });
+        setHolidays(Array.isArray(res.data) ? res.data : []);
+        setIsAdmin(false);
+      }
     } catch {
       toast.error("Failed to load holidays.");
     } finally {
@@ -90,14 +93,24 @@ const Holidays = () => {
     items: filtered.filter((h) => new Date(h.date).getMonth() === idx),
   })).filter((m) => m.items.length > 0);
 
-  const upcomingCount = holidays.filter((h) => new Date(h.date) >= new Date()).length;
+  const currentYear = new Date().getFullYear();
+  const now = new Date();
+  const upcomingCount = year > currentYear
+    ? holidays.length
+    : year < currentYear
+      ? 0
+      : holidays.filter((h) => new Date(h.date) >= now).length;
 
   return (
     <div className="holidays-container">
       <div className="holidays-header">
         <div>
           <h1>Holiday Calendar</h1>
-          <p className="holidays-sub">{upcomingCount} upcoming this year</p>
+          <p className="holidays-sub">
+            {year === currentYear
+              ? `${upcomingCount} upcoming · ${holidays.length} total`
+              : `${holidays.length} holiday${holidays.length !== 1 ? "s" : ""} in ${year}`}
+          </p>
         </div>
         <div className="holidays-controls">
           <div className="year-nav">

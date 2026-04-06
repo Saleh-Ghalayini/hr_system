@@ -50,9 +50,21 @@ class UserController extends Controller
             return $this->notFound('Job details not found.');
         }
 
+        $userData = $user->only([
+            'id', 'first_name', 'last_name', 'email', 'position',
+            'gender', 'date_of_birth', 'nationality', 'phone_number',
+            'address', 'profile_url',
+        ]);
+
+        // Return a date-only value to avoid timezone shifting in date inputs.
+        $userData['date_of_birth'] = $user->date_of_birth?->format('Y-m-d');
+
+        $jobDetailData = $jobDetail->toArray();
+        $jobDetailData['hiring_date'] = $jobDetail->hiring_date?->format('Y-m-d');
+
         return $this->success([
-            'user'       => $user->only(['id', 'first_name', 'last_name', 'email', 'position', 'gender', 'date_of_birth', 'nationality', 'phone_number', 'address', 'profile_url']),
-            'job_detail' => $jobDetail,
+            'user'       => $userData,
+            'job_detail' => $jobDetailData,
         ]);
     }
 

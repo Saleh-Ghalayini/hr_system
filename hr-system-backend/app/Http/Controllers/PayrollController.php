@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Payroll;
 use App\Models\BaseSalary;
 use App\Traits\ApiResponse;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,7 +47,15 @@ class PayrollController extends Controller
         ])->where('user_id', Auth::id());
 
         if ($month = $request->query('month')) {
-            $query->where('month', $month);
+            $query->where(function ($q) use ($month) {
+                $q->where('month', $month);
+
+                // Backward compatibility for legacy textual month storage (e.g. "March 2026").
+                if (preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
+                    $legacyMonth = Carbon::createFromFormat('Y-m', $month)->format('F Y');
+                    $q->orWhere('month', $legacyMonth);
+                }
+            });
         } else {
             $query->orderByDesc('month');
         }

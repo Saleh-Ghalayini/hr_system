@@ -1,8 +1,9 @@
 import Table from "../../../components/Table";
 import "./style.css";
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { request } from "../../../common/request";
 import { toast } from 'react-toastify';
+import { useAuthContext } from "../../../context/AuthContext";
 
 const STATUS_OPTIONS = ["On-time", "Late"];
 
@@ -17,6 +18,9 @@ const DATE_PRESETS = [
 function fmt(d) { return d.toISOString().split("T")[0]; }
 
 const AttendanceRecords = () => {
+    const { user } = useAuthContext();
+    const role = (user?.role || "").toLowerCase();
+    const isAdmin = role === "admin";
     const [longitude, setLongitude] = useState(null);
     const [latitude, setLatitude] = useState(null);
     const [is_checked_in, setIsCheckedIn] = useState(false);
@@ -113,38 +117,52 @@ const AttendanceRecords = () => {
     const fetchAttendance = useCallback(async (page = 1, filters = {}) => {
         setLoading(true);
         try {
-            const params = { page };
-            if (filters.names?.length === 1) params.full_name = filters.names[0];
+            const params = {};
+            if (isAdmin) params.page = page;
+            if (isAdmin && filters.names?.length === 1) params.full_name = filters.names[0];
             if (filters.start_date) params.start_date = filters.start_date;
             if (filters.end_date) params.end_date = filters.end_date;
-            if (filters.statuses?.length === 1) params.status = filters.statuses[0];
+            if (isAdmin && filters.statuses?.length === 1) params.status = filters.statuses[0];
 
-            const response = await request({ method: "GET", path: "admin/attendance/all", params });
+            const path = isAdmin ? "admin/attendance/all" : "attendance/my";
+            const response = await request({ method: "GET", path, params });
             const raw = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
 
             // Extract unique names for the name picker
-            const names = [...new Set(raw.map(r => r.full_name).filter(Boolean))].sort();
-            if (names.length > 0 && allNames.length === 0) setAllNames(names);
+            if (isAdmin) {
+                const names = [...new Set(raw.map(r => r.full_name).filter(Boolean))].sort();
+                if (names.length > 0 && allNames.length === 0) setAllNames(names);
+            }
 
-            // Client-side multi-name filter if >1 name selected
+            // Client-side filtering for cases not covered by backend params.
             let filtered = raw;
-            if (filters.names?.length > 1) {
+            if (isAdmin && filters.names?.length > 1) {
                 filtered = raw.filter(r => filters.names.includes(r.full_name));
+            }
+            if (filters.statuses?.length > 1 || !isAdmin) {
+                filtered = filtered.filter(r =>
+                    filters.statuses?.length ? filters.statuses.includes(r.time_in_status) : true
+                );
             }
 
             setAttendance(transformRecords(filtered));
-            setTotalPages(response.data?.last_page ?? 1);
-            setCurrentPage(page);
+            if (isAdmin) {
+                setTotalPages(response.data?.last_page ?? 1);
+                setCurrentPage(page);
+            } else {
+                setTotalPages(1);
+                setCurrentPage(1);
+            }
         } catch {
             toast.error("Failed to load attendance records.");
         } finally {
             setLoading(false);
         }
-    }, [allNames.length]);
+    }, [allNames.length, isAdmin]);
 
     useEffect(() => {
         fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
-    }, []);
+    }, [fetchAttendance]);
 
     const handleFilter = () => {
         fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
@@ -225,24 +243,26 @@ const AttendanceRecords = () => {
 
                 <div className="filter-row">
                     {/* Employee multi-select */}
-                    <div className="multi-dropdown" ref={nameRef}>
-                        <button className="multi-dropdown-btn" onClick={() => setNameDropdownOpen(o => !o)} type="button">
-                            {nameLabel}
-                            <span className="dropdown-arrow">{nameDropdownOpen ? "\u25B2" : "\u25BC"}</span>
-                        </button>
-                        {nameDropdownOpen && (
-                            <div className="multi-dropdown-menu name-menu">
-                                {allNames.length === 0 ? (
-                                    <div className="dropdown-empty">No employees loaded</div>
-                                ) : allNames.map(n => (
-                                    <label key={n} className="dropdown-option">
-                                        <input type="checkbox" checked={selectedNames.includes(n)} onChange={() => toggleName(n)} />
-                                        {n}
-                                    </label>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    {isAdmin && (
+                        <div className="multi-dropdown" ref={nameRef}>
+                            <button className="multi-dropdown-btn" onClick={() => setNameDropdownOpen(o => !o)} type="button">
+                                {nameLabel}
+                                <span className="dropdown-arrow">{nameDropdownOpen ? "\u25B2" : "\u25BC"}</span>
+                            </button>
+                            {nameDropdownOpen && (
+                                <div className="multi-dropdown-menu name-menu">
+                                    {allNames.length === 0 ? (
+                                        <div className="dropdown-empty">No employees loaded</div>
+                                    ) : allNames.map(n => (
+                                        <label key={n} className="dropdown-option">
+                                            <input type="checkbox" checked={selectedNames.includes(n)} onChange={() => toggleName(n)} />
+                                            {n}
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
                     {/* Status multi-select */}
                     <div className="multi-dropdown" ref={statusRef}>
@@ -276,7 +296,7 @@ const AttendanceRecords = () => {
                 data={attendance}
                 loading={loading}
                 emptyMessage="No attendance records found"
-                pagination={totalPages > 1 ? { currentPage, totalPages, onPageChange: handlePageChange } : undefined}
+                pagination={isAdmin && totalPages > 1 ? { currentPage, totalPages, onPageChange: handlePageChange } : undefined}
             />
         </div>
     );

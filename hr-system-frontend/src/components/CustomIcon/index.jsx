@@ -2,9 +2,10 @@ import React from "react";
 import "./style.css";
 import { Icon } from "@iconify/react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuthContext } from "../../context/AuthContext";
 
 const icons = [
-  { id: "Dashboard",    path: "/dashboard",    icon: "mdi:home-outline",               label: "Dashboard"    },
+  { id: "Dashboard",    path: "/dashboard",    icon: "mdi:home-outline",               label: "Dashboard", roles: ["admin"] },
   { id: "Attendance",   path: "/attendance",   icon: "mdi:calendar-check-outline",     label: "Attendance"   },
   { id: "Onboarding",   path: "/onboarding",   icon: "mdi:account-plus-outline",       label: "Onboarding"   },
   { id: "Training",     path: "/training",     icon: "mdi:school-outline",             label: "Training"     },
@@ -19,13 +20,20 @@ const icons = [
 
 const CustomIcon = ({ activeIconId, collapsed }) => {
   const location = useLocation();
+  const { user, loading } = useAuthContext();
 
   const isActive = (path) =>
     location.pathname.startsWith(path) || activeIconId === path;
 
+  const visibleIcons = icons.filter((item) => {
+    if (!item.roles || item.roles.length === 0) return true;
+    if (loading) return true;
+    return item.roles.includes(user?.role);
+  });
+
   return (
     <div className="nav-items">
-      {icons.map((iconData) => (
+      {visibleIcons.map((iconData) => (
         <div
           key={iconData.id}
           className="nav-item-wrapper"

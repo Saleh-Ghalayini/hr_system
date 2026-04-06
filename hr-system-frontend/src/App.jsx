@@ -6,6 +6,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Layout from "./Layout";
 import ErrorBoundary from "./components/ErrorBoundary";
+import ProtectedRoute from "./components/ProtectedRoute";
+import RoleRoute from "./components/RoleRoute";
 
 // Eagerly loaded (always needed)
 import Login from "./pages/Auth/Login";
@@ -62,9 +64,17 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
 
+          <Route element={<ProtectedRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route
+              path="dashboard"
+              element={(
+                <RoleRoute allowedRoles={["admin"]}>
+                  <Dashboard />
+                </RoleRoute>
+              )}
+            />
 
             {/* Training Section */}
             <Route path="training/*" element={<TrainingLayout />}>
@@ -112,9 +122,30 @@ function App() {
               <Route path="attendance-records" element={<AttendanceRecords />} />
               <Route path="leave-requests" element={<LeaveRequests />} />
               <Route path="my-leave" element={<MyLeave />} />
-              <Route path="sick-leave-report" element={<SickLeaveReport />} />
-              <Route path="attendance-reports" element={<AttendanceReports />} />
-              <Route path="settings" element={<AttendanceSettings />} />
+              <Route
+                path="sick-leave-report"
+                element={(
+                  <RoleRoute allowedRoles={["admin"]}>
+                    <SickLeaveReport />
+                  </RoleRoute>
+                )}
+              />
+              <Route
+                path="attendance-reports"
+                element={(
+                  <RoleRoute allowedRoles={["admin"]}>
+                    <AttendanceReports />
+                  </RoleRoute>
+                )}
+              />
+              <Route
+                path="settings"
+                element={(
+                  <RoleRoute allowedRoles={["admin"]}>
+                    <AttendanceSettings />
+                  </RoleRoute>
+                )}
+              />
             </Route>
 
             {/* Reports */}
@@ -130,6 +161,7 @@ function App() {
             <Route path="announcements" element={<Announcements />} />
             <Route path="holidays" element={<Holidays />} />
             <Route path="directory" element={<EmployeeDirectory />} />
+          </Route>
           </Route>
 
           <Route path="*" element={<NotFound />} />

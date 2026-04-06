@@ -15,12 +15,27 @@ const fmtHours = (h) => {
     return `${hrs}h ${mins}m`;
 };
 
+const formatLocalDate = (value) => {
+    if (!value) return "--";
+
+    const ymd = String(value).split("T")[0];
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+        return value;
+    }
+
+    const [year, month, day] = ymd.split("-").map(Number);
+    const localDate = new Date(year, month - 1, day);
+    return localDate.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+    });
+};
+
 const formatDate = (dateStr) => {
     if (!dateStr) return "--";
     try {
-        return new Date(dateStr).toLocaleDateString("en-GB", {
-            day: "2-digit", month: "short", year: "numeric",
-        });
+        return formatLocalDate(dateStr);
     } catch { return dateStr; }
 };
 
@@ -39,8 +54,24 @@ const AttendanceReports = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await request({ method: "GET", path: "admin/attendance/all" });
-                setRecords(Array.isArray(response.data) ? response.data : (response.data?.data ?? []));
+                const all = [];
+                let page = 1;
+                let lastPage = 1;
+
+                do {
+                    const response = await request({
+                        method: "GET",
+                        path: "admin/attendance/all",
+                        params: { page },
+                    });
+
+                    const pageRows = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+                    all.push(...pageRows);
+                    lastPage = response.data?.last_page ?? 1;
+                    page += 1;
+                } while (page <= lastPage);
+
+                setRecords(all);
             } catch {
                 toast.error("Failed to load attendance data.");
             } finally {
@@ -51,7 +82,7 @@ const AttendanceReports = () => {
     }, []);
 
     const months = useMemo(() => {
-        const set = new Set(records.map(r => r.date ? r.date.slice(0, 7) : null).filter(Boolean));
+        const set = new Set(records.map(r => r.date ? String(r.date).split("T")[0].slice(0, 7) : null).filter(Boolean));
         return Array.from(set).sort().reverse();
     }, [records]);
 
@@ -62,7 +93,13 @@ const AttendanceReports = () => {
 
     const filtered = useMemo(() => {
         let data = records;
-        if (monthFilter !== "all") data = data.filter(r => r.date && r.date.startsWith(monthFilter));
+        if (monthFilter !== "all") {
+            data = data.filter(r => {
+                if (!r.date) return false;
+                const rowMonth = String(r.date).split("T")[0].slice(0, 7);
+                return rowMonth === monthFilter;
+            });
+        }
         if (nameFilter !== "all") data = data.filter(r => r.full_name === nameFilter);
         return data;
     }, [records, monthFilter, nameFilter]);

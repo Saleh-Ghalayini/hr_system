@@ -4,8 +4,6 @@ import { request, baseApi } from "../../common/request";
 import { toast } from "react-toastify";
 import "./style.css";
 
-const POSITIONS = ["All", "Junior", "Senior", "Intern", "Executive", "Manager"];
-
 const getInitials = (first, last) =>
   `${first?.[0] ?? ""}${last?.[0] ?? ""}`.toUpperCase();
 
@@ -19,9 +17,14 @@ const EmployeeDirectory = () => {
   const fetchEmployees = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await request({ method: "GET", path: "admin/users" });
-      const list = Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
-      setEmployees(list);
+      // Try admin endpoint; fall back to messaging users list for non-admins
+      try {
+        const res = await request({ method: "GET", path: "admin/users" });
+        setEmployees(Array.isArray(res.data) ? res.data : (res.data?.data ?? []));
+      } catch {
+        const res = await request({ method: "GET", path: "messages/users" });
+        setEmployees(Array.isArray(res.data) ? res.data : []);
+      }
     } catch {
       toast.error("Failed to load employee directory.");
     } finally {
@@ -30,6 +33,9 @@ const EmployeeDirectory = () => {
   }, []);
 
   useEffect(() => { fetchEmployees(); }, [fetchEmployees]);
+
+  // Build position list dynamically from actual data
+  const positions = ["All", ...Array.from(new Set(employees.map((e) => e.position).filter(Boolean))).sort()];
 
   const filtered = employees.filter((e) => {
     const name = `${e.first_name} ${e.last_name}`.toLowerCase();
@@ -72,7 +78,7 @@ const EmployeeDirectory = () => {
           />
         </div>
         <div className="pos-filter-wrap">
-          {POSITIONS.map((p) => (
+          {positions.map((p) => (
             <button
               key={p}
               className={`filter-chip ${posFilter === p ? "active" : ""}`}

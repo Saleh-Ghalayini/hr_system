@@ -10,8 +10,27 @@ const GENDER_OPTIONS = [
   { value: "", label: "— Select gender —" },
   { value: "male", label: "Male" },
   { value: "female", label: "Female" },
-  { value: "other", label: "Other" },
 ];
+
+const normalizeDateForInput = (value) => {
+  if (!value) return "";
+
+  // Already normalized by backend or raw date input.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return value;
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return String(value).slice(0, 10);
+  }
+
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
 
 const BasicInfo = () => {
   const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
@@ -78,7 +97,7 @@ const BasicInfo = () => {
         const url = u.profile_url ? ImageBaseUrl + u.profile_url : "/logo.png";
         setBasicInfo({
           firstName: u.first_name ?? "", lastName: u.last_name ?? "",
-          dob: u.date_of_birth ?? "", email: u.email ?? "",
+          dob: normalizeDateForInput(u.date_of_birth), email: u.email ?? "",
           nationality: u.nationality ?? "", contactNumber: u.phone_number ?? "",
           gender: u.gender ?? "", Address: u.address ?? "", profile_url: url,
         });

@@ -223,18 +223,22 @@
     .filter-container {
         padding: 12px;
     }
+
     .filter-row {
         flex-direction: column;
         align-items: stretch;
     }
+
     .date-range {
         flex-direction: column;
         gap: 8px;
     }
+
     .filter-actions {
         margin-left: 0;
         flex-direction: column;
     }
+
     .filter-btn, .check-btn {
         width: 100%;
         justify-content: center;

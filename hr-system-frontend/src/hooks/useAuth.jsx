@@ -26,7 +26,7 @@ export const useAuth = () => {
           localStorage.removeItem("token");
         }
         setToken(tok);
-        setUser(data.data.user);
+        setUser(data.data.user ?? data.data);
         navigate("/dashboard");
       }
       return data;

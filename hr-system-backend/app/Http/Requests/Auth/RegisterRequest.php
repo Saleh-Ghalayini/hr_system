@@ -19,7 +19,7 @@ class RegisterRequest extends BaseFormRequest
             'phone_number'  => 'required|string|max:20',
             'address'       => 'required|string|max:255',
             'position'      => 'required|string|max:100',
-            'gender'        => 'required|in:male,female,other',
+            'gender'        => 'required|in:male,female',
             'insurance_id'  => 'required|exists:insurances,id',
         ];
     }

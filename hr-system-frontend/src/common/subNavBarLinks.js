@@ -23,9 +23,9 @@ export const SUBNAV_CONFIG = {
     { text: "Attendance Records", link: "attendance-records" },
     { text: "Leave Requests", link: "leave-requests" },
     { text: "My Leave", link: "my-leave" },
-    { text: "Sick Leave Report", link: "sick-leave-report" },
-    { text: "Attendance Reports", link: "attendance-reports" },
-    { text: "Settings", link: "settings" },
+    { text: "Sick Leave Report", link: "sick-leave-report", roles: ["admin"] },
+    { text: "Attendance Reports", link: "attendance-reports", roles: ["admin"] },
+    { text: "Settings", link: "settings", roles: ["admin"] },
   ],
   "/reports": [
     { text: "Salary Reports", link: "salary-reports" },

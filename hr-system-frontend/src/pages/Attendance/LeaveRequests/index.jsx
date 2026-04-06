@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/AuthContext";
 import "./style.css";
 
 const STATUS_OPTIONS = ["pending", "approved", "rejected"];
+const CLIENT_PAGE_SIZE = 10;
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "—";
@@ -18,6 +20,9 @@ const formatDate = (dateStr) => {
 };
 
 const LeaveRequests = () => {
+  const { user } = useAuthContext();
+  const role = (user?.role || "").toLowerCase();
+  const isAdmin = role === "admin";
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -35,34 +40,51 @@ const LeaveRequests = () => {
   const dropdownRef = useRef(null);
   const debounceRef = useRef(null);
 
-  const tableHeaders = [
-    { key: "id", label: "ID" },
-    { key: "employee", label: "Employee" },
-    { key: "start_date", label: "Start Date" },
-    { key: "end_date", label: "End Date" },
-    { key: "leave_type", label: "Type" },
-    { key: "status", label: "Status" },
-    { key: "actions", label: "Actions" },
-  ];
+  const tableHeaders = isAdmin
+    ? [
+        { key: "id", label: "ID" },
+        { key: "employee", label: "Employee" },
+        { key: "start_date", label: "Start Date" },
+        { key: "end_date", label: "End Date" },
+        { key: "leave_type", label: "Type" },
+        { key: "status", label: "Status" },
+        { key: "actions", label: "Actions" },
+      ]
+    : [
+        { key: "id", label: "ID" },
+        { key: "start_date", label: "Start Date" },
+        { key: "end_date", label: "End Date" },
+        { key: "leave_type", label: "Type" },
+        { key: "status", label: "Status" },
+        { key: "reason", label: "Reason" },
+      ];
 
   const fetchLeaveRequests = useCallback(async (page = 1, srch = "", statuses = []) => {
     setLoading(true);
     try {
-      const params = { page };
-      if (srch.trim()) params.search = srch.trim();
-      if (statuses.length > 0) params.status = statuses;
+      if (isAdmin) {
+        const params = { page };
+        if (srch.trim()) params.search = srch.trim();
+        if (statuses.length > 0) params.status = statuses;
 
-      const response = await request({ method: "GET", path: "admin/leave/requests", params });
-      const list = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
-      setRows(list);
-      setTotalPages(response.data?.last_page ?? 1);
-      setCurrentPage(page);
+        const response = await request({ method: "GET", path: "admin/leave/requests", params });
+        const list = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
+        setRows(list);
+        setTotalPages(response.data?.last_page ?? 1);
+        setCurrentPage(page);
+      } else {
+        const response = await request({ method: "GET", path: "leave/requests" });
+        const list = Array.isArray(response.data) ? response.data : [];
+        setRows(list);
+        setTotalPages(1);
+        setCurrentPage(1);
+      }
     } catch {
       toast.error("Failed to fetch leave requests.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
     fetchLeaveRequests(1, "", []);
@@ -97,13 +119,17 @@ const LeaveRequests = () => {
   const handleSearchChange = (e) => {
     const val = e.target.value;
     setSearch(val);
-    triggerSearch(val, selectedStatuses);
+    if (isAdmin) {
+      triggerSearch(val, selectedStatuses);
+    }
   };
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter") {
-      clearTimeout(debounceRef.current);
-      fetchLeaveRequests(1, search, selectedStatuses);
+      if (isAdmin) {
+        clearTimeout(debounceRef.current);
+        fetchLeaveRequests(1, search, selectedStatuses);
+      }
     }
   };
 
@@ -112,14 +138,21 @@ const LeaveRequests = () => {
       ? selectedStatuses.filter(s => s !== status)
       : [...selectedStatuses, status];
     setSelectedStatuses(next);
-    fetchLeaveRequests(1, search, next);
+    if (isAdmin) {
+      fetchLeaveRequests(1, search, next);
+    }
   };
 
   const handlePageChange = (page) => {
-    fetchLeaveRequests(page, search, selectedStatuses);
+    if (isAdmin) {
+      fetchLeaveRequests(page, search, selectedStatuses);
+    } else {
+      setCurrentPage(page);
+    }
   };
 
   const fetchUserDetails = async (userId) => {
+    if (!isAdmin) return;
     try {
       setModalLoading(true);
       const [userResponse, balanceResponse] = await Promise.all([
@@ -136,6 +169,7 @@ const LeaveRequests = () => {
   };
 
   const updateLeaveStatus = async () => {
+    if (!isAdmin) return;
     if (!newStatus) { toast.error("Please select a status"); return; }
     try {
       setUpdateLoading(true);
@@ -155,6 +189,7 @@ const LeaveRequests = () => {
   };
 
   const handleViewDetails = (req) => {
+    if (!isAdmin) return;
     setSelectedRequest(req);
     setNewStatus(req.status);
     setShowModal(true);
@@ -173,24 +208,74 @@ const LeaveRequests = () => {
     ? "All Statuses"
     : selectedStatuses.map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(", ");
 
-  const transformedRows = rows.map((item) => ({
-    ...item,
-    employee: item.user ? `${item.user.first_name} ${item.user.last_name}` : `#${item.user_id}`,
-    start_date: formatDate(item.start_date),
-    end_date: formatDate(item.end_date),
-    actions: (
-      <button onClick={() => handleViewDetails(item)} className="view-btn">
-        Details
-      </button>
-    ),
-  }));
+  const filteredClientRows = useMemo(() => {
+    if (isAdmin) return rows;
+
+    const term = search.trim().toLowerCase();
+    return rows.filter((item) => {
+      const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(item.status);
+      if (!matchesStatus) return false;
+      if (!term) return true;
+
+      const haystack = [
+        item.leave_type,
+        item.reason,
+        item.status,
+        item.start_date,
+        item.end_date,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(term);
+    });
+  }, [isAdmin, rows, search, selectedStatuses]);
+
+  const effectiveTotalPages = isAdmin
+    ? totalPages
+    : Math.max(1, Math.ceil(filteredClientRows.length / CLIENT_PAGE_SIZE));
+
+  const effectiveRows = isAdmin
+    ? rows
+    : filteredClientRows.slice((currentPage - 1) * CLIENT_PAGE_SIZE, currentPage * CLIENT_PAGE_SIZE);
+
+  useEffect(() => {
+    if (!isAdmin) {
+      setCurrentPage(1);
+    }
+  }, [isAdmin, search, selectedStatuses]);
+
+  const transformedRows = effectiveRows.map((item) => {
+    const base = {
+      ...item,
+      start_date: formatDate(item.start_date),
+      end_date: formatDate(item.end_date),
+      leave_type: item.leave_type ? item.leave_type.charAt(0).toUpperCase() + item.leave_type.slice(1) : "—",
+      reason: item.reason || "—",
+    };
+
+    if (!isAdmin) {
+      return base;
+    }
+
+    return {
+      ...base,
+      employee: item.user ? `${item.user.first_name} ${item.user.last_name}` : `#${item.user_id}`,
+      actions: (
+        <button onClick={() => handleViewDetails(item)} className="view-btn">
+          Details
+        </button>
+      ),
+    };
+  });
 
   return (
     <div className="leave-requests-container">
       <div className="filters-container">
         <input
           type="text"
-          placeholder="Search by name or email…"
+          placeholder={isAdmin ? "Search by name or email..." : "Search by type, reason, or date..."}
           value={search}
           onChange={handleSearchChange}
           onKeyDown={handleSearchKeyDown}
@@ -233,10 +318,10 @@ const LeaveRequests = () => {
             ? "No matching leave requests found"
             : "No leave requests available"
         }
-        pagination={totalPages > 1 ? { currentPage, totalPages, onPageChange: handlePageChange } : undefined}
+        pagination={effectiveTotalPages > 1 ? { currentPage, totalPages: effectiveTotalPages, onPageChange: handlePageChange } : undefined}
       />
 
-      {showModal && selectedRequest && (
+      {isAdmin && showModal && selectedRequest && (
         <div className="modal" onClick={(e) => { if (e.target === e.currentTarget) handleCloseModal(); }}>
           <div className="modal-content">
             <div className="modal-header">

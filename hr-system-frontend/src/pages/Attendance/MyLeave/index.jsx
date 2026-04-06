@@ -16,7 +16,29 @@ const LEAVE_TYPES = [
   { value: "other",       label: "Other",              icon: "mdi:dots-horizontal-circle",  color: "#9ca3af", needsDoc: false },
 ];
 
-const formatDate = (d) => d ? new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—";
+const getLocalYmd = (date = new Date()) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const formatDate = (value) => {
+  if (!value) return "—";
+
+  const ymd = String(value).split("T")[0];
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
+    return value;
+  }
+
+  const [year, month, day] = ymd.split("-").map(Number);
+  const localDate = new Date(year, month - 1, day);
+  return localDate.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
 
 const StatusBadge = ({ status }) => {
   const cls = { approved: "status-green", pending: "status-yellow", rejected: "status-red" }[status] ?? "status-yellow";
@@ -60,6 +82,7 @@ const MyLeave = () => {
   }, [fetchBalance, fetchRequests]);
 
   const selectedType = LEAVE_TYPES.find((t) => t.value === form.leave_type);
+  const todayYmd = getLocalYmd();
 
   const handleDocChange = (e) => {
     const file = e.target.files[0];
@@ -199,11 +222,11 @@ const MyLeave = () => {
             <div className="form-row">
               <div className="form-group">
                 <label>Start Date *</label>
-                <input type="date" value={form.start_date} onChange={(e) => setForm((f) => ({ ...f, start_date: e.target.value }))} min={new Date().toISOString().split("T")[0]} required />
+                <input type="date" value={form.start_date} onChange={(e) => setForm((f) => ({ ...f, start_date: e.target.value }))} min={todayYmd} required />
               </div>
               <div className="form-group">
                 <label>End Date *</label>
-                <input type="date" value={form.end_date} onChange={(e) => setForm((f) => ({ ...f, end_date: e.target.value }))} min={form.start_date || new Date().toISOString().split("T")[0]} required />
+                <input type="date" value={form.end_date} onChange={(e) => setForm((f) => ({ ...f, end_date: e.target.value }))} min={form.start_date || todayYmd} required />
               </div>
             </div>
 

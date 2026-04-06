@@ -1,6 +1,6 @@
 .messages-container {
   display: flex;
-  height: calc(100vh - 120px);
+  height: calc(100vh - 64px);
   background: #f5f7fa;
   border-radius: 12px;
   overflow: hidden;
