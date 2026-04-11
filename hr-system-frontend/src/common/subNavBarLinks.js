@@ -1,23 +1,23 @@
 export const SUBNAV_CONFIG = {
   "/training": [
-    { text: "Enrollments", link: "enrollments" },
-    { text: "Course Catalog", link: "catalog" },
+    { text: "Enrollments", link: "enrollments", roles: ["admin", "manager"] },
+    { text: "Course Catalog", link: "catalog", roles: ["admin", "manager"] },
   ],
   "/payroll": [
-    { text: "Salaries", link: "salaries" },
-    { text: "Payroll Details", link: "payroll-details" },
-    { text: "Insurance & Tax", link: "insandtax" },
+    { text: "Salaries", link: "salaries", roles: ["admin", "manager"] },
+    { text: "Payroll Details", link: "payroll-details", roles: ["admin", "manager"] },
+    { text: "Insurance & Tax", link: "insandtax", roles: ["admin", "manager"] },
   ],
   "/onboarding": [
-    { text: "New Hires", link: "new-hires" },
+    { text: "New Hires", link: "new-hires", roles: ["admin"] },
     { text: "Documents", link: "documents" },
     { text: "Checklist", link: "checklist" },
   ],
   "/performance": [
     { text: "Performance Reviews", link: "performance-reviews" },
     { text: "Employee Ratings", link: "employee-ratings" },
-    { text: "Rate Employee", link: "rate-employee" },
-    { text: "Average Rating", link: "average-rate" },
+    { text: "Rate Employee", link: "rate-employee", roles: ["admin", "manager"] },
+    { text: "Average Rating", link: "average-rate", roles: ["admin", "manager"] },
   ],
   "/attendance": [
     { text: "Attendance Records", link: "attendance-records" },

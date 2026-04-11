@@ -44,6 +44,5 @@ class DatabaseSeeder extends Seeder
         $this->call(AttendanceSettingSeeder::class);
         $this->call(AnnouncementSeeder::class);
         $this->call(HolidaySeeder::class);
-        $this->call(MessageSeeder::class);
     }
 }

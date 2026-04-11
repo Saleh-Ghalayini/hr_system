@@ -46,7 +46,6 @@ const TaxSettings = lazy(() => import("./pages/Reports/TaxSettings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy loaded — NEW pages
-const Messages = lazy(() => import("./pages/Messages"));
 const Announcements = lazy(() => import("./pages/Announcements"));
 const Holidays = lazy(() => import("./pages/Holidays"));
 const EmployeeDirectory = lazy(() => import("./pages/Directory"));
@@ -79,8 +78,16 @@ function App() {
             {/* Training Section */}
             <Route path="training/*" element={<TrainingLayout />}>
               <Route index element={<Navigate to="enrollments" replace />} />
-              <Route path="enrollments" element={<Enrollments />} />
-              <Route path="catalog" element={<CourseCatalog />} />
+              <Route path="enrollments" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <Enrollments />
+                </RoleRoute>
+              } />
+              <Route path="catalog" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <CourseCatalog />
+                </RoleRoute>
+              } />
             </Route>
 
             {/* Profile section */}
@@ -94,15 +101,30 @@ function App() {
             {/* Payroll Section */}
             <Route path="payroll/*" element={<Payroll />}>
               <Route index element={<Navigate to="salaries" replace />} />
-              <Route path="salaries" element={<Salaries />} />
-              <Route path="payroll-details" element={<PayrollDetails />} />
-              <Route path="insandtax" element={<InsuranceAndTax />} />
+              <Route path="salaries" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <Salaries />
+                </RoleRoute>
+              } />
+              <Route path="payroll-details" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <PayrollDetails />
+                </RoleRoute>
+              } />
+              <Route path="insandtax" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <InsuranceAndTax />
+                </RoleRoute>
+              } />
             </Route>
 
             {/* Onboarding */}
             <Route path="onboarding/*" element={<Onboarding />}>
-              <Route index element={<Navigate to="new-hires" replace />} />
-              <Route path="new-hires" element={<NewHire />} />
+              <Route path="new-hires" element={
+                <RoleRoute allowedRoles={["admin"]}>
+                  <NewHire />
+                </RoleRoute>
+              } />
               <Route path="documents" element={<Documents />} />
               <Route path="checklist" element={<Checklist />} />
             </Route>
@@ -112,8 +134,16 @@ function App() {
               <Route index element={<Navigate to="performance-reviews" replace />} />
               <Route path="performance-reviews" element={<EmpPerfo />} />
               <Route path="employee-ratings" element={<EmpRate />} />
-              <Route path="rate-employee" element={<AdminRate />} />
-              <Route path="average-rate" element={<AdminAverage />} />
+              <Route path="rate-employee" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <AdminRate />
+                </RoleRoute>
+              } />
+              <Route path="average-rate" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <AdminAverage />
+                </RoleRoute>
+              } />
             </Route>
 
             {/* Attendance */}
@@ -151,13 +181,24 @@ function App() {
             {/* Reports */}
             <Route path="reports/*" element={<Reports />}>
               <Route index element={<Navigate to="salary-reports" replace />} />
-              <Route path="salary-reports" element={<SalaryReports />} />
-              <Route path="payment-history" element={<PaymentHistory />} />
-              <Route path="tax-settings" element={<TaxSettings />} />
+              <Route path="salary-reports" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <SalaryReports />
+                </RoleRoute>
+              } />
+              <Route path="payment-history" element={
+                <RoleRoute allowedRoles={["admin", "manager"]}>
+                  <PaymentHistory />
+                </RoleRoute>
+              } />
+              <Route path="tax-settings" element={
+                <RoleRoute allowedRoles={["admin"]}>
+                  <TaxSettings />
+                </RoleRoute>
+              } />
             </Route>
 
             {/* NEW standalone pages */}
-            <Route path="messages" element={<Messages />} />
             <Route path="announcements" element={<Announcements />} />
             <Route path="holidays" element={<Holidays />} />
             <Route path="directory" element={<EmployeeDirectory />} />

@@ -19,7 +19,6 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
 use App\Http\Controllers\User\UserController as AdminUserController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\AttendanceSettingController;
@@ -75,14 +74,6 @@ Route::prefix('v1')->group(function () {
         Route::get('/enrollments/my', [UserController::class, 'enrollments']);
 
         // Messages (all authenticated users)
-        Route::get('/messages/inbox', [MessageController::class, 'inbox']);
-        Route::get('/messages/sent', [MessageController::class, 'sent']);
-        Route::get('/messages/unread-count', [MessageController::class, 'unreadCount']);
-        Route::get('/messages/users', [MessageController::class, 'users']);
-        Route::post('/messages', [MessageController::class, 'store']);
-        Route::get('/messages/{message}', [MessageController::class, 'show']);
-        Route::put('/messages/{message}/read', [MessageController::class, 'markRead']);
-        Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
 
         // Announcements (read — all roles)
         Route::get('/announcements', [AnnouncementController::class, 'index']);
@@ -128,6 +119,9 @@ Route::prefix('v1')->group(function () {
             // Users
             Route::get('/users', [AuthController::class, 'getAllUsers']);
             Route::get('/users/{id}', [AuthController::class, 'getUserById']);
+            Route::post('/users', [AdminUserController::class, 'store']);
+            Route::put('/users/{user}', [AdminUserController::class, 'update']);
+            Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
             Route::get('/users/{user}/courses', [AdminUserController::class, 'userCourses']);
 
             // Attendance (full access)

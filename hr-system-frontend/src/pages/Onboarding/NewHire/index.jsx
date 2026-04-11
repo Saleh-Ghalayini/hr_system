@@ -18,6 +18,7 @@ const NewHire = () => {
     position: "",
     gender: "",
     insurance_id: "",
+    role: "user",
   });
   const [insurances, setInsurances] = useState([]);
 
@@ -65,6 +66,7 @@ const NewHire = () => {
     if (!formData.position.trim()) newErrors.position = "Position is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.insurance_id) newErrors.insurance_id = "Insurance plan is required";
+    if (!formData.role) newErrors.role = "Role is required";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -78,7 +80,7 @@ const NewHire = () => {
     try {
       const response = await request({
         method: "POST",
-        path: "guest/register",
+        path: "admin/users",
         data: formData,
       });
       if (response.success) {
@@ -241,6 +243,23 @@ const NewHire = () => {
                 <option value="Executive">Executive</option>
               </select>
               {errors.position && <span className="error-message">{errors.position}</span>}
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="role">Role</label>
+              <select
+                id="role"
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={errors.role ? "error" : ""}
+              >
+                <option value="">Select Role</option>
+                <option value="admin">Admin</option>
+                <option value="manager">Manager</option>
+                <option value="user">Employee</option>
+              </select>
+              {errors.role && <span className="error-message">{errors.role}</span>}
             </div>
 
             <div className="form-group">
