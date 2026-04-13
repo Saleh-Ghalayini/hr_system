@@ -18,7 +18,7 @@ class JobDetail extends Model
     ];
 
     protected $casts = [
-        'hiring_date' => 'date',
+        'hiring_date' => 'date:Y-m-d',
     ];
 
     public function user(): BelongsTo

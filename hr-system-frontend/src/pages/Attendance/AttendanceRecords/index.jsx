@@ -15,7 +15,12 @@ const DATE_PRESETS = [
     { label: "This month", getValue: () => { const n = new Date(); return [fmt(new Date(n.getFullYear(), n.getMonth(), 1)), fmt(n)]; } },
 ];
 
-function fmt(d) { return d.toISOString().split("T")[0]; }
+function fmt(d) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 const AttendanceRecords = () => {
     const { user } = useAuthContext();
@@ -30,6 +35,7 @@ const AttendanceRecords = () => {
     const [end_date, setEndDate] = useState("");
     const [selectedStatuses, setSelectedStatuses] = useState([]);
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const [presetValue, setPresetValue] = useState("");
     const [attendance, setAttendance] = useState([]);
     const [allNames, setAllNames] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -168,6 +174,15 @@ const AttendanceRecords = () => {
         fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
     };
 
+    const handleClearFilters = () => {
+        setStartDate("");
+        setEndDate("");
+        setSelectedNames([]);
+        setSelectedStatuses([]);
+        setPresetValue("");
+        fetchAttendance(1, { names: [], start_date: "", end_date: "", statuses: [] });
+    };
+
     const handleKeyDown = (e) => { if (e.key === "Enter") handleFilter(); };
 
     const handlePageChange = (page) => {
@@ -188,6 +203,7 @@ const AttendanceRecords = () => {
 
     const applyPreset = (e) => {
         const val = e.target.value;
+        setPresetValue(val);
         if (!val) return;
         const preset = DATE_PRESETS.find(p => p.label === val);
         if (preset) {
@@ -213,8 +229,8 @@ const AttendanceRecords = () => {
             toast.success(is_checked_in ? "Checked out!" : "Checked in!");
             setIsCheckedIn(!is_checked_in);
             fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
-        } catch {
-            toast.error("Error processing attendance request.");
+        } catch (error) {
+            toast.error(error.response?.data?.message || error.message || "Error processing attendance request.");
         }
     };
 
@@ -226,7 +242,7 @@ const AttendanceRecords = () => {
             <div className="filter-container">
                 {/* Date range with presets */}
                 <div className="filter-row">
-                    <select className="preset-select" onChange={applyPreset} defaultValue="">
+                    <select className="preset-select" onChange={applyPreset} value={presetValue}>
                         <option value="" disabled>Quick Select...</option>
                         {DATE_PRESETS.map(p => (
                             <option key={p.label} value={p.label}>{p.label}</option>
@@ -284,6 +300,7 @@ const AttendanceRecords = () => {
 
                     <div className="filter-actions">
                         <button className="filter-btn" onClick={handleFilter}>Apply Filters</button>
+                        <button className="filter-btn clear-btn" onClick={handleClearFilters}>Clear</button>
                         <button className={`check-btn${is_checked_in ? " checked-in" : ""}`} onClick={checkInOut}>
                             {is_checked_in ? "Check Out" : "Check In"}
                         </button>

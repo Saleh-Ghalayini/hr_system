@@ -193,6 +193,16 @@
     background: #1e4a8a;
 }
 
+.filter-btn.clear-btn {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.filter-btn.clear-btn:hover {
+    background: #e2e8f0;
+}
+
 .check-btn {
     border: none;
     border-radius: 8px;

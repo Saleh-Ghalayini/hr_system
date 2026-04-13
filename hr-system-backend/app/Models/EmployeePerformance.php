@@ -22,7 +22,7 @@ class EmployeePerformance extends Model
     ];
 
     protected $casts = [
-        'created_date' => 'date',
+        'created_date' => 'date:Y-m-d',
     ];
 
     public function user(): BelongsTo
