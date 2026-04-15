@@ -8,14 +8,14 @@ class Holiday extends Model
 {
     protected $fillable = [
         'name',
-        'date:Y-m-d',
+        'date',
         'type',
         'is_recurring',
         'description',
     ];
 
     protected $casts = [
-        'date:Y-m-d'         => 'date:Y-m-d',
+        'date'         => 'date:Y-m-d',
         'is_recurring' => 'boolean',
     ];
 }

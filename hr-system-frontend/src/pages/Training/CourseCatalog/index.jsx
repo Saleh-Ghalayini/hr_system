@@ -4,6 +4,8 @@ import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 
+const PAGE_SIZE = 10;
+
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -15,9 +17,12 @@ const debounce = (func, wait) => {
 const CourseCatalog = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [modal, setModal] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [editingCourse, setEditingCourse] = useState(null);
   const [formData, setFormData] = useState({
     course_name: "",
     description: "",
@@ -41,7 +46,7 @@ const CourseCatalog = () => {
       const data = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
       setCourses(data);
       setFilteredData(transformCourseData(data));
-    } catch (error) {
+    } catch {
       toast.error("Failed to fetch courses.");
     } finally {
       setLoading(false);
@@ -55,8 +60,55 @@ const CourseCatalog = () => {
       description: course.description,
       skills: (course.skills ?? []).join(", "),
       duration: `${course.duration_hours} hours`,
-      certificate: course.certificate_text,
+      certificate: course.certificate_text || "--",
     }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      course_name: "",
+      description: "",
+      skills: [],
+      duration_hours: "",
+      certificate_text: "",
+    });
+    setEditingCourse(null);
+    setError("");
+  };
+
+  const openCreateModal = () => {
+    resetForm();
+    setModal(true);
+  };
+
+  const openEditModal = (courseId) => {
+    const target = courses.find((item) => item.id === courseId);
+    if (!target) return;
+
+    setEditingCourse(target);
+    setFormData({
+      course_name: target.course_name ?? "",
+      description: target.description ?? "",
+      skills: target.skills ?? [],
+      duration_hours: target.duration_hours ?? "",
+      certificate_text: target.certificate_text ?? "",
+    });
+    setError("");
+    setModal(true);
+  };
+
+  const deleteCourse = async (courseId) => {
+    if (!window.confirm("Delete this course? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await request({ method: "DELETE", path: `admin/courses/${courseId}` });
+      toast.success("Course deleted successfully.");
+      await fetchCourses();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to delete course.");
+    }
   };
 
   const tableHeaders = [
@@ -65,6 +117,20 @@ const CourseCatalog = () => {
     { key: "skills", label: "Skills" },
     { key: "duration", label: "Duration" },
     { key: "certificate", label: "Certificate" },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (row) => (
+        <div className="course-row-actions">
+          <button className="course-action-btn" onClick={() => openEditModal(row.id)}>
+            Edit
+          </button>
+          <button className="course-action-btn danger" onClick={() => deleteCourse(row.id)}>
+            Delete
+          </button>
+        </div>
+      ),
+    },
   ];
 
   const handleInputChange = (e) => {
@@ -113,33 +179,27 @@ const CourseCatalog = () => {
     e.preventDefault();
     if (!validateForm()) return;
 
-    setLoading(true);
+    setSubmitting(true);
     setError("");
 
     try {
       await request({
-        method: "POST",
-        path: "admin/courses",
+        method: editingCourse ? "PUT" : "POST",
+        path: editingCourse ? `admin/courses/${editingCourse.id}` : "admin/courses",
         data: formData,
       });
 
       await fetchCourses();
-      setFormData({
-        course_name: "",
-        description: "",
-        skills: [],
-        duration_hours: "",
-        certificate_text: "",
-      });
+      resetForm();
       setModal(false);
-      toast.success("Course created successfully!");
-    } catch (error) {
+      toast.success(editingCourse ? "Course updated successfully!" : "Course created successfully!");
+    } catch (err) {
       setError(
-        error.response?.data?.message ||
+        err.response?.data?.message ||
           "Failed to create course. Please try again."
       );
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -149,7 +209,8 @@ const CourseCatalog = () => {
       if (!searchValue.trim()) return transformedData;
       const lowerSearch = searchValue.toLowerCase();
       return transformedData.filter((item) =>
-        Object.values(item).some((value) =>
+        Object.entries(item).some(([key, value]) =>
+          key !== "id" &&
           String(value).toLowerCase().includes(lowerSearch)
         )
       );
@@ -170,6 +231,10 @@ const CourseCatalog = () => {
   }, [search, debouncedFilter]);
 
   useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
+
+  useEffect(() => {
     if (!modal) return;
     const handleEsc = (e) => { if (e.key === "Escape") setModal(false); };
     document.addEventListener("keydown", handleEsc);
@@ -182,7 +247,7 @@ const CourseCatalog = () => {
         <div className="course-modal" onClick={(e) => { if (e.target === e.currentTarget) setModal(false); }}>
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Add New Course</h2>
+              <h2>{editingCourse ? "Edit Course" : "Add New Course"}</h2>
               <div className="modal-close" onClick={() => setModal(false)}>
                 X
               </div>
@@ -238,9 +303,11 @@ const CourseCatalog = () => {
                 <button
                   type="submit"
                   className="course-btn course-modal-submit-btn"
-                  disabled={loading}
+                  disabled={submitting}
                 >
-                  {loading ? "Creating Course..." : "Add Course"}
+                  {submitting
+                    ? (editingCourse ? "Saving..." : "Creating Course...")
+                    : (editingCourse ? "Save Changes" : "Add Course")}
                 </button>
               </form>
             </div>
@@ -256,17 +323,26 @@ const CourseCatalog = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <div className="course-btn" onClick={() => setModal(true)}>
+          <div className="course-btn" onClick={openCreateModal}>
             Add Course
           </div>
         </div>
 
         <Table
           headers={tableHeaders}
-          data={filteredData}
+          data={filteredData.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)}
           loading={loading}
           emptyMessage={
             search ? "No matching courses found" : "No courses available"
+          }
+          pagination={
+            filteredData.length > PAGE_SIZE
+              ? {
+                  currentPage,
+                  totalPages: Math.ceil(filteredData.length / PAGE_SIZE),
+                  onPageChange: setCurrentPage,
+                }
+              : undefined
           }
         />
       </div>

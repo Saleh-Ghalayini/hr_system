@@ -11,7 +11,7 @@ The **HR-System** is an integrated Human Resource Management and Onboarding plat
 - **Recruitment and Onboarding**: Candidate tracking system with onboarding checklist functionalities.
 - **Performance Management**: Regular appraisals, feedback, and goal tracking.
 - **Document Management**: Secure repository for employee contracts, certifications, and important documents.
-- **Training and Development**: Training portal with courses, certifications, and skill assessments.
+- **Training and Development**: Training portal with course catalog management, enrollments, and completion-based certificate eligibility.
 - **Benefits Management**: Management of health plans, retirement options, and perks.
 - **Compliance and Reporting**: Regulatory compliance tracking and automated reporting.
 - **Task Assignment and Project Tracking**: Internal task management for HR-related projects.
@@ -131,6 +131,15 @@ HR-System/
    ```sh
    https://documenter.getpostman.com/view/33828343/2sAYkLmc1N
    ```
+
+## Documentation Quick Links
+
+- docs/attendance-changelog.md
+- docs/api-endpoints.md
+- docs/db-schema.md
+- docs/progress.md
+- docs/project-review.md
+
 ## License
 This project is licensed under the **MIT License**.
 

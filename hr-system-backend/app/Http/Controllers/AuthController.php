@@ -23,6 +23,30 @@ class AuthController extends Controller
         return $this->success($users);
     }
 
+    public function getDirectoryUsers()
+    {
+        $users = User::with('manager:id,first_name,last_name')
+            ->select(
+                'id',
+                'first_name',
+                'last_name',
+                'email',
+                'position',
+                'role',
+                'profile_url',
+                'phone_number',
+                'address',
+                'nationality',
+                'date_of_birth',
+                'manager_id'
+            )
+            ->orderBy('first_name')
+            ->orderBy('last_name')
+            ->get();
+
+        return $this->success($users);
+    }
+
     public function getUserById($id)
     {
         $user = User::with(['jobDetail', 'payroll', 'leaveBalance'])->find($id);
@@ -103,15 +127,15 @@ class AuthController extends Controller
 
         Mail::raw(
             "Hello {$user->first_name},\n\n"
-            . "Your HR System password has been reset.\n\n"
-            . "Your new temporary password is:\n\n"
-            . "    {$newPassword}\n\n"
-            . "Please log in and change your password as soon as possible.\n\n"
-            . "Best regards,\n"
-            . "HR System",
+                . "Your HR System password has been reset.\n\n"
+                . "Your new temporary password is:\n\n"
+                . "    {$newPassword}\n\n"
+                . "Please log in and change your password as soon as possible.\n\n"
+                . "Best regards,\n"
+                . "HR System",
             function ($message) use ($user) {
                 $message->to($user->email, "{$user->first_name} {$user->last_name}")
-                        ->subject('Your New HR System Password');
+                    ->subject('Your New HR System Password');
             }
         );
 

@@ -1,0 +1,1 @@
+<?php \App\Models\Attendance::whereNotNull('check_in')->whereNotNull('check_out')->whereNull('working_hours')->get()->each(function($a) { $in = \Carbon\Carbon::parse($a->check_in); $out = \Carbon\Carbon::parse($a->check_out); $workingHours = $in->diffInMinutes($out) / 60; $a->update(['working_hours' => round($workingHours, 2)]); }); echo 'fixed'.PHP_EOL;

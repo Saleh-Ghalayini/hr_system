@@ -43,8 +43,9 @@ const Messages = () => {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await request({ method: "GET", path: "messages/users" });
-      setUsers(Array.isArray(res.data) ? res.data : []);
+      const res = await request({ method: "GET", path: "directory/users" });
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data ?? []);
+      setUsers(list);
     } catch (e) {
       console.error("Failed to fetch users");
     }

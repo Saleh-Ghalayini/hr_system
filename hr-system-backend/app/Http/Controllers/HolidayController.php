@@ -13,20 +13,47 @@ class HolidayController extends Controller
     /** GET /holidays — all authenticated users */
     public function index(Request $request)
     {
-        $query = Holiday::query()->orderBy('date');
+        $query = Holiday::query();
 
         if ($year = $request->query('year')) {
-            $query->whereYear('date', $year);
+            $query->where(function ($q) use ($year) {
+                $q->whereYear('date', $year)
+                    ->orWhere(function ($q2) use ($year) {
+                        $q2->where('is_recurring', true)
+                            ->whereYear('date', '<=', $year);
+                    });
+            });
         } else {
             // Default: current + next year
-            $query->whereYear('date', '>=', now()->year);
+            $query->where(function ($q) {
+                $q->whereYear('date', '>=', now()->year)
+                    ->orWhere('is_recurring', true);
+            });
         }
 
         if ($type = $request->query('type')) {
             $query->where('type', $type);
         }
 
-        return $this->success($query->get());
+        $holidays = $query->get();
+
+        // Adjust dates for recurring holidays to match the requested view
+        $targetYear = (int) $request->query('year', now()->year);
+        $holidays->transform(function ($holiday) use ($targetYear) {
+            if ($holiday->is_recurring) {
+                $date = \Carbon\Carbon::parse($holiday->date);
+                if ($date->year < $targetYear) {
+                    $date->year = $targetYear;
+                    $holiday->date = $date->format('Y-m-d');
+                }
+            }
+            return $holiday;
+        });
+
+        // Sort them by the newly assigned dates
+        $holidays = $holidays->sortBy('date')->values();
+
+        return $this->success($holidays);
     }
 
     /** POST /admin/holidays */

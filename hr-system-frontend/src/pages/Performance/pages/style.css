@@ -141,7 +141,7 @@
     height: 52px;
     width: 52px;
     border-radius: 50%;
-    border: 2px solid #28eea7;
+    border: none;
     object-fit: cover;
 }
 

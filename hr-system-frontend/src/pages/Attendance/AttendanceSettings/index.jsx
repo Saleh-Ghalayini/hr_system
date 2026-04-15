@@ -7,7 +7,7 @@ import "./style.css";
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
 
 const AttendanceSettings = () => {
-  const [settings, setSettings] = useState(null);
+  const [leaveTypes, setLeaveTypes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -27,9 +27,22 @@ const AttendanceSettings = () => {
     const fetchSettings = async () => {
       setLoading(true);
       try {
-        const res = await request({ method: "GET", path: "admin/attendance-settings" });
-        const s = res.data ?? {};
-        setSettings(s);
+        const [attendanceRes, leaveRes] = await Promise.all([
+          request({ method: "GET", path: "admin/attendance-settings" }),
+          request({ method: "GET", path: "admin/leave/settings" }),
+        ]);
+
+        const s = attendanceRes.data ?? {};
+        const leavePolicy = Array.isArray(leaveRes.data?.types) ? leaveRes.data.types : [];
+
+        setLeaveTypes(
+          leavePolicy.map((type) => ({
+            name: type.name,
+            max_days: Number(type.max_days ?? 0),
+            is_balance_exempt: Boolean(type.is_balance_exempt),
+          }))
+        );
+
         setForm({
           work_start:                  (s.work_start ?? "09:00:00").slice(0, 5),
           work_end:                    (s.work_end ?? "17:00:00").slice(0, 5),
@@ -43,11 +56,17 @@ const AttendanceSettings = () => {
           working_days:                s.working_days ?? ["Monday","Tuesday","Wednesday","Thursday","Friday"],
         });
       } catch {
-        toast.error("Failed to load attendance settings.");
+        toast.error("Failed to load settings.");
       } finally { setLoading(false); }
     };
     fetchSettings();
   }, []);
+
+  const updateLeaveType = (name, patch) => {
+    setLeaveTypes((prev) => prev.map((type) => (
+      type.name === name ? { ...type, ...patch } : type
+    )));
+  };
 
   const toggleDay = (day) => {
     setForm((f) => ({
@@ -60,10 +79,41 @@ const AttendanceSettings = () => {
 
   const handleSave = async (e) => {
     e.preventDefault();
+
+    if (!leaveTypes.length) {
+      toast.error("Leave policy is not loaded yet.");
+      return;
+    }
+
     setSaving(true);
     try {
-      await request({ method: "PUT", path: "admin/attendance-settings", data: form });
-      toast.success("Settings saved successfully!");
+      const [attendanceResult, leaveResult] = await Promise.allSettled([
+        request({ method: "PUT", path: "admin/attendance-settings", data: form }),
+        request({
+          method: "PUT",
+          path: "admin/leave/settings",
+          data: {
+            types: leaveTypes.map((type) => ({
+              name: type.name,
+              max_days: Number(type.max_days ?? 0),
+              is_balance_exempt: Boolean(type.is_balance_exempt),
+            })),
+          },
+        }),
+      ]);
+
+      const attendanceFailed = attendanceResult.status === "rejected";
+      const leaveFailed = leaveResult.status === "rejected";
+
+      if (!attendanceFailed && !leaveFailed) {
+        toast.success("All settings saved successfully!");
+      } else if (attendanceFailed && leaveFailed) {
+        toast.error("Failed to save attendance and leave settings.");
+      } else if (attendanceFailed) {
+        toast.error("Attendance settings failed to save, but leave settings were saved.");
+      } else {
+        toast.error("Leave settings failed to save, but attendance settings were saved.");
+      }
     } catch {
       toast.error("Failed to save settings.");
     } finally { setSaving(false); }
@@ -98,14 +148,12 @@ const AttendanceSettings = () => {
               <label>Late Grace Period (minutes)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.late_threshold_minutes} onChange={(e) => setForm((f) => ({ ...f, late_threshold_minutes: parseInt(e.target.value) || 0 }))} min={0} max={120} />
-                <span className="unit">min</span>
               </div>
             </div>
             <div className="setting-row">
               <label>Overtime Threshold (minutes after end)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.overtime_threshold_minutes} onChange={(e) => setForm((f) => ({ ...f, overtime_threshold_minutes: parseInt(e.target.value) || 0 }))} min={0} max={120} />
-                <span className="unit">min</span>
               </div>
             </div>
           </div>
@@ -143,7 +191,6 @@ const AttendanceSettings = () => {
               <label>Check-in Radius (meters)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.max_radius_meters} onChange={(e) => setForm((f) => ({ ...f, max_radius_meters: parseInt(e.target.value) || 100 }))} min={10} max={10000} />
-                <span className="unit">m</span>
               </div>
             </div>
             <div className="setting-row">
@@ -175,9 +222,49 @@ const AttendanceSettings = () => {
           )}
         </div>
 
+        <div className="settings-card">
+          <div className="settings-card-header">
+            <Icon icon="mdi:clipboard-text-clock-outline" width="22" />
+            <h2>Leave Policy Settings</h2>
+          </div>
+
+          <div className="leave-settings-grid">
+            {leaveTypes.map((type) => (
+              <div key={type.name} className="leave-type-row">
+                <div className="leave-type-name">{type.name}</div>
+                <div className="leave-type-days">
+                  <label>Max Days</label>
+                  <input
+                    type="number"
+                    min={0}
+                    max={365}
+                    value={type.max_days}
+                    disabled={type.is_balance_exempt}
+                    onChange={(e) => updateLeaveType(type.name, { max_days: parseInt(e.target.value, 10) || 0 })}
+                  />
+                </div>
+                <div className="leave-type-toggle">
+                  <label>Balance Exempt</label>
+                  <button
+                    type="button"
+                    className={`toggle-btn ${type.is_balance_exempt ? "on" : "off"}`}
+                    onClick={() => updateLeaveType(type.name, {
+                      is_balance_exempt: !type.is_balance_exempt,
+                      max_days: !type.is_balance_exempt ? 0 : type.max_days,
+                    })}
+                  >
+                    <span className="toggle-thumb" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
         <div className="settings-save-row">
           <button type="submit" className="primary-btn save-settings-btn" disabled={saving}>
-            {saving ? "Saving…" : (<><Icon icon="mdi:content-save" width="18" /> Save Settings</>)}
+            {saving ? "Saving…" : (<><Icon icon="mdi:content-save" width="18" /> Save All Settings</>)}
           </button>
         </div>
       </form>

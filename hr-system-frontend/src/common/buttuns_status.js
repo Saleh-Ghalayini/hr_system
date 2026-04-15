@@ -1,9 +1,18 @@
 export const getStatusClass = (status) => {
-  const green = ["Present", "Active", "Completed", "enrolled", "Approved", "approved", "On-time"];
-  const yellow = ["Pending", "in_progress", "Rejected", "pending", "in_progress", "Not Started", "Late"];
-  return green.includes(status)
+  const normalized = String(status ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+
+  const green = ["present", "active", "completed", "enrolled", "approved", "on_time"];
+  const yellow = ["pending", "in_progress", "not_started"];
+  const red = ["rejected", "late", "absent", "cancelled", "failed", "terminated"];
+
+  return green.includes(normalized)
     ? "status-green"
-    : yellow.includes(status)
+    : yellow.includes(normalized)
     ? "status-yellow"
-    : "status-red";
+    : red.includes(normalized)
+    ? "status-red"
+    : "status-gray"; // fallback
 };

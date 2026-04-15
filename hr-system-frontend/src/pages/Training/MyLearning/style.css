@@ -1,0 +1,179 @@
+.my-learning-container {
+  padding: 20px;
+}
+
+.my-learning-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  padding: 20px;
+}
+
+.my-learning-header {
+  margin-bottom: 12px;
+}
+
+.my-learning-header h2 {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  font-size: 1.2rem;
+  color: #142f5a;
+}
+
+.my-learning-header p {
+  margin: 6px 0 0;
+  font-family: "Lato", sans-serif;
+  color: #6b7280;
+  font-size: 0.92rem;
+}
+
+.my-learning-search {
+  margin-bottom: 14px;
+}
+
+.my-learning-search input {
+  width: 100%;
+  height: 40px;
+  padding: 0 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: "Lato", sans-serif;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #f9fafb;
+}
+
+.my-learning-search input:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+  background: #ffffff;
+}
+
+.my-learning-action-btn {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #1f2937;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.my-learning-action-btn:hover {
+  background: #eef2ff;
+}
+
+.my-learning-action-disabled {
+  color: #6b7280;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+}
+
+.progress-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.progress-modal-content {
+  width: 100%;
+  max-width: 460px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.progress-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.progress-modal-header h3 {
+  margin: 0;
+  color: #142f5a;
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.progress-modal-close {
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.progress-modal-form {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.progress-modal-form label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #374151;
+  font-family: "Poppins", sans-serif;
+}
+
+.progress-modal-course {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #111827;
+  font-weight: 600;
+}
+
+.progress-modal-form input[type="number"] {
+  height: 40px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 0.875rem;
+  font-family: "Lato", sans-serif;
+}
+
+.progress-modal-form small {
+  color: #6b7280;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.progress-modal-form button {
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  background: #142f5a;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+.progress-modal-form button:disabled {
+  background: #7a96be;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .my-learning-container {
+    padding: 12px;
+  }
+
+  .my-learning-card {
+    padding: 14px;
+  }
+}

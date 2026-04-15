@@ -5,7 +5,7 @@
 
 .sick-stats-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -19,7 +19,6 @@
 }
 .sick-stat-card.approved { border-top-color: #28eea7; }
 .sick-stat-card.pending { border-top-color: #d39c1d; }
-.sick-stat-card.doc { border-top-color: #0369a1; }
 .stat-val { display: block; font-size: 28px; font-weight: 800; color: #142f5a; }
 .stat-label { display: block; font-size: 13px; color: #6b7280; margin-top: 2px; }
 
@@ -60,10 +59,6 @@
   transition: border-color 0.2s, background 0.15s;
 }
 .secondary-btn:hover { border-color: #142f5a; background: #f8fafc; }
-
-.doc-link { display: inline-flex; align-items: center; gap: 4px; color: #0369a1; font-size: 13px; text-decoration: none; }
-.doc-link:hover { text-decoration: underline; }
-.no-doc { font-size: 13px; color: #9ca3af; }
 
 @media (max-width: 768px) {
   .sick-stats-row { grid-template-columns: repeat(2, 1fr); }

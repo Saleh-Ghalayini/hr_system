@@ -1,6 +1,7 @@
 .documents-page {
-    padding: 24px;
+    padding: 32px 24px;
     max-width: 800px;
+    margin: 0 auto;
 }
 
 .documents-header {

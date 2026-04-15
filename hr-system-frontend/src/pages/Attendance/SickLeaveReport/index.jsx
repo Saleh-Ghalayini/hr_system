@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Icon } from "@iconify/react";
 import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
@@ -23,7 +22,6 @@ const SickLeaveReport = () => {
     { key: "end_date", label: "End" },
     { key: "days", label: "Days" },
     { key: "status", label: "Status" },
-    { key: "document", label: "Medical Doc" },
   ];
 
   const fetchReport = useCallback(async (page = 1) => {
@@ -50,9 +48,6 @@ const SickLeaveReport = () => {
           start_date: formatDate(r.start_date),
           end_date:   formatDate(r.end_date),
           days,
-          document:   r.document_url
-            ? (<a href={r.document_url} target="_blank" rel="noreferrer" className="doc-link"><Icon icon="mdi:file-pdf-box" width="18" /> View</a>)
-            : <span className="no-doc">None</span>,
         };
       }));
     } catch {
@@ -64,7 +59,6 @@ const SickLeaveReport = () => {
 
   const stats = {
     total: rows.length,
-    withDoc: rows.filter((r) => r.document_url).length,
     pending: rows.filter((r) => r.status === "pending").length,
     approved: rows.filter((r) => r.status === "approved").length,
   };
@@ -73,14 +67,13 @@ const SickLeaveReport = () => {
     <div className="sick-report-container">
       <div className="sick-report-header">
         <h1>Sick Leave Report</h1>
-        <p>Monitor sick leave requests with medical documentation</p>
+        <p>Monitor sick leave requests and approval outcomes</p>
       </div>
 
       <div className="sick-stats-row">
         <div className="sick-stat-card"><span className="stat-val">{stats.total}</span><span className="stat-label">Total Requests</span></div>
         <div className="sick-stat-card approved"><span className="stat-val">{stats.approved}</span><span className="stat-label">Approved</span></div>
         <div className="sick-stat-card pending"><span className="stat-val">{stats.pending}</span><span className="stat-label">Pending</span></div>
-        <div className="sick-stat-card doc"><span className="stat-val">{stats.withDoc}</span><span className="stat-label">With Documents</span></div>
       </div>
 
       <div className="sick-filters">

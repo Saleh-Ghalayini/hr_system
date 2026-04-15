@@ -82,12 +82,22 @@ class LeaveServiceTest extends TestCase
         $this->assertIsString($result);
     }
 
-    public function test_validate_balance_treats_missing_leave_type_as_zero(): void
+    public function test_validate_balance_uses_default_balance_for_missing_tracked_leave_type(): void
     {
         $balance          = new LeaveBalance();
-        $balance->balances = ['annual' => 10];  // 'sick' not present
+        $balance->balances = ['annual' => 10]; // 'sick' not present
 
         $result = $this->service->validateBalance($balance, 'sick', 1);
+
+        $this->assertNull($result);
+    }
+
+    public function test_validate_balance_treats_missing_unknown_leave_type_as_zero(): void
+    {
+        $balance          = new LeaveBalance();
+        $balance->balances = ['annual' => 10];
+
+        $result = $this->service->validateBalance($balance, 'unknown', 1);
 
         $this->assertIsString($result);
     }

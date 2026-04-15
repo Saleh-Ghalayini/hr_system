@@ -97,11 +97,14 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   padding: 5px;
+  height: 28px;
+  width: 28px;
   cursor: pointer;
   color: #6b7280;
   display: flex;
   align-items: center;
   transition: all 0.2s;
+  justify-content: center;
 }
 .ann-action-btn:hover { background: #f3f4f6; }
 .ann-action-btn.delete { color: #d62525; border-color: #fca5a5; }

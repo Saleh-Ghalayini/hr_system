@@ -8,7 +8,7 @@ const icons = [
   { id: "Dashboard",    path: "/dashboard",    icon: "mdi:home-outline",               label: "Dashboard", roles: ["admin"] },
   { id: "Attendance",   path: "/attendance",   icon: "mdi:calendar-check-outline",     label: "Attendance"   },
   { id: "Onboarding",   path: "/onboarding",   icon: "mdi:account-plus-outline",       label: "Onboarding"   },
-  { id: "Training",     path: "/training",     icon: "mdi:school-outline",             label: "Training",     roles: ["admin", "manager"] },
+  { id: "Training",     path: "/training",     icon: "mdi:school-outline",             label: "Training",     roles: ["admin", "manager", "user"] },
   { id: "Performance",  path: "/performance",  icon: "mdi:chart-line",                 label: "Performance"  },
   { id: "Payroll",      path: "/payroll",      icon: "mdi:cash-multiple",              label: "Payroll",      roles: ["admin", "manager"] },
   { id: "Reports",      path: "/reports",      icon: "mdi:chart-bar",                  label: "Reports",      roles: ["admin", "manager"] },

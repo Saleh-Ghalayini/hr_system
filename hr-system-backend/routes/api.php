@@ -15,6 +15,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\PerformanceController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\LeaveRequestController;
+use App\Http\Controllers\LeaveSettingController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\Admin\AdminEnrollmentController;
@@ -48,6 +49,7 @@ Route::prefix('v1')->group(function () {
         // Auth
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/validate-token', [AuthController::class, 'validateToken']);
+        Route::get('/directory/users', [AuthController::class, 'getDirectoryUsers']);
 
         // Profile
         Route::get('/profile/photo', [UserController::class, 'getImageUrl']);
@@ -72,6 +74,7 @@ Route::prefix('v1')->group(function () {
 
         // Enrollments (own)
         Route::get('/enrollments/my', [UserController::class, 'enrollments']);
+        Route::patch('/enrollments/{enrollment}/progress', [UserController::class, 'updateMyEnrollmentProgress']);
 
         // Messages (all authenticated users)
 
@@ -127,13 +130,16 @@ Route::prefix('v1')->group(function () {
             // Attendance (full access)
             Route::get('/attendance/search', [AttendanceController::class, 'getUserByName']);
             Route::get('/attendance/all', [AttendanceController::class, 'getAllUsersAttendance']);
-            Route::get('/attendance/user/{user_id}', [AttendanceController::class, 'getUserAttendance']);
+            Route::get('/attendance/user/{user_id}', [AttendanceController::class, 'getAttendanceByUserId']);
+            Route::put('/attendance/{attendance}/review', [AttendanceController::class, 'reviewLocation']);
 
             // Leave (full access)
             Route::get('/leave/requests', [LeaveRequestController::class, 'getLeaveRequests']);
             Route::get('/leave/balances', [LeaveBalanceController::class, 'getLeaveBalances']);
             Route::get('/leave/balance/{user}', [LeaveBalanceController::class, 'getLeaveBalanceForUser']);
             Route::get('/leave/balance-by-id/{id}', [LeaveBalanceController::class, 'getLeaveBalanceForUserById']);
+            Route::get('/leave/settings', [LeaveSettingController::class, 'index']);
+            Route::put('/leave/settings', [LeaveSettingController::class, 'update']);
 
             // Payroll
             Route::get('/payroll', [PayrollController::class, 'getPayrolls']);

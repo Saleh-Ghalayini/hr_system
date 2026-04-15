@@ -116,6 +116,10 @@ textarea {
   cursor: pointer;
   padding: 8px 18px;
   transition: background-color 0.2s, transform 0.1s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
 .primary-btn:hover {

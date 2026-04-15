@@ -16,11 +16,13 @@ class Enrollment extends Model
         'start_date',
         'end_date',
         'status',
+        'progress_percentage',
     ];
 
     protected $casts = [
         'start_date' => 'date:Y-m-d',
         'end_date' => 'date:Y-m-d',
+        'progress_percentage' => 'integer',
     ];
 
     public function user(): BelongsTo

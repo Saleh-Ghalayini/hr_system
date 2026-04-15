@@ -86,6 +86,59 @@ class LeaveTest extends TestCase
             ->assertJson(['success' => false]);
     }
 
+    public function test_user_can_submit_pto_leave_request_when_balance_is_available(): void
+    {
+        $user = $this->createUser();
+
+        LeaveBalance::where('user_id', $user->id)->update([
+            'balances' => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 3, 'other' => 5],
+        ]);
+
+        $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
+            'leave_type' => 'pto',
+            'start_date' => $this->tomorrow(),
+            'end_date'   => $this->tomorrow(),
+            'reason'     => 'Recharge day',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('data.leave_type', 'pto')
+            ->assertJsonPath('data.status', 'pending');
+    }
+
+    public function test_half_day_leave_must_have_same_start_and_end_date(): void
+    {
+        $user = $this->createUser();
+
+        $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
+            'leave_type' => 'annual',
+            'start_date' => $this->tomorrow(),
+            'end_date'   => $this->dayAfterTomorrow(),
+            'reason'     => 'Half-day request',
+            'is_half_day' => true,
+            'half_day_period' => 'morning',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('errors.end_date', fn($v) => !empty($v));
+    }
+
+    public function test_leave_request_rejects_document_field(): void
+    {
+        $user = $this->createUser();
+
+        $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
+            'leave_type' => 'sick',
+            'start_date' => $this->tomorrow(),
+            'end_date'   => $this->tomorrow(),
+            'reason'     => 'Sick leave request',
+            'document'   => 'legacy-doc.pdf',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonPath('errors.document', fn($v) => !empty($v));
+    }
+
     public function test_unauthenticated_cannot_submit_leave_request(): void
     {
         $response = $this->postJson('/api/v1/leave/requests', [
@@ -191,6 +244,53 @@ class LeaveTest extends TestCase
         // Balance must NOT change on rejection
         $balanceAfter = LeaveBalance::where('user_id', $user->id)->first()->balances['sick'];
         $this->assertEquals($balanceBefore, $balanceAfter);
+    }
+
+    public function test_manager_cannot_approve_leave_request_for_non_direct_report(): void
+    {
+        $managerA = $this->createUser(['role' => 'manager']);
+        $managerB = $this->createUser(['role' => 'manager']);
+        $user = $this->createUser(['role' => 'user', 'manager_id' => $managerB->id]);
+
+        $leave = LeaveRequest::create([
+            'user_id'    => $user->id,
+            'leave_type' => 'annual',
+            'start_date' => $this->tomorrow(),
+            'end_date'   => $this->tomorrow(),
+            'status'     => 'pending',
+            'reason'     => 'Rest',
+        ]);
+
+        $response = $this->actingAsJwt($managerA)
+            ->putJson("/api/v1/leave/requests/{$leave->id}", ['status' => 'approved']);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_approved_pto_leave_deducts_from_balance(): void
+    {
+        $manager = $this->createUser(['role' => 'manager']);
+        $user    = $this->createUser(['role' => 'user', 'manager_id' => $manager->id]);
+
+        LeaveBalance::where('user_id', $user->id)->update([
+            'balances' => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 4, 'other' => 5],
+        ]);
+
+        $leave = LeaveRequest::create([
+            'user_id'    => $user->id,
+            'leave_type' => 'pto',
+            'start_date' => $this->tomorrow(),
+            'end_date'   => $this->tomorrow(),
+            'status'     => 'pending',
+            'reason'     => 'Recharge',
+        ]);
+
+        $this->actingAsJwt($manager)
+            ->putJson("/api/v1/leave/requests/{$leave->id}", ['status' => 'approved'])
+            ->assertOk();
+
+        $balanceAfter = LeaveBalance::where('user_id', $user->id)->first()->balances['pto'];
+        $this->assertEquals(3, $balanceAfter);
     }
 
     public function test_already_processed_leave_cannot_be_updated_again(): void

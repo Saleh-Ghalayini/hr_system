@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Enrollment;
 use App\Services\ProfileService;
 use App\Traits\ApiResponse;
+use Carbon\Carbon;
+use App\Http\Requests\Enrollment\UpdateMyEnrollmentProgressRequest;
 use App\Http\Requests\User\UpdateBasicInfoRequest;
 use App\Http\Requests\User\UpdateJobDetailsRequest;
 use App\Http\Requests\User\UploadProfilePhotoRequest;
@@ -102,15 +104,11 @@ class UserController extends Controller
             ->map(fn(Enrollment $e) => [
                 'id'                   => $e->id,
                 'course_name'          => $e->course->course_name ?? null,
-                'start_date'           => $e->start_date,
-                'end_date'             => $e->end_date,
+                'start_date'           => $e->start_date?->format('Y-m-d'),
+                'end_date'             => $e->end_date?->format('Y-m-d'),
                 'status'               => $e->status,
-                'progress'             => match ($e->status) {
-                    'completed'   => 100,
-                    'in_progress' => 50,
-                    'terminated'  => 0,
-                    default       => 25,
-                },
+                'progress'             => $this->calculateEnrollmentProgress($e),
+                'progress_percentage'  => $e->progress_percentage,
                 'certificate_eligible' => $e->status === 'completed',
             ]);
 
@@ -118,5 +116,78 @@ class UserController extends Controller
             'enrollments' => $enrollments,
             'total'       => $enrollments->count(),
         ]);
+    }
+
+    public function updateMyEnrollmentProgress(UpdateMyEnrollmentProgressRequest $request, Enrollment $enrollment)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ((int) $enrollment->user_id !== (int) $user->id) {
+            return $this->forbidden('You can only update your own enrollments.');
+        }
+
+        if (in_array($enrollment->status, ['completed', 'terminated'], true)) {
+            return $this->error('Progress cannot be updated for completed or terminated enrollments.', 400);
+        }
+
+        $progress = (int) $request->validated()['progress_percentage'];
+
+        $updates = [
+            'progress_percentage' => $progress,
+        ];
+
+        // Keep status and progress consistent once learner activity starts.
+        if ($enrollment->status === 'enrolled' && $progress > 0) {
+            $updates['status'] = 'in_progress';
+        }
+
+        $enrollment->update($updates);
+
+        $enrollment->refresh();
+
+        return $this->success([
+            'id' => $enrollment->id,
+            'status' => $enrollment->status,
+            'progress' => $this->calculateEnrollmentProgress($enrollment),
+            'progress_percentage' => $enrollment->progress_percentage,
+        ], 'Progress updated successfully.');
+    }
+
+    private function calculateEnrollmentProgress(Enrollment $enrollment): int
+    {
+        if ($enrollment->status === 'completed') {
+            return 100;
+        }
+
+        if ($enrollment->status === 'terminated') {
+            return 0;
+        }
+
+        if ($enrollment->progress_percentage !== null) {
+            return max(0, min(95, (int) $enrollment->progress_percentage));
+        }
+
+        if (!$enrollment->start_date || !$enrollment->end_date) {
+            return $enrollment->status === 'in_progress' ? 50 : 0;
+        }
+
+        $start = $enrollment->start_date->copy()->startOfDay();
+        $end = $enrollment->end_date->copy()->startOfDay();
+        $today = Carbon::today();
+
+        if ($today->lte($start)) {
+            return 0;
+        }
+
+        if ($today->gte($end)) {
+            return 95;
+        }
+
+        $totalDays = max(1, $start->diffInDays($end));
+        $elapsedDays = $start->diffInDays($today);
+        $progress = (int) round(($elapsedDays / $totalDays) * 100);
+
+        return max(1, min(95, $progress));
     }
 }

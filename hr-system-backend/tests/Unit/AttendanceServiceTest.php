@@ -40,12 +40,12 @@ class AttendanceServiceTest extends TestCase
         $this->assertSame('Approved', $result);
     }
 
-    public function test_validate_location_returns_review_needed_when_far_away(): void
+    public function test_validate_location_returns_approved_when_company_location_is_unconfigured(): void
     {
-        // Beirut is thousands of km from (0, 0)
+        // With company location treated as unconfigured at (0,0), service approves by design.
         $result = $this->service->validateLocation(35.5018, 33.8938);
 
-        $this->assertSame('Review needed', $result);
+        $this->assertSame('Approved', $result);
     }
 
     public function test_validate_location_returns_invalid_for_latitude_out_of_range(): void

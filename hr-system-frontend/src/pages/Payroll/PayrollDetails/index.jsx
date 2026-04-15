@@ -198,7 +198,7 @@ const PayrollDetails = () => {
 };
 
 const StatusBadge = ({ status }) => {
-  const cls = { paid: "status-green", processed: "status-blue", draft: "status-gray" }[status] ?? "status-gray";
+  const cls = { paid: "status-green", processed: "status-blue", draft: "status-gray" }[status?.toLowerCase()] ?? "status-gray";
   return <span className={`payroll-status ${cls}`}>{status}</span>;
 };
 

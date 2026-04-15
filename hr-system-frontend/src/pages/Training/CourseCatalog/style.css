@@ -58,6 +58,39 @@
   background-color: #1e4a8a;
 }
 
+.course-row-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.course-action-btn {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #1f2937;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  cursor: pointer;
+}
+
+.course-action-btn:hover {
+  background: #eef2ff;
+}
+
+.course-action-btn.danger {
+  border-color: #fca5a5;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.course-action-btn.danger:hover {
+  background: #fee2e2;
+}
+
 /* Modal */
 .course-modal {
   position: fixed;

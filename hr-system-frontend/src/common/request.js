@@ -19,6 +19,7 @@ export const request = async ({ method, path, data, params, headers }) => {
             params,
             headers: {
                 ...headers,
+                "ngrok-skip-browser-warning": "69420",
                 Authorization: `Bearer ${token}`,
             },
         });

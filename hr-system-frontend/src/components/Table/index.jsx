@@ -34,20 +34,32 @@ const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
               ) : (
                 data.map((row, index) => (
                   <tr key={row.id ?? index} className={styles.tableRow}>
-                    {headers.map((header) =>
-                      header.key === "status" ? (
-                        <td key={header.key} className={styles.tableCell}>
-                          <StatusField
-                            text={row[header.key]}
-                            status={row[header.key]}
-                          />
-                        </td>
-                      ) : (
+                    {headers.map((header) => {
+                      if (typeof header.render === "function") {
+                        return (
+                          <td key={header.key} className={styles.tableCell}>
+                            {header.render(row)}
+                          </td>
+                        );
+                      }
+
+                      if (header.key === "status") {
+                        return (
+                          <td key={header.key} className={styles.tableCell}>
+                            <StatusField
+                              text={row[header.key]}
+                              status={row[header.key]}
+                            />
+                          </td>
+                        );
+                      }
+
+                      return (
                         <td key={header.key} className={styles.tableCell}>
                           {row[header.key]}
                         </td>
-                      )
-                    )}
+                      );
+                    })}
                   </tr>
                 ))
               )}

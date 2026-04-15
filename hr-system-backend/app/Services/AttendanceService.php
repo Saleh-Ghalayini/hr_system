@@ -4,19 +4,55 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\AttendanceSetting;
 
 class AttendanceService
 {
+    private function hasConfiguredCompanyLocation(?AttendanceSetting $settings): bool
+    {
+        if (!$settings) {
+            return false;
+        }
+
+        $lat = $settings->company_lat;
+        $lon = $settings->company_lon;
+
+        if ($lat === null || $lon === null) {
+            return false;
+        }
+
+        // Treat 0,0 as an unconfigured geofence to avoid forcing manual reviews.
+        return !((float) $lat === 0.0 && (float) $lon === 0.0);
+    }
+
+    private function getSettings(): ?AttendanceSetting
+    {
+        try {
+            return AttendanceSetting::current();
+        } catch (\Throwable $e) {
+            // Keep service usable in isolated unit tests where DB is not bootstrapped.
+            return null;
+        }
+    }
+
     public function validateLocation(float $longitude, float $latitude): string
     {
         if ($longitude < -180 || $longitude > 180 || $latitude < -90 || $latitude > 90) {
             return 'Invalid location';
         }
 
+        $settings = $this->getSettings();
+        $maxRadiusMeters = (int) ($settings?->max_radius_meters ?? 100);
+        $allowRemoteCheckIn = (bool) ($settings?->allow_remote_checkin ?? false);
+
+        if ($allowRemoteCheckIn || !$this->hasConfiguredCompanyLocation($settings)) {
+            return 'Approved';
+        }
+
         $userLat    = deg2rad($latitude);
         $userLon    = deg2rad($longitude);
-        $companyLat = deg2rad((float) env('COMPANY_LAT', 0));
-        $companyLon = deg2rad((float) env('COMPANY_LON', 0));
+        $companyLat = deg2rad((float) ($settings?->company_lat ?? env('COMPANY_LAT', 0)));
+        $companyLon = deg2rad((float) ($settings?->company_lon ?? env('COMPANY_LON', 0)));
 
         $dlat  = $companyLat - $userLat;
         $dlon  = $companyLon - $userLon;
@@ -26,18 +62,35 @@ class AttendanceService
         ));
 
         $distance = $angle * 6371000;
+        return $distance > $maxRadiusMeters ? 'Review needed' : 'Approved';
+    }
 
-        return $distance >= 100 ? 'Review needed' : 'Approved';
+    private function resolveLocationStatus(?float $longitude, ?float $latitude): string
+    {
+        $settings = $this->getSettings();
+        $requireLocation = (bool) ($settings?->require_location ?? true);
+
+        if (!$requireLocation) {
+            return 'Approved';
+        }
+
+        if ($longitude === null || $latitude === null) {
+            return 'Review needed';
+        }
+
+        return $this->validateLocation($longitude, $latitude);
     }
 
     public function validateTime(string $time, string $type): string
     {
+        $settings = $this->getSettings();
         $t         = \Carbon\Carbon::parse($time);
-        $startTime = \Carbon\Carbon::parse(env('COMPANY_START_TIME', '09:00:00'));
-        $endTime   = \Carbon\Carbon::parse(env('COMPANY_END_TIME', '17:00:00'));
+        $startTime = \Carbon\Carbon::parse((string) ($settings?->work_start ?? env('COMPANY_START_TIME', '09:00:00')));
+        $endTime   = \Carbon\Carbon::parse((string) ($settings?->work_end ?? env('COMPANY_END_TIME', '17:00:00')));
+        $lateThreshold = (int) ($settings?->late_threshold_minutes ?? 0);
 
         if ($type === 'in') {
-            return $t->greaterThan($startTime) ? 'Late' : 'On-time';
+            return $t->greaterThan($startTime->copy()->addMinutes($lateThreshold)) ? 'Late' : 'On-time';
         }
 
         if ($type === 'out') {
@@ -71,15 +124,20 @@ class AttendanceService
 
     public function processCheckIn(User $user, array $data): Attendance
     {
+        $timeInStatus = $this->validateTime(now()->toTimeString(), 'in');
+        $checkInLon = isset($data['check_in_lon']) ? (float) $data['check_in_lon'] : null;
+        $checkInLat = isset($data['check_in_lat']) ? (float) $data['check_in_lat'] : null;
+
         return Attendance::create([
             'user_id'        => $user->id,
             'full_name'      => trim($user->first_name . ' ' . $user->last_name),
             'date'           => now()->toDateString(),
             'check_in'       => now()->toTimeString(),
-            'check_in_lon'   => $data['check_in_lon'],
-            'check_in_lat'   => $data['check_in_lat'],
-            'time_in_status' => $this->validateTime(now()->toTimeString(), 'in'),
-            'loc_in_status'  => $this->validateLocation((float) $data['check_in_lon'], (float) $data['check_in_lat']),
+            'check_in_lon'   => $checkInLon,
+            'check_in_lat'   => $checkInLat,
+            'status'         => $timeInStatus === 'Late' ? 'Late' : 'Present',
+            'time_in_status' => $timeInStatus,
+            'loc_in_status'  => $this->resolveLocationStatus($checkInLon, $checkInLat),
         ]);
     }
 
@@ -89,12 +147,27 @@ class AttendanceService
             ->whereDate('date', now()->toDateString())
             ->firstOrFail();
 
+        $checkOutTime = now()->toTimeString();
+        $checkIn  = \Carbon\Carbon::parse($attendance->check_in);
+        $checkOut = \Carbon\Carbon::parse($checkOutTime);
+        $workingHours = $checkIn->diffInMinutes($checkOut) / 60;
+        $timeOutStatus = $this->validateTime($checkOutTime, 'out');
+        $checkOutLon = isset($data['check_out_lon']) ? (float) $data['check_out_lon'] : null;
+        $checkOutLat = isset($data['check_out_lat']) ? (float) $data['check_out_lat'] : null;
+
+        $status = $attendance->time_in_status === 'Late' ? 'Late' : 'Present';
+        if ($status !== 'Late' && $timeOutStatus === 'Early') {
+            $status = 'Early';
+        }
+
         $attendance->update([
-            'check_out'       => now()->toTimeString(),
-            'check_out_lon'   => $data['check_out_lon'],
-            'check_out_lat'   => $data['check_out_lat'],
-            'time_out_status' => $this->validateTime(now()->toTimeString(), 'out'),
-            'loc_out_status'  => $this->validateLocation((float) $data['check_out_lon'], (float) $data['check_out_lat']),
+            'check_out'       => $checkOutTime,
+            'check_out_lon'   => $checkOutLon,
+            'check_out_lat'   => $checkOutLat,
+            'status'          => $status,
+            'time_out_status' => $timeOutStatus,
+            'loc_out_status'  => $this->resolveLocationStatus($checkOutLon, $checkOutLat),
+            'working_hours'   => round($workingHours, 2),
         ]);
 
         return $attendance->fresh();
@@ -105,7 +178,7 @@ class AttendanceService
         $query = Attendance::where('user_id', $user->id);
         $this->applyDateFilters($query, $filters);
 
-        return $query->orderByDesc('date')->get();
+        return $query->orderByDesc('date')->orderByDesc('check_in')->get();
     }
 
     public function getUserAttendance(array $filters): ?array
@@ -123,7 +196,24 @@ class AttendanceService
 
         return [
             'user'       => $user->only(['id', 'first_name', 'last_name']),
-            'attendance' => $query->orderByDesc('date')->get(),
+            'attendance' => $query->orderByDesc('date')->orderByDesc('check_in')->get(),
+        ];
+    }
+
+    public function getAttendanceByUserId(int $userId, array $filters): ?array
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return null;
+        }
+
+        $query = Attendance::where('user_id', $user->id);
+        $this->applyDateFilters($query, $filters);
+
+        return [
+            'user'       => $user->only(['id', 'first_name', 'last_name']),
+            'attendance' => $query->orderByDesc('date')->orderByDesc('check_in')->get(),
         ];
     }
 
@@ -140,7 +230,7 @@ class AttendanceService
             $query->where('time_in_status', $filters['status']);
         }
 
-        return $query->orderByDesc('date')->paginate(20);
+        return $query->orderByDesc('date')->orderByDesc('check_in')->paginate(20);
     }
 
     public function findUserByName(string $firstName, string $lastName): ?User

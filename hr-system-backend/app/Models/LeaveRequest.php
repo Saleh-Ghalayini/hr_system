@@ -11,6 +11,10 @@ class LeaveRequest extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $hidden = [
+        'document_path',
+    ];
+
     protected $fillable = [
         'user_id',
         'leave_type',
@@ -18,7 +22,6 @@ class LeaveRequest extends Model
         'end_date',
         'status',
         'reason',
-        'document_path',
         'is_half_day',
         'half_day_period',
     ];

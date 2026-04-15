@@ -5,15 +5,15 @@ import { toast } from "react-toastify";
 import "./style.css";
 
 const LEAVE_TYPES = [
-  { value: "annual",      label: "Annual Leave",      icon: "mdi:beach",                   color: "#0369a1", needsDoc: false },
-  { value: "sick",        label: "Sick Leave",         icon: "mdi:medical-bag",             color: "#d62525", needsDoc: true  },
-  { value: "casual",      label: "Casual Leave",       icon: "mdi:coffee-outline",          color: "#6b7280", needsDoc: false },
-  { value: "pto",         label: "PTO (Paid Time Off)", icon: "mdi:umbrella-beach-outline", color: "#28eea7", needsDoc: false },
-  { value: "unpaid",      label: "Unpaid Leave",       icon: "mdi:currency-usd-off",        color: "#d39c1d", needsDoc: false },
-  { value: "maternity",   label: "Maternity Leave",    icon: "mdi:baby-carriage",           color: "#a855f7", needsDoc: true  },
-  { value: "paternity",   label: "Paternity Leave",    icon: "mdi:human-male-child",        color: "#3b82f6", needsDoc: false },
-  { value: "bereavement", label: "Bereavement Leave",  icon: "mdi:candle",                  color: "#78716c", needsDoc: false },
-  { value: "other",       label: "Other",              icon: "mdi:dots-horizontal-circle",  color: "#9ca3af", needsDoc: false },
+  { value: "annual",      label: "Annual Leave",      icon: "mdi:beach",                   color: "#0369a1" },
+  { value: "sick",        label: "Sick Leave",         icon: "mdi:medical-bag",             color: "#d62525" },
+  { value: "casual",      label: "Casual Leave",       icon: "mdi:coffee-outline",          color: "#6b7280" },
+  { value: "pto",         label: "PTO (Paid Time Off)", icon: "mdi:umbrella-beach-outline", color: "#28eea7" },
+  { value: "unpaid",      label: "Unpaid Leave",       icon: "mdi:currency-usd-off",        color: "#d39c1d" },
+  { value: "maternity",   label: "Maternity Leave",    icon: "mdi:baby-carriage",           color: "#a855f7" },
+  { value: "paternity",   label: "Paternity Leave",    icon: "mdi:human-male-child",        color: "#3b82f6" },
+  { value: "bereavement", label: "Bereavement Leave",  icon: "mdi:candle",                  color: "#78716c" },
+  { value: "other",       label: "Other",              icon: "mdi:dots-horizontal-circle",  color: "#9ca3af" },
 ];
 
 const getLocalYmd = (date = new Date()) => {
@@ -41,7 +41,7 @@ const formatDate = (value) => {
 };
 
 const StatusBadge = ({ status }) => {
-  const cls = { approved: "status-green", pending: "status-yellow", rejected: "status-red" }[status] ?? "status-yellow";
+  const cls = { approved: "status-green", pending: "status-yellow", rejected: "status-red" }[status?.toLowerCase()] ?? "status-gray";
   return <span className={`status-badge ${cls}`}>{status}</span>;
 };
 
@@ -53,10 +53,8 @@ const MyLeave = () => {
   const [loadingReq, setLoadingReq] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
-    leave_type: "", start_date: "", end_date: "", reason: "",
-    is_half_day: false, half_day_period: "morning", document: null,
+    leave_type: "", start_date: "", end_date: "", reason: "", is_half_day: false, half_day_period: "morning",
   });
-  const [docPreview, setDocPreview] = useState(null);
 
   const fetchBalance = useCallback(async () => {
     setLoadingBal(true);
@@ -84,13 +82,6 @@ const MyLeave = () => {
   const selectedType = LEAVE_TYPES.find((t) => t.value === form.leave_type);
   const todayYmd = getLocalYmd();
 
-  const handleDocChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setForm((f) => ({ ...f, document: file }));
-    setDocPreview(file.name);
-  };
-
   const calcDays = () => {
     if (!form.start_date || !form.end_date) return 0;
     if (form.is_half_day) return 0.5;
@@ -102,6 +93,10 @@ const MyLeave = () => {
     e.preventDefault();
     if (!form.leave_type) { toast.error("Please select a leave type."); return; }
     if (!form.start_date || !form.end_date) { toast.error("Please select dates."); return; }
+    if (form.is_half_day && form.start_date !== form.end_date) {
+      toast.error("Half-day leave must have the same start and end date.");
+      return;
+    }
     if (!form.reason.trim()) { toast.error("Please provide a reason."); return; }
 
     setSubmitting(true);
@@ -113,7 +108,6 @@ const MyLeave = () => {
       payload.append("reason",          form.reason);
       payload.append("is_half_day",     form.is_half_day ? "1" : "0");
       if (form.is_half_day) payload.append("half_day_period", form.half_day_period);
-      if (form.document)    payload.append("document", form.document);
 
       await request({
         method: "POST",
@@ -123,8 +117,7 @@ const MyLeave = () => {
       });
 
       toast.success("Leave request submitted successfully!");
-      setForm({ leave_type: "", start_date: "", end_date: "", reason: "", is_half_day: false, half_day_period: "morning", document: null });
-      setDocPreview(null);
+  setForm({ leave_type: "", start_date: "", end_date: "", reason: "", is_half_day: false, half_day_period: "morning" });
       fetchBalance();
       fetchRequests();
       setTab("history");
@@ -222,18 +215,43 @@ const MyLeave = () => {
             <div className="form-row">
               <div className="form-group">
                 <label>Start Date *</label>
-                <input type="date" value={form.start_date} onChange={(e) => setForm((f) => ({ ...f, start_date: e.target.value }))} min={todayYmd} required />
+                <input
+                  type="date"
+                  value={form.start_date}
+                  onChange={(e) => setForm((f) => ({
+                    ...f,
+                    start_date: e.target.value,
+                    end_date: f.is_half_day ? e.target.value : f.end_date,
+                  }))}
+                  min={todayYmd}
+                  required
+                />
               </div>
               <div className="form-group">
                 <label>End Date *</label>
-                <input type="date" value={form.end_date} onChange={(e) => setForm((f) => ({ ...f, end_date: e.target.value }))} min={form.start_date || todayYmd} required />
+                <input
+                  type="date"
+                  value={form.end_date}
+                  onChange={(e) => setForm((f) => ({ ...f, end_date: e.target.value }))}
+                  min={form.start_date || todayYmd}
+                  disabled={form.is_half_day}
+                  required
+                />
               </div>
             </div>
 
             {/* Half day */}
             <div className="form-group half-day-wrap">
               <label className="check-label">
-                <input type="checkbox" checked={form.is_half_day} onChange={(e) => setForm((f) => ({ ...f, is_half_day: e.target.checked }))} />
+                <input
+                  type="checkbox"
+                  checked={form.is_half_day}
+                  onChange={(e) => setForm((f) => ({
+                    ...f,
+                    is_half_day: e.target.checked,
+                    end_date: e.target.checked ? (f.start_date || f.end_date) : f.end_date,
+                  }))}
+                />
                 Half-day leave
               </label>
               {form.is_half_day && (
@@ -262,30 +280,6 @@ const MyLeave = () => {
               <label>Reason *</label>
               <textarea rows={3} value={form.reason} onChange={(e) => setForm((f) => ({ ...f, reason: e.target.value }))} placeholder="Please provide a reason for your leave request…" maxLength={1000} required />
             </div>
-
-            {/* Medical document (shown for relevant types) */}
-            {selectedType?.needsDoc && (
-              <div className="form-group">
-                <label>
-                  Medical Document <span className="optional-tag">(optional — PDF or image)</span>
-                </label>
-                <div className="file-upload-area">
-                  <input type="file" id="medical-doc" accept=".pdf,.jpg,.jpeg,.png" onChange={handleDocChange} style={{ display: "none" }} />
-                  <label htmlFor="medical-doc" className="file-upload-btn">
-                    <Icon icon="mdi:upload" width="20" />
-                    {docPreview ? docPreview : "Upload document"}
-                  </label>
-                  {docPreview && (
-                    <button type="button" className="remove-doc-btn" onClick={() => { setForm((f) => ({ ...f, document: null })); setDocPreview(null); }}>
-                      <Icon icon="mdi:close" width="16" />
-                    </button>
-                  )}
-                </div>
-                {form.leave_type === "sick" && (
-                  <p className="doc-hint"><Icon icon="mdi:information-outline" width="14" /> A medical certificate may be required for sick leave over 2 consecutive days.</p>
-                )}
-              </div>
-            )}
 
             <button type="submit" className="submit-leave-btn" disabled={submitting}>
               {submitting ? "Submitting…" : (<><Icon icon="mdi:send" width="18" /> Submit Request</>)}
@@ -321,7 +315,6 @@ const MyLeave = () => {
                       <p className="req-dates">{formatDate(req.start_date)} → {formatDate(req.end_date)}</p>
                       <p className="req-reason">{req.reason}</p>
                       {req.is_half_day && <span className="half-day-badge">Half day ({req.half_day_period})</span>}
-                      {req.document_path && <p className="req-doc"><Icon icon="mdi:paperclip" width="14" /> Document attached</p>}
                     </div>
                   </div>
                 );

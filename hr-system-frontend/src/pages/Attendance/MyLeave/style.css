@@ -190,3 +190,4 @@
   .my-leave-tabs { width: 100%; }
   .leave-tab { flex: 1; justify-content: center; padding: 9px 8px; }
 }
+.status-gray { background: #f3f4f6; color: #4b5563; }

@@ -29,7 +29,7 @@ nav {
     height: 38px;
     width: 38px;
     border-radius: 50%;
-    border: 2px solid #28eea7;
+    border: none;
     cursor: pointer;
     object-fit: cover;
     transition: opacity 0.2s, transform 0.2s;
@@ -76,7 +76,7 @@ nav {
     height: 40px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #28eea7;
+    border: none;
     flex-shrink: 0;
 }
 

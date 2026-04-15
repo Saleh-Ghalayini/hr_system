@@ -1,7 +1,8 @@
 export const SUBNAV_CONFIG = {
   "/training": [
-    { text: "Enrollments", link: "enrollments", roles: ["admin", "manager"] },
-    { text: "Course Catalog", link: "catalog", roles: ["admin", "manager"] },
+    { text: "My Learning", link: "my-learning" },
+    { text: "Enrollments", link: "enrollments", roles: ["admin"] },
+    { text: "Course Catalog", link: "catalog", roles: ["admin"] },
   ],
   "/payroll": [
     { text: "Salaries", link: "salaries", roles: ["admin", "manager"] },

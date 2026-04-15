@@ -99,6 +99,28 @@ const AttendanceRecords = () => {
         return `${hrs}h ${mins}m`;
     };
 
+    const formatLocStatus = (status, type, id) => {
+        if (!status) return null;
+        if (isAdmin && status === "Review needed") {
+            return (
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ fontSize: '12px', color: '#BA5143', fontWeight: 'bold' }}>{type}: Review needed</span>
+                    <button 
+                        type="button"
+                        style={{ padding: '2px 8px', fontSize: '11px', background: '#069855', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleReview(id, type === 'In' ? 'loc_in_status' : 'loc_out_status', 'Approved'); }}
+                    >Approve</button>
+                    <button 
+                        type="button"
+                        style={{ padding: '2px 8px', fontSize: '11px', background: '#BA5143', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleReview(id, type === 'In' ? 'loc_in_status' : 'loc_out_status', 'Rejected'); }}
+                    >Reject</button>
+                </div>
+            );
+        }
+        return <div style={{ fontSize: '12px', marginBottom: '4px' }}>{type}: {status}</div>;
+    };
+
     const transformRecords = (records) => {
         const todayStr = fmt(new Date());
         const yest = new Date(); yest.setDate(yest.getDate() - 1);
@@ -109,11 +131,17 @@ const AttendanceRecords = () => {
             if (itemDate === todayStr) dateLabel = "Today";
             else if (itemDate === yesterdayStr) dateLabel = "Yesterday";
             return {
+                id: item.id,
                 date: dateLabel,
                 employee: item.full_name || "--",
                 "check-in time": item.check_in || "--",
                 "check-out time": item.check_out || "--",
-                "location status": item.loc_in_status || "--",
+                "location status": (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {formatLocStatus(item.loc_in_status, 'In', item.id) || <div>In: --</div>}
+                        {item.check_out ? (formatLocStatus(item.loc_out_status, 'Out', item.id) || <div>Out: --</div>) : <div>Out: --</div>}
+                    </div>
+                ),
                 status: item.time_in_status || "--",
                 "hours worked": fmtHours(item.working_hours),
             };
@@ -151,7 +179,15 @@ const AttendanceRecords = () => {
                 );
             }
 
-            setAttendance(transformRecords(filtered));
+            const sorted = [...filtered].sort((a, b) => {
+                const aDate = String(a?.date || "").split("T")[0];
+                const bDate = String(b?.date || "").split("T")[0];
+                const aDateTime = new Date(`${aDate}T${a?.check_in || "00:00:00"}`);
+                const bDateTime = new Date(`${bDate}T${b?.check_in || "00:00:00"}`);
+                return bDateTime - aDateTime;
+            });
+
+            setAttendance(transformRecords(sorted));
             if (isAdmin) {
                 setTotalPages(response.data?.last_page ?? 1);
                 setCurrentPage(page);
@@ -170,11 +206,27 @@ const AttendanceRecords = () => {
         fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
     }, [fetchAttendance]);
 
-    const handleFilter = () => {
+    const handleReview = async (id, statusType, newValue) => {
+        try {
+            await request({
+                method: "PUT",
+                path: `admin/attendance/${id}/review`,
+                data: { [statusType]: newValue },
+            });
+            toast.success("Location status updated successfully");
+            fetchAttendance(currentPage, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update status");
+        }
+    };
+
+    const handleFilter = (e) => {
+        if (e) e.preventDefault();
         fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
     };
 
-    const handleClearFilters = () => {
+    const handleClearFilters = (e) => {
+        if (e) e.preventDefault();
         setStartDate("");
         setEndDate("");
         setSelectedNames([]);
@@ -213,23 +265,32 @@ const AttendanceRecords = () => {
         }
     };
 
-    const checkInOut = async () => {
-        if (longitude === null || latitude === null) {
-            toast.error("Geolocation is not available.");
-            return;
+    const checkInOut = async (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
         }
+
+        const hasCoordinates = Number.isFinite(longitude) && Number.isFinite(latitude);
+        const payload = is_checked_in
+            ? (hasCoordinates ? { check_out_lon: longitude, check_out_lat: latitude } : {})
+            : (hasCoordinates ? { check_in_lon: longitude, check_in_lat: latitude } : {});
+
         try {
             await request({
                 method: "POST",
                 path: is_checked_in ? "attendance/check-out" : "attendance/check-in",
-                data: is_checked_in
-                    ? { check_out_lon: longitude, check_out_lat: latitude }
-                    : { check_in_lon: longitude, check_in_lat: latitude },
+                data: payload,
             });
             toast.success(is_checked_in ? "Checked out!" : "Checked in!");
             setIsCheckedIn(!is_checked_in);
             fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
         } catch (error) {
+            if ((error?.response?.status === 422) && !hasCoordinates) {
+                toast.error("Location is required by attendance settings. Enable geolocation and try again.");
+                return;
+            }
+
             toast.error(error.response?.data?.message || error.message || "Error processing attendance request.");
         }
     };
@@ -299,9 +360,9 @@ const AttendanceRecords = () => {
                     </div>
 
                     <div className="filter-actions">
-                        <button className="filter-btn" onClick={handleFilter}>Apply Filters</button>
-                        <button className="filter-btn clear-btn" onClick={handleClearFilters}>Clear</button>
-                        <button className={`check-btn${is_checked_in ? " checked-in" : ""}`} onClick={checkInOut}>
+                        <button type="button" className="filter-btn" onClick={handleFilter}>Apply Filters</button>
+                        <button type="button" className="filter-btn clear-btn" onClick={handleClearFilters}>Clear</button>
+                        <button type="button" className={`check-btn${is_checked_in ? " checked-in" : ""}`} onClick={checkInOut}>
                             {is_checked_in ? "Check Out" : "Check In"}
                         </button>
                     </div>

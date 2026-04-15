@@ -40,7 +40,7 @@ class CourseController extends Controller
     public function destroy(Course $course)
     {
         if ($course->enrollments()->count() > 0) {
-            return $this->error('Cannot delete a course that has active enrollments.', 400);
+            return $this->error('Cannot delete a course that has enrollments.', 400);
         }
 
         $course->delete();

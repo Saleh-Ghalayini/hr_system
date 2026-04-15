@@ -9,11 +9,12 @@ class StoreEnrollmentRequest extends BaseFormRequest
     public function rules(): array
     {
         return [
-            'user_id'    => 'required|exists:users,id',
-            'course_id'  => 'required|exists:courses,id',
+            'user_id'    => 'required|integer|exists:users,id',
+            'course_id'  => 'required|integer|exists:courses,id',
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after_or_equal:start_date',
             'status'     => 'sometimes|in:enrolled,in_progress,completed,terminated',
+            'progress_percentage' => 'sometimes|integer|min:0|max:100',
         ];
     }
 }

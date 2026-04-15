@@ -312,6 +312,13 @@
   background: white;
 }
 
+.status-note {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #6b7280;
+  font-family: 'Lato', sans-serif;
+}
+
 .update-btn {
   background-color: #142f5a;
   color: white;

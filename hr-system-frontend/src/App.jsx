@@ -8,6 +8,7 @@ import Layout from "./Layout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RoleRoute from "./components/RoleRoute";
+import { useAuthContext } from "./context/AuthContext";
 
 // Eagerly loaded (always needed)
 import Login from "./pages/Auth/Login";
@@ -25,6 +26,7 @@ const Profile = lazy(() => import("./pages/profile"));
 // Lazy loaded — leaf pages (existing)
 const Enrollments = lazy(() => import("./pages/Training/Enrollments"));
 const CourseCatalog = lazy(() => import("./pages/Training/CourseCatalog"));
+const MyLearning = lazy(() => import("./pages/Training/MyLearning"));
 const JobInfo = lazy(() => import("./pages/Profile/pages/JobInfo"));
 const BasicInfo = lazy(() => import("./pages/Profile/pages/BasicInfo"));
 const Salary = lazy(() => import("./pages/Profile/pages/Salary"));
@@ -54,6 +56,17 @@ const SickLeaveReport = lazy(() => import("./pages/Attendance/SickLeaveReport"))
 const AttendanceSettings = lazy(() => import("./pages/Attendance/AttendanceSettings"));
 const PayrollDetails = lazy(() => import("./pages/Payroll/PayrollDetails"));
 
+function TrainingIndexRedirect() {
+  const { user, loading } = useAuthContext();
+
+  if (loading) {
+    return <div className="loading-spinner" />;
+  }
+
+  const defaultPath = user?.role === "admin" ? "enrollments" : "my-learning";
+  return <Navigate to={defaultPath} replace />;
+}
+
 function App() {
   return (
     <BrowserRouter>
@@ -77,14 +90,15 @@ function App() {
 
             {/* Training Section */}
             <Route path="training/*" element={<TrainingLayout />}>
-              <Route index element={<Navigate to="enrollments" replace />} />
+              <Route index element={<TrainingIndexRedirect />} />
+              <Route path="my-learning" element={<MyLearning />} />
               <Route path="enrollments" element={
-                <RoleRoute allowedRoles={["admin", "manager"]}>
+                <RoleRoute allowedRoles={["admin"]}>
                   <Enrollments />
                 </RoleRoute>
               } />
               <Route path="catalog" element={
-                <RoleRoute allowedRoles={["admin", "manager"]}>
+                <RoleRoute allowedRoles={["admin"]}>
                   <CourseCatalog />
                 </RoleRoute>
               } />

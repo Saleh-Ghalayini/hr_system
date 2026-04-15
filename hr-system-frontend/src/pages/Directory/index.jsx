@@ -17,14 +17,8 @@ const EmployeeDirectory = () => {
   const fetchEmployees = useCallback(async () => {
     setLoading(true);
     try {
-      // Try admin endpoint; fall back to messaging users list for non-admins
-      try {
-        const res = await request({ method: "GET", path: "admin/users" });
-        setEmployees(Array.isArray(res.data) ? res.data : (res.data?.data ?? []));
-      } catch {
-        const res = await request({ method: "GET", path: "messages/users" });
-        setEmployees(Array.isArray(res.data) ? res.data : []);
-      }
+      const res = await request({ method: "GET", path: "directory/users" });
+      setEmployees(Array.isArray(res.data) ? res.data : (res.data?.data ?? []));
     } catch {
       toast.error("Failed to load employee directory.");
     } finally {

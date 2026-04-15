@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { request } from "../../common/request";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../context/AuthContext";
 import "./style.css";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -15,9 +16,10 @@ const formatDate = (d) => {
 const getDayOfWeek = (d) => new Date(d).toLocaleDateString("en-GB", { weekday: "long" });
 
 const Holidays = () => {
+  const { user } = useAuthContext();
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const isAdmin = user?.role === "admin";
   const [year, setYear] = useState(new Date().getFullYear());
   const [filter, setFilter] = useState("all");
   const [showForm, setShowForm] = useState(false);
@@ -28,16 +30,8 @@ const Holidays = () => {
   const fetchHolidays = useCallback(async () => {
     setLoading(true);
     try {
-      // Try admin endpoint first; success means user is admin
-      try {
-        const res = await request({ method: "GET", path: "admin/holidays", params: { year } });
-        setHolidays(Array.isArray(res.data) ? res.data : []);
-        setIsAdmin(true);
-      } catch {
-        const res = await request({ method: "GET", path: "holidays", params: { year } });
-        setHolidays(Array.isArray(res.data) ? res.data : []);
-        setIsAdmin(false);
-      }
+      const res = await request({ method: "GET", path: "holidays", params: { year } });
+      setHolidays(Array.isArray(res.data) ? res.data : []);
     } catch {
       toast.error("Failed to load holidays.");
     } finally {

@@ -44,6 +44,19 @@ const formatStatus = (s) => {
     return s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
 };
 
+const resolveStatus = (record) => {
+    const rawStatus = String(record?.status ?? "").toLowerCase();
+    if (["present", "late", "early", "absent"].includes(rawStatus)) {
+        return rawStatus;
+    }
+
+    if (!record?.check_in) {
+        return "absent";
+    }
+
+    return String(record?.time_in_status ?? "").toLowerCase() === "late" ? "late" : "present";
+};
+
 const AttendanceReports = () => {
     const [records, setRecords] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -106,9 +119,12 @@ const AttendanceReports = () => {
 
     const stats = useMemo(() => {
         const total = filtered.length;
-        const present = filtered.filter(r => r.time_in_status === "on_time" || r.time_in_status === "late" || r.time_in_status === "On-time" || r.time_in_status === "Late").length;
-        const late = filtered.filter(r => r.time_in_status === "late" || r.time_in_status === "Late").length;
-        const absent = total - present;
+        const present = filtered.filter(r => {
+            const status = resolveStatus(r);
+            return status === "present" || status === "late" || status === "early";
+        }).length;
+        const late = filtered.filter(r => resolveStatus(r) === "late").length;
+        const absent = filtered.filter(r => resolveStatus(r) === "absent").length;
         const totalHours = filtered.reduce((acc, r) => acc + (parseFloat(r.working_hours) || 0), 0);
         return { total, present, late, absent, totalHours };
     }, [filtered]);
@@ -125,7 +141,7 @@ const AttendanceReports = () => {
     const tableData = filtered.map(r => ({
         employee: r.full_name || "--",
         date: formatDate(r.date),
-        status: formatStatus(r.time_in_status),
+        status: formatStatus(resolveStatus(r)),
         check_in: r.check_in || "--",
         check_out: r.check_out || "--",
         hours: fmtHours(r.working_hours),

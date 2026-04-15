@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AttendanceSetting;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceSettingController extends Controller
 {
@@ -19,9 +20,11 @@ class AttendanceSettingController extends Controller
     /** PUT /admin/attendance-settings */
     public function update(Request $request)
     {
-        $data = $request->validate([
+        $settings = AttendanceSetting::current();
+
+        $validator = Validator::make($request->all(), [
             'work_start'                 => 'sometimes|date_format:H:i',
-            'work_end'                   => 'sometimes|date_format:H:i|after:work_start',
+            'work_end'                   => 'sometimes|date_format:H:i',
             'late_threshold_minutes'     => 'sometimes|integer|min:0|max:120',
             'overtime_threshold_minutes' => 'sometimes|integer|min:0|max:120',
             'max_radius_meters'          => 'sometimes|integer|min:10|max:10000',
@@ -30,11 +33,25 @@ class AttendanceSettingController extends Controller
             'require_location'           => 'sometimes|boolean',
             'allow_remote_checkin'       => 'sometimes|boolean',
             'working_days_per_week'      => 'sometimes|integer|min:1|max:7',
-            'working_days'               => 'sometimes|array',
-            'working_days.*'             => 'in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'working_days'               => 'sometimes|array|min:1|max:7',
+            'working_days.*'             => 'distinct|in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
         ]);
 
-        $settings = AttendanceSetting::current();
+        $validator->after(function ($validator) use ($request, $settings) {
+            $effectiveStart = $request->input('work_start', substr((string) $settings->work_start, 0, 5));
+            $effectiveEnd = $request->input('work_end', substr((string) $settings->work_end, 0, 5));
+
+            if ($effectiveStart !== null && $effectiveEnd !== null && $effectiveEnd <= $effectiveStart) {
+                $validator->errors()->add('work_end', 'The work end time must be after the effective work start time.');
+            }
+        });
+
+        $data = $validator->validate();
+
+        if (array_key_exists('working_days', $data)) {
+            $data['working_days_per_week'] = count($data['working_days']);
+        }
+
         $settings->update($data);
 
         return $this->success($settings->fresh(), 'Attendance settings updated successfully.');

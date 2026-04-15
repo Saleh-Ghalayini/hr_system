@@ -34,6 +34,7 @@ class UserObserver
                         'annual'  => 15,
                         'sick'    => 15,
                         'casual'  => 10,
+                        'pto'     => 10,
                         'other'   => 5,
                     ],
                 ]);

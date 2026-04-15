@@ -191,7 +191,7 @@ const LeaveRequests = () => {
   const handleViewDetails = (req) => {
     if (!isAdmin) return;
     setSelectedRequest(req);
-    setNewStatus(req.status);
+    setNewStatus(req.status === "pending" ? "" : req.status);
     setShowModal(true);
     fetchUserDetails(req.user_id);
   };
@@ -419,17 +419,20 @@ const LeaveRequests = () => {
                             value={newStatus}
                             onChange={(e) => setNewStatus(e.target.value)}
                             className="status-select"
+                            disabled={selectedRequest.status !== "pending"}
                           >
                             <option value="">Select Status</option>
-                            <option value="pending">Pending</option>
                             <option value="approved">Approved</option>
                             <option value="rejected">Rejected</option>
                           </select>
                         </div>
+                        {selectedRequest.status !== "pending" && (
+                          <p className="status-note">Only pending requests can be updated.</p>
+                        )}
                         <button
                           className="update-btn"
                           onClick={updateLeaveStatus}
-                          disabled={updateLoading || newStatus === selectedRequest.status}
+                          disabled={updateLoading || selectedRequest.status !== "pending" || !newStatus || newStatus === selectedRequest.status}
                         >
                           {updateLoading ? "Updating…" : "Update Status"}
                         </button>

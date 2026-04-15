@@ -4,6 +4,13 @@ import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 const PAGE_SIZE = 10;
+const initialFormData = {
+  user_id: "",
+  course_id: "",
+  status: "enrolled",
+  start_date: "",
+  end_date: "",
+};
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "--";
@@ -32,9 +39,49 @@ const Enrollments = () => {
   const [courses, setCourses] = useState([]);
   const [users, setUsers] = useState([]);
   const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState({
-    user_id: "", course_id: "", status: "enrolled", start_date: "", end_date: "",
-  });
+  const [editingEnrollment, setEditingEnrollment] = useState(null);
+  const [formData, setFormData] = useState(initialFormData);
+
+  const closeModal = useCallback(() => {
+    setModal(false);
+    setEditingEnrollment(null);
+    setFormData(initialFormData);
+  }, []);
+
+  const openCreateModal = () => {
+    setEditingEnrollment(null);
+    setFormData(initialFormData);
+    setModal(true);
+  };
+
+  const openEditModal = (enrollmentId) => {
+    const target = enrollments.find((item) => item.id === enrollmentId);
+    if (!target) return;
+
+    setEditingEnrollment(target);
+    setFormData({
+      user_id: String(target.user_id ?? ""),
+      course_id: String(target.course_id ?? ""),
+      status: target.status ?? "enrolled",
+      start_date: target.start_date ?? "",
+      end_date: target.end_date ?? "",
+    });
+    setModal(true);
+  };
+
+  const deleteEnrollment = async (enrollmentId) => {
+    if (!window.confirm("Delete this enrollment? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await request({ method: "DELETE", path: `admin/enrollments/${enrollmentId}` });
+      toast.success("Enrollment deleted successfully.");
+      await fetchEnrollments();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to delete enrollment.");
+    }
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -63,6 +110,10 @@ const Enrollments = () => {
   const transformEnrollmentData = (data) =>
     data.map((enrollment) => ({
       id: enrollment.id,
+    user_id: enrollment.user_id,
+    course_id: enrollment.course_id,
+    start_date_raw: enrollment.start_date,
+    end_date_raw: enrollment.end_date,
       date: formatDate(enrollment.start_date),
       AssignedTo: `${enrollment.user?.first_name ?? ""} ${enrollment.user?.last_name ?? ""}`.trim() || "--",
       CourseName: enrollment.course?.course_name || "--",
@@ -87,10 +138,10 @@ const Enrollments = () => {
 
   useEffect(() => {
     if (!modal) return;
-    const handleEsc = (e) => { if (e.key === "Escape") setModal(false); };
+    const handleEsc = (e) => { if (e.key === "Escape") closeModal(); };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [modal]);
+  }, [modal, closeModal]);
 
   const filterData = useCallback((searchValue) => {
     const transformed = transformEnrollmentData(enrollments);
@@ -121,17 +172,21 @@ const Enrollments = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const enrollNewEmployee = async (e) => {
+  const saveEnrollment = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await request({ method: "POST", path: "admin/enrollments", data: formData });
-      toast.success("Employee enrolled successfully!");
-      setFormData({ user_id: "", course_id: "", status: "enrolled", start_date: "", end_date: "" });
-      setModal(false);
-      fetchEnrollments();
-    } catch {
-      toast.error("Failed to create enrollment. Please try again.");
+      await request({
+        method: editingEnrollment ? "PUT" : "POST",
+        path: editingEnrollment ? `admin/enrollments/${editingEnrollment.id}` : "admin/enrollments",
+        data: formData,
+      });
+
+      toast.success(editingEnrollment ? "Enrollment updated successfully!" : "Employee enrolled successfully!");
+      closeModal();
+      await fetchEnrollments();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Failed to save enrollment. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -144,18 +199,32 @@ const Enrollments = () => {
     { key: "DueDate", label: "End Date" },
     { key: "status", label: "Status" },
     { key: "certificate", label: "Certificate" },
+    {
+      key: "actions",
+      label: "Actions",
+      render: (row) => (
+        <div className="enrollment-row-actions">
+          <button className="enrollment-action-btn" onClick={() => openEditModal(row.id)}>
+            Edit
+          </button>
+          <button className="enrollment-action-btn danger" onClick={() => deleteEnrollment(row.id)}>
+            Delete
+          </button>
+        </div>
+      ),
+    },
   ];
 
   return (
     <div className="enrollments-container">
       {modal && (
-        <div className="enroll-modal" onClick={() => setModal(false)}>
+        <div className="enroll-modal" onClick={closeModal}>
           <div className="enroll-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="enroll-modal-header">
-              <h3>New Enrollment</h3>
-              <button className="enroll-modal-close" onClick={() => setModal(false)}>×</button>
+              <h3>{editingEnrollment ? "Edit Enrollment" : "New Enrollment"}</h3>
+              <button className="enroll-modal-close" onClick={closeModal}>×</button>
             </div>
-            <form className="enroll-modal-form" onSubmit={enrollNewEmployee}>
+            <form className="enroll-modal-form" onSubmit={saveEnrollment}>
               <div className="enroll-field">
                 <label>Employee</label>
                 <select name="user_id" value={formData.user_id} onChange={handleInputChange} required>
@@ -194,7 +263,9 @@ const Enrollments = () => {
                 </select>
               </div>
               <button type="submit" className="enroll-submit-btn" disabled={submitting}>
-                {submitting ? "Enrolling…" : "Enroll Employee"}
+                {submitting
+                  ? (editingEnrollment ? "Saving…" : "Enrolling…")
+                  : (editingEnrollment ? "Save Changes" : "Enroll Employee")}
               </button>
             </form>
           </div>
@@ -209,7 +280,7 @@ const Enrollments = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button className="enroll-btn" onClick={() => setModal(true)}>+ Enroll</button>
+          <button className="enroll-btn" onClick={openCreateModal}>+ Enroll</button>
         </div>
         <Table
           headers={tableHeaders}
