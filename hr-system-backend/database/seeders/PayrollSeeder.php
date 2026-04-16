@@ -9,8 +9,6 @@ class PayrollSeeder extends Seeder
 {
     public function run(): void
     {
-        if (DB::table('payrolls')->count() > 0) { return; }
-
         $now = now();
 
         /*
@@ -48,11 +46,26 @@ class PayrollSeeder extends Seeder
             [10, 'Rima Khoury',    'Intern',    1, 1,  217],
         ];
 
-        $months = ['November 2025', 'December 2025', 'January 2026', 'February 2026'];
+        $months = ['2026-01', '2026-02', '2026-03'];
+
+        $userIds = array_map(static fn($row) => $row[0], $users);
+        $existingPairs = DB::table('payrolls')
+            ->select('user_id', 'month')
+            ->whereIn('user_id', $userIds)
+            ->whereIn('month', $months)
+            ->get();
+
+        $existing = [];
+        foreach ($existingPairs as $row) {
+            $existing[$row->user_id . '|' . $row->month] = true;
+        }
 
         $rows = [];
         foreach ($months as $month) {
             foreach ($users as [$userId, $fullname, $position, $baseSalaryId, $insuranceId, $total]) {
+                if (isset($existing[$userId . '|' . $month])) {
+                    continue;
+                }
                 $rows[] = [
                     'user_id'        => $userId,
                     'fullname'       => $fullname,
@@ -61,12 +74,23 @@ class PayrollSeeder extends Seeder
                     'insurance_id'   => $insuranceId,
                     'tax_id'         => 1,
                     'extra_leaves'   => 0,
+                    'overtime_hours' => 0,
+                    'overtime_rate'  => 1.5,
+                    'bonus'          => 0,
+                    'allowances'     => 0,
+                    'deductions'     => 0,
+                    'notes'          => null,
+                    'status'         => 'draft',
                     'month'          => $month,
                     'total'          => $total,
                     'created_at'     => $now,
                     'updated_at'     => $now,
                 ];
             }
+        }
+
+        if (count($rows) === 0) {
+            return;
         }
 
         DB::table('payrolls')->insert($rows);

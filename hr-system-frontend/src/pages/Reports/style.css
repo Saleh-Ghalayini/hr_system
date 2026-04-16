@@ -406,3 +406,44 @@
     grid-template-columns: 1fr;
   }
 }
+ 
+
+/* ── Tax Edit Form ── */
+.tax-card { position: relative; }
+.settings-edit-btn-inline {
+  width: 32px; height: 32px; border-radius: 6px;
+  border: 1px solid #e2e8f0; background: #f8fafc; color: #64748b;
+  font-size: 0.9rem; cursor: pointer; display: flex; align-items: center;
+  justify-content: center; transition: all 0.2s; flex-shrink: 0;
+}
+.settings-edit-btn-inline:hover { background: #e2e8f0; color: #142f5a; }
+.tax-edit-form { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.tax-edit-row { display: flex; align-items: center; gap: 8px; }
+.tax-rate-input {
+  width: 80px; padding: 8px 12px; border: 2px solid #e2e8f0;
+  border-radius: 6px; font-size: 1rem; font-family: Poppins, sans-serif;
+  font-weight: 600; outline: none; text-align: right;
+}
+.tax-rate-input:focus { border-color: #142f5a; }
+.tax-rate-symbol {
+  font-family: Poppins, sans-serif; font-size: 1rem; font-weight: 600; color: #6b7280;
+}
+.tax-label-input {
+  flex: 1; padding: 8px 12px; border: 2px solid #e2e8f0;
+  border-radius: 6px; font-size: 0.9rem; font-family: Lato, sans-serif; outline: none;
+}
+.tax-label-input:focus { border-color: #142f5a; }
+.tax-edit-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.settings-cancel-btn {
+  padding: 8px 16px; border: 2px solid #e2e8f0; border-radius: 6px;
+  background: white; font-family: Poppins, sans-serif; font-size: 0.85rem;
+  font-weight: 600; color: #64748b; cursor: pointer; transition: all 0.2s;
+}
+.settings-cancel-btn:hover:not(:disabled) { background: #f1f5f9; border-color: #cbd5e1; }
+.settings-save-btn {
+  padding: 8px 18px; border: none; border-radius: 6px; background: #142f5a;
+  color: white; font-family: Poppins, sans-serif; font-size: 0.85rem;
+  font-weight: 600; cursor: pointer; transition: all 0.2s;
+}
+.settings-save-btn:hover:not(:disabled) { background: #1e4976; }
+.settings-cancel-btn:disabled, .settings-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }

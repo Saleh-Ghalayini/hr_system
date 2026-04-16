@@ -145,13 +145,13 @@ const AttendanceSettings = () => {
               <input type="time" value={form.work_end} onChange={(e) => setForm((f) => ({ ...f, work_end: e.target.value }))} />
             </div>
             <div className="setting-row">
-              <label>Late Grace Period (minutes)</label>
+              <label>Late Grace (min)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.late_threshold_minutes} onChange={(e) => setForm((f) => ({ ...f, late_threshold_minutes: parseInt(e.target.value) || 0 }))} min={0} max={120} />
               </div>
             </div>
             <div className="setting-row">
-              <label>Overtime Threshold (minutes after end)</label>
+              <label>OT Threshold (min)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.overtime_threshold_minutes} onChange={(e) => setForm((f) => ({ ...f, overtime_threshold_minutes: parseInt(e.target.value) || 0 }))} min={0} max={120} />
               </div>
@@ -162,22 +162,38 @@ const AttendanceSettings = () => {
         {/* Working Days */}
         <div className="settings-card">
           <div className="settings-card-header">
-            <Icon icon="mdi:calendar-week" width="22" />
-            <h2>Working Days</h2>
+            <div className="title-row">
+              <Icon icon="mdi:calendar-week" width="22" />
+              <h2>Working Days</h2>
+            </div>
+            <span className="settings-note">{form.working_days.length} days/week selected</span>
           </div>
-          <div className="days-grid">
-            {DAYS.map((day) => (
-              <button
-                key={day}
-                type="button"
-                className={`day-btn ${form.working_days.includes(day) ? "active" : ""}`}
-                onClick={() => toggleDay(day)}
-              >
-                {day.slice(0, 3)}
-              </button>
-            ))}
+          <div className="days-container">
+            <div className="days-grid-row">
+              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map((day) => (
+                <button
+                  key={day}
+                  type="button"
+                  className={`day-btn ${form.working_days.includes(day) ? "active" : ""}`}
+                  onClick={() => toggleDay(day)}
+                >
+                  {day.slice(0, 3)}
+                </button>
+              ))}
+            </div>
+            <div className="days-grid-row">
+              {["Saturday", "Sunday"].map((day) => (
+                <button
+                  key={day}
+                  type="button"
+                  className={`day-btn ${form.working_days.includes(day) ? "active" : ""}`}
+                  onClick={() => toggleDay(day)}
+                >
+                  {day.slice(0, 3)}
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="settings-note">{form.working_days.length} days/week selected</p>
         </div>
 
         {/* Location */}
@@ -188,7 +204,7 @@ const AttendanceSettings = () => {
           </div>
           <div className="settings-grid">
             <div className="setting-row">
-              <label>Check-in Radius (meters)</label>
+              <label>Check-in Radius (m)</label>
               <div className="num-input-wrap">
                 <input type="number" value={form.max_radius_meters} onChange={(e) => setForm((f) => ({ ...f, max_radius_meters: parseInt(e.target.value) || 100 }))} min={10} max={10000} />
               </div>
@@ -202,7 +218,7 @@ const AttendanceSettings = () => {
               <input type="number" step="0.000001" value={form.company_lon} onChange={(e) => setForm((f) => ({ ...f, company_lon: parseFloat(e.target.value) || 0 }))} />
             </div>
             <div className="setting-row toggle-row">
-              <label>Require Location for Check-in</label>
+              <label>Require Location</label>
               <button type="button" className={`toggle-btn ${form.require_location ? "on" : "off"}`} onClick={() => setForm((f) => ({ ...f, require_location: !f.require_location }))}>
                 <span className="toggle-thumb" />
               </button>
@@ -217,7 +233,7 @@ const AttendanceSettings = () => {
           {form.company_lat === 0 && form.company_lon === 0 && (
             <div className="settings-warning">
               <Icon icon="mdi:alert-outline" width="16" />
-              Company coordinates are not set. Geofencing will not work correctly.
+              <span>Company coordinates not set. Geofencing will not work.</span>
             </div>
           )}
         </div>
@@ -244,7 +260,7 @@ const AttendanceSettings = () => {
                   />
                 </div>
                 <div className="leave-type-toggle">
-                  <label>Balance Exempt</label>
+                  <label>Exempt</label>
                   <button
                     type="button"
                     className={`toggle-btn ${type.is_balance_exempt ? "on" : "off"}`}

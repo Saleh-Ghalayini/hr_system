@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { request } from "../../../common/request";
 import Table from "../../../components/Table";
 import { toast } from "react-toastify";
@@ -62,60 +62,73 @@ const AttendanceReports = () => {
     const [loading, setLoading] = useState(true);
     const [monthFilter, setMonthFilter] = useState("all");
     const [nameFilter, setNameFilter] = useState("all");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const fetchData = useCallback(async (page = 1) => {
+        setLoading(true);
+        try {
+            const params = { page };
+            if (monthFilter !== "all") {
+                params.start_date = `${monthFilter}-01`;
+                const nextMonth = new Date(monthFilter + "-01");
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                params.end_date = nextMonth.toISOString().slice(0, 10);
+            }
+            if (nameFilter !== "all") {
+                params.full_name = nameFilter;
+            }
+
+            const response = await request({
+                method: "GET",
+                path: "admin/attendance/all",
+                params,
+            });
+
+            const data = response.data?.data ?? response.data ?? [];
+            setRecords(data);
+            setCurrentPage(response.data?.current_page ?? 1);
+            setTotalPages(response.data?.last_page ?? 1);
+        } catch {
+            toast.error("Failed to load attendance data.");
+        } finally {
+            setLoading(false);
+        }
+    }, [monthFilter, nameFilter]);
 
     useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const all = [];
-                let page = 1;
-                let lastPage = 1;
+        fetchData(1);
+    }, [monthFilter, nameFilter]);
 
-                do {
-                    const response = await request({
-                        method: "GET",
-                        path: "admin/attendance/all",
-                        params: { page },
-                    });
+    const handlePageChange = useCallback((page) => {
+        setCurrentPage(page);
+        fetchData(page);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }, [fetchData]);
 
-                    const pageRows = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
-                    all.push(...pageRows);
-                    lastPage = response.data?.last_page ?? 1;
-                    page += 1;
-                } while (page <= lastPage);
-
-                setRecords(all);
-            } catch {
-                toast.error("Failed to load attendance data.");
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
+    const handleNameFilterChange = useCallback((value) => {
+        setNameFilter(value);
     }, []);
 
-    const months = useMemo(() => {
-        const set = new Set(records.map(r => r.date ? String(r.date).split("T")[0].slice(0, 7) : null).filter(Boolean));
-        return Array.from(set).sort().reverse();
-    }, [records]);
+    const handleMonthFilterChange = useCallback((value) => {
+        setMonthFilter(value);
+    }, []);
 
     const employees = useMemo(() => {
         const set = new Set(records.map(r => r.full_name).filter(Boolean));
         return Array.from(set).sort();
     }, [records]);
 
+    const months = useMemo(() => {
+        const set = new Set(records.map(r => r.date ? String(r.date).split("T")[0].slice(0, 7) : null).filter(Boolean));
+        return Array.from(set).sort().reverse();
+    }, [records]);
+
     const filtered = useMemo(() => {
         let data = records;
-        if (monthFilter !== "all") {
-            data = data.filter(r => {
-                if (!r.date) return false;
-                const rowMonth = String(r.date).split("T")[0].slice(0, 7);
-                return rowMonth === monthFilter;
-            });
-        }
         if (nameFilter !== "all") data = data.filter(r => r.full_name === nameFilter);
         return data;
-    }, [records, monthFilter, nameFilter]);
+    }, [records, nameFilter]);
 
     const stats = useMemo(() => {
         const total = filtered.length;
@@ -152,13 +165,13 @@ const AttendanceReports = () => {
             <div className="att-reports-header">
                 <h2>Attendance Reports</h2>
                 <div className="att-reports-filters">
-                    <select className="att-select" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)}>
+                    <select className="att-select" value={nameFilter} onChange={(e) => handleNameFilterChange(e.target.value)}>
                         <option value="all">All Employees</option>
                         {employees.map(n => <option key={n} value={n}>{n}</option>)}
                     </select>
-                    <select className="att-select" value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
+                    <select className="att-select" value={monthFilter} onChange={(e) => handleMonthFilterChange(e.target.value)}>
                         <option value="all">All Months</option>
-                        {months.map(m => (
+                        {employees.length > 0 && months.map(m => (
                             <option key={m} value={m}>
                                 {new Date(m + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                             </option>
@@ -196,6 +209,7 @@ const AttendanceReports = () => {
                     data={tableData}
                     loading={loading}
                     emptyMessage="No attendance data for this period"
+                    pagination={totalPages > 1 ? { currentPage, totalPages, onPageChange: handlePageChange } : undefined}
                 />
             </div>
         </div>

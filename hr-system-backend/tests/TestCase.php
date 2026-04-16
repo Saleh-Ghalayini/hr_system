@@ -5,6 +5,7 @@ namespace Tests;
 use App\Models\User;
 use App\Models\Insurance;
 use App\Models\BaseSalary;
+use App\Models\Tax;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -36,6 +37,11 @@ abstract class TestCase extends BaseTestCase
         $insurance = Insurance::firstOrCreate(
             ['type' => 'TEST'],
             ['cost' => 50, 'old_cost' => 50]
+        );
+
+        Tax::firstOrCreate(
+            ['label' => 'Standard'],
+            ['rate' => 11]
         );
 
         foreach (['Junior' => 800, 'Senior' => 1600, 'Executive' => 2100] as $position => $salary) {

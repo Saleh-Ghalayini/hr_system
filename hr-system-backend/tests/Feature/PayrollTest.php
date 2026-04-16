@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\Models\Payroll;
 use App\Models\BaseSalary;
+use App\Models\Tax;
 
 class PayrollTest extends TestCase
 {
@@ -100,8 +101,16 @@ class PayrollTest extends TestCase
         $user       = $this->createUser(['position' => 'Junior']);
 
         $payroll = Payroll::where('user_id', $user->id)->first();
+        $insurance = $user->insurance()->first();
+        $tax = Tax::first();
+        $expected = round(
+            $baseSalary->salary
+                - ($insurance?->cost ?? 0)
+                - ($baseSalary->salary * (($tax?->rate ?? 0) / 100)),
+            2
+        );
 
-        $this->assertEquals($baseSalary->salary, $payroll->total);
+        $this->assertEquals($expected, $payroll->total);
     }
 
     public function test_payroll_updates_when_user_position_changes(): void
@@ -113,8 +122,79 @@ class PayrollTest extends TestCase
         $user->update(['position' => 'Senior']);
 
         $payroll = Payroll::where('user_id', $user->id)->first();
+        $insurance = $user->insurance()->first();
+        $tax = Tax::first();
+        $expected = round(
+            1600
+                - ($insurance?->cost ?? 0)
+                - (1600 * (($tax?->rate ?? 0) / 100)),
+            2
+        );
 
         $this->assertEquals('Senior', $payroll->position);
-        $this->assertEquals(1600, $payroll->total);
+        $this->assertEquals($expected, $payroll->total);
+    }
+
+    public function test_admin_can_recalculate_payroll_total(): void
+    {
+        $admin = $this->createUser(['role' => 'admin']);
+        $user  = $this->createUser(['role' => 'user', 'position' => 'Junior']);
+
+        $payroll = Payroll::where('user_id', $user->id)->first();
+        $payroll->update([
+            'overtime_hours' => 10,
+            'overtime_rate'  => 2,
+            'bonus'          => 100,
+            'allowances'     => 50,
+            'deductions'     => 20,
+            'extra_leaves'   => 1,
+            'total'          => 0,
+        ]);
+
+        $payroll->load(['baseSalary', 'insurance', 'tax']);
+        $base = $payroll->baseSalary?->salary ?? 0;
+        $insurance = $payroll->insurance?->cost ?? 0;
+        $taxRate = $payroll->tax?->rate ?? 0;
+        $taxAmount = $base * ($taxRate / 100);
+        $dailyRate = $base / 22;
+        $leaveDeduct = $payroll->extra_leaves * $dailyRate;
+        $overtimePay = $payroll->overtime_hours * ($base / 160) * $payroll->overtime_rate;
+        $expected = round(
+            $base
+                - $insurance
+                - $taxAmount
+                - $leaveDeduct
+                - $payroll->deductions
+                + $payroll->bonus
+                + $payroll->allowances
+                + $overtimePay,
+            2
+        );
+
+        $response = $this->actingAsJwt($admin)
+            ->postJson('/api/v1/admin/payroll/recalculate/' . $payroll->id);
+
+        $response->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.total', $expected);
+    }
+
+    public function test_paid_payroll_cannot_be_updated_or_recalculated(): void
+    {
+        $admin = $this->createUser(['role' => 'admin']);
+        $user  = $this->createUser(['role' => 'user']);
+
+        $payroll = Payroll::where('user_id', $user->id)->first();
+        $payroll->update(['status' => 'paid']);
+
+        $updateResponse = $this->actingAsJwt($admin)
+            ->putJson('/api/v1/admin/payroll/' . $payroll->id, ['bonus' => 100]);
+
+        $updateResponse->assertStatus(422);
+
+        $recalcResponse = $this->actingAsJwt($admin)
+            ->postJson('/api/v1/admin/payroll/recalculate/' . $payroll->id);
+
+        $recalcResponse->assertStatus(422);
     }
 }

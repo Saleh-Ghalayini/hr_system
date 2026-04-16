@@ -2,15 +2,35 @@ import React, { useState, useEffect, useCallback } from "react";
 import Table from "../../../components/Table";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/AuthContext";
 import "./styles.css";
 
 const Salaries = () => {
   const [loading, setLoading] = useState(true);
   const [salaryData, setSalaryData] = useState([]);
   const [search, setSearch] = useState("");
-  const [month, setMonth] = useState("");
+  const getLastMonthValue = () => {
+    const date = new Date();
+    date.setDate(1);
+    date.setMonth(date.getMonth() - 1);
+    return date.toISOString().slice(0, 7);
+  };
+
+  const [month, setMonth] = useState(getLastMonthValue());
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const { user } = useAuthContext();
+  const isAdmin = user?.role === "admin";
+
+  const formatMonth = (value) => {
+    if (!value) return "—";
+    if (/^\d{4}-(0[1-9]|1[0-2])$/.test(value)) {
+      const [year, monthIndex] = value.split("-").map(Number);
+      const date = new Date(year, monthIndex - 1, 1);
+      return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+    }
+    return value;
+  };
 
   const tableHeaders = [
     { key: "month", label: "Month" },
@@ -27,9 +47,14 @@ const Salaries = () => {
       if (srch.trim()) params.search = srch.trim();
       if (mn) params.month = mn;
 
-      const response = await request({ method: "GET", path: "admin/payroll", params });
+      const path = isAdmin ? "admin/payroll" : "payroll";
+      const response = await request({ method: "GET", path, params });
       const raw = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
-      setSalaryData(raw.map((p) => ({ ...p, insurance: p.insurance?.type ?? "—" })));
+      setSalaryData(raw.map((p) => ({
+        ...p,
+        month: formatMonth(p.month),
+        insurance: p.insurance?.type ?? "—",
+      })));
       setTotalPages(response.data?.last_page ?? 1);
       setCurrentPage(page);
     } catch {
@@ -37,11 +62,11 @@ const Salaries = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isAdmin]);
 
   useEffect(() => {
-    fetchSalaries(1, "", "");
-  }, [fetchSalaries]);
+    fetchSalaries(1, "", month);
+  }, [fetchSalaries, month]);
 
   const handleFilter = () => fetchSalaries(1, search, month);
   const handleKeyDown = (e) => { if (e.key === "Enter") handleFilter(); };

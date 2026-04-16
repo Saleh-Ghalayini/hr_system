@@ -3,25 +3,27 @@
 namespace App\Http\Controllers;
 
 use App\Models\Enrollment;
-use App\Services\ProfileService;
 use App\Traits\ApiResponse;
 use Carbon\Carbon;
 use App\Http\Requests\Enrollment\UpdateMyEnrollmentProgressRequest;
 use App\Http\Requests\User\UpdateBasicInfoRequest;
 use App\Http\Requests\User\UpdateJobDetailsRequest;
-use App\Http\Requests\User\UploadProfilePhotoRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
     use ApiResponse;
 
-    public function __construct(private ProfileService $profileService) {}
-
     public function updateUserBasicInfo(UpdateBasicInfoRequest $request)
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        // Security: Only admins can update basic info (even their own)
+        if (!$user || $user->role !== 'admin') {
+            return $this->forbidden('Only administrators can update profile information.');
+        }
+
         $user->update($request->validated());
 
         return $this->success($user, 'Profile updated successfully.');
@@ -30,7 +32,13 @@ class UserController extends Controller
     public function updateJobDetails(UpdateJobDetailsRequest $request)
     {
         /** @var \App\Models\User $user */
-        $user      = Auth::user();
+        $user = Auth::user();
+
+        // Security: Only admins can update job details (even their own)
+        if (!$user || $user->role !== 'admin') {
+            return $this->forbidden('Only administrators can update job details.');
+        }
+
         $jobDetail = $user->jobDetail;
 
         if (!$jobDetail) {
@@ -63,7 +71,6 @@ class UserController extends Controller
             'nationality',
             'phone_number',
             'address',
-            'profile_url',
         ]);
 
         // Return a date-only value to avoid timezone shifting in date inputs.
@@ -76,20 +83,6 @@ class UserController extends Controller
             'user'       => $userData,
             'job_detail' => $jobDetailData,
         ]);
-    }
-
-    public function uploadProfilePhoto(UploadProfilePhotoRequest $request)
-    {
-        /** @var \App\Models\User $user */
-        $user     = Auth::user();
-        $photoUrl = $this->profileService->upload($user, $request->input('image'));
-
-        return $this->success(['photo_url' => $photoUrl], 'Profile photo uploaded successfully.');
-    }
-
-    public function getImageUrl()
-    {
-        return $this->success(['photo_url' => Auth::user()->profile_url]);
     }
 
     public function enrollments()

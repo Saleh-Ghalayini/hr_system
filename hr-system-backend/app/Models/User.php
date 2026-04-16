@@ -87,6 +87,11 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Payroll::class);
     }
 
+    public function payrolls(): HasMany
+    {
+        return $this->hasMany(Payroll::class);
+    }
+
     public function leaveBalance(): HasOne
     {
         return $this->hasOne(LeaveBalance::class);

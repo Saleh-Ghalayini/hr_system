@@ -1,74 +1,628 @@
-.secondary-btn {
-    background-color: #f3f4f6;
-    color: #374151;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: background 0.2s;
+/* ═══════════════════════════════════════════════════════════
+   Insurance & Tax Settings Page
+   ═══════════════════════════════════════════════════════════ */
+
+.ins-tax-page {
+  padding: 24px;
+  max-width: 1200px;
+  min-height: 100vh;
 }
 
-.secondary-btn:hover {
-    background-color: #e5e7eb;
+/* ── Header ── */
+.ins-tax-header {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e9ecef;
 }
 
-.actions-btn {
-    gap: 10px;
+.ins-tax-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #142f5a;
+  margin: 0 0 4px;
 }
 
-.update-input {
-    width: 100%;
-    height: 44px;
-    padding: 0 14px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Lato', sans-serif;
-    margin-bottom: 16px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
+.ins-tax-header p {
+  font-family: "Lato", sans-serif;
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0;
 }
 
-.update-input:focus {
-    border-color: #142f5a;
-    box-shadow: 0 0 0 3px rgba(20, 47, 90, 0.1);
+/* ── Summary Cards ── */
+.ins-tax-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
 }
 
-.updater {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+.ins-tax-summary-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e9ecef;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.updater-container {
-    background: white;
-    border-radius: 14px;
-    padding: 28px;
-    min-width: 320px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    gap: 12px;
+.ins-tax-summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.updater-container header h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    font-family: 'Poppins', sans-serif;
-    color: #142f5a;
-    margin: 0 0 16px;
+.ins-tax-summary-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ins-tax-summary-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.deduction-icon {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #d97706;
+}
+
+.plans-icon {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #2563eb;
+}
+
+.tax-icon {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #7c3aed;
+}
+
+.ins-tax-summary-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.ins-tax-summary-value {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #142f5a;
+  line-height: 1.2;
+}
+
+.ins-tax-summary-label {
+  font-family: "Lato", sans-serif;
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+/* ── Sections ── */
+.ins-tax-section {
+  margin-bottom: 32px;
+}
+
+.ins-tax-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ins-tax-section-header h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #142f5a;
+  margin: 0;
+}
+
+.ins-tax-section-count {
+  font-family: "Lato", sans-serif;
+  font-size: 0.8rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+
+/* ── Cards Grid ── */
+.ins-tax-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.ins-tax-card {
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ins-tax-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.ins-tax-card-header {
+  padding: 20px 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.ins-tax-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ins-tax-card-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.tax-icon-bg {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #2563eb;
+}
+
+.ins-tax-card-badge {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #16a34a;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ins-tax-card-badge.tax-badge {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.ins-tax-card-body {
+  padding: 16px 20px;
+}
+
+.ins-tax-card-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #142f5a;
+  margin: 0 0 8px;
+}
+
+.ins-tax-card-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.ins-tax-card-amount {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #142f5a;
+}
+
+.ins-tax-card-period {
+  font-family: "Lato", sans-serif;
+  font-size: 0.85rem;
+  color: #9ca3af;
+}
+
+.ins-tax-card-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-family: "Lato", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.ins-tax-card-change svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ins-tax-card-change.increase {
+  color: #dc2626;
+}
+
+.ins-tax-card-change.decrease {
+  color: #16a34a;
+}
+
+.ins-tax-card-desc {
+  font-family: "Lato", sans-serif;
+  font-size: 0.8rem;
+  color: #9ca3af;
+  margin: 6px 0 0;
+}
+
+.ins-tax-card-footer {
+  padding: 0 20px 20px;
+}
+
+.ins-tax-edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ins-tax-edit-btn:hover {
+  background: #142f5a;
+  color: #ffffff;
+  border-color: #142f5a;
+}
+
+.ins-tax-edit-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Empty State ── */
+.ins-tax-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 2px dashed #e2e8f0;
+}
+
+.ins-tax-empty svg {
+  width: 64px;
+  height: 64px;
+  color: #cbd5e1;
+  margin-bottom: 16px;
+}
+
+.ins-tax-empty p {
+  font-family: "Lato", sans-serif;
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── Modal ── */
+.ins-tax-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ins-tax-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ins-tax-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.ins-tax-modal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ins-tax-modal-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ins-tax-modal-header > div:nth-child(2) {
+  flex: 1;
+}
+
+.ins-tax-modal-header h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #142f5a;
+  margin: 0 0 2px;
+}
+
+.ins-tax-modal-header p {
+  font-family: "Lato", sans-serif;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.ins-tax-modal-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.ins-tax-modal-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.ins-tax-modal-close svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ins-tax-modal-form {
+  padding: 24px;
+}
+
+.ins-tax-form-group {
+  margin-bottom: 16px;
+}
+
+.ins-tax-form-group label {
+  display: block;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.ins-tax-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  color: #142f5a;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.ins-tax-input:focus {
+  border-color: #142f5a;
+  box-shadow: 0 0 0 4px rgba(20, 47, 90, 0.1);
+}
+
+.ins-tax-input::placeholder {
+  color: #9ca3af;
+}
+
+.ins-tax-form-info {
+  font-family: "Lato", sans-serif;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-bottom: 24px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.ins-tax-modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.ins-tax-btn-cancel {
+  flex: 1;
+  height: 48px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ins-tax-btn-cancel:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.ins-tax-btn-cancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ins-tax-btn-save {
+  flex: 2;
+  height: 48px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #142f5a 0%, #1e4976 100%);
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.ins-tax-btn-save:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1e4976 0%, #2d5a8a 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(20, 47, 90, 0.3);
+}
+
+.ins-tax-btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.ins-tax-btn-save svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ins-tax-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-    .updater-container {
-        min-width: unset;
-        width: 90%;
-        max-width: 380px;
-    }
+  .ins-tax-page {
+    padding: 16px;
+  }
+
+  .ins-tax-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ins-tax-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ins-tax-modal {
+    margin: 0 10px;
+  }
+
+  .ins-tax-modal-header {
+    flex-wrap: wrap;
+  }
+
+  .ins-tax-modal-close {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+  }
+
+  .ins-tax-modal-header {
+    position: relative;
+    padding-right: 56px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ins-tax-page {
+    padding: 12px;
+  }
+
+  .ins-tax-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .ins-tax-summary-card {
+    padding: 16px;
+  }
+
+  .ins-tax-summary-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .ins-tax-summary-value {
+    font-size: 1.25rem;
+  }
+
+  .ins-tax-card-amount {
+    font-size: 1.4rem;
+  }
+
+  .ins-tax-modal-form {
+    padding: 20px 16px;
+  }
+
+  .ins-tax-modal-actions {
+    flex-direction: column;
+  }
+
+  .ins-tax-btn-cancel,
+  .ins-tax-btn-save {
+    flex: unset;
+    width: 100%;
+  }
 }

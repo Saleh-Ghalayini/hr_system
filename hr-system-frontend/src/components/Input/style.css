@@ -30,9 +30,16 @@
     background-color: #ffffff;
 }
 
-.input-label input:disabled {
+.input-label input:disabled,
+.input-label input.input-readonly {
     background-color: #e9ecef;
     color: #9ca3af;
     cursor: not-allowed;
     border-color: #e9ecef;
+}
+
+.input-label input[readonly] {
+    background-color: #f0f4f8;
+    color: #6b7280;
+    cursor: default;
 }

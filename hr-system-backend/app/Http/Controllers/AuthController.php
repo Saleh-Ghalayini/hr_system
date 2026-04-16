@@ -7,6 +7,7 @@ use App\Traits\ApiResponse;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
@@ -33,7 +34,6 @@ class AuthController extends Controller
                 'email',
                 'position',
                 'role',
-                'profile_url',
                 'phone_number',
                 'address',
                 'nationality',
@@ -58,6 +58,113 @@ class AuthController extends Controller
         return $this->success($user);
     }
 
+    public function getUserFullProfile($id)
+    {
+        // Security: Only admins can view full profiles
+        $currentUser = Auth::user();
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return $this->forbidden('Only administrators can view full user profiles.');
+        }
+
+        $user = User::with('manager:id,first_name,last_name')->find($id);
+
+        if (!$user) {
+            return $this->notFound('User not found.');
+        }
+
+        $userData = $user->only([
+            'id',
+            'first_name',
+            'last_name',
+            'email',
+            'position',
+            'gender',
+            'date_of_birth',
+            'nationality',
+            'phone_number',
+            'address',
+            'manager_id',
+            'role',
+        ]);
+
+        $userData['date_of_birth'] = $user->date_of_birth?->format('Y-m-d');
+
+        $jobDetailData = $user->jobDetail ? array_merge($user->jobDetail->toArray(), [
+            'hiring_date' => $user->jobDetail->hiring_date?->format('Y-m-d'),
+        ]) : null;
+
+        return $this->success([
+            'user'       => $userData,
+            'job_detail' => $jobDetailData,
+            'manager'    => $user->manager ? [
+                'id' => $user->manager->id,
+                'first_name' => $user->manager->first_name,
+                'last_name' => $user->manager->last_name,
+            ] : null,
+        ]);
+    }
+
+    public function updateUserBasicInfo(Request $request, $id)
+    {
+        // Security: Only admins can edit other users' basic info
+        $currentUser = Auth::user();
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return $this->forbidden('Only administrators can edit user profiles.');
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return $this->notFound('User not found.');
+        }
+
+        $validated = $request->validate([
+            'first_name'    => 'sometimes|string|max:100',
+            'last_name'     => 'sometimes|string|max:100',
+            'email'         => 'sometimes|email|unique:users,email,' . $id . '|max:255',
+            'date_of_birth' => 'sometimes|date|before:16 years ago',
+            'nationality'   => 'sometimes|string|max:100',
+            'phone_number'  => 'sometimes|string|max:20',
+            'address'       => 'sometimes|string|max:255',
+            'gender'        => 'sometimes|in:male,female',
+        ]);
+
+        $user->update($validated);
+
+        return $this->success($user, 'Basic info updated successfully.');
+    }
+
+    public function updateUserJobDetails(Request $request, $id)
+    {
+        // Security: Only admins can edit other users' job details
+        $currentUser = Auth::user();
+        if (!$currentUser || $currentUser->role !== 'admin') {
+            return $this->forbidden('Only administrators can edit user job details.');
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return $this->notFound('User not found.');
+        }
+
+        $jobDetail = $user->jobDetail;
+        if (!$jobDetail) {
+            return $this->notFound('Job details not found for this user.');
+        }
+
+        $validated = $request->validate([
+            'title'             => 'sometimes|string|max:100',
+            'employment_type'   => 'sometimes|in:full_time,part_time,contract,internship',
+            'employee_level'    => 'sometimes|in:junior,mid-senior,senior',
+            'work_location'     => 'sometimes|in:on_site,remote,hybrid',
+            'employment_status'=> 'sometimes|in:active,on_leave,terminated',
+            'hiring_date'       => 'sometimes|date',
+        ]);
+
+        $jobDetail->update($validated);
+
+        return $this->success($jobDetail->fresh(), 'Job details updated successfully.');
+    }
+
     public function login(LoginRequest $request)
     {
         if (!$token = Auth::attempt($request->validated())) {
@@ -74,7 +181,6 @@ class AuthController extends Controller
             'last_name'   => $user->last_name,
             'email'       => $user->email,
             'role'        => $user->role,
-            'profile_url' => $user->profile_url,
             'token'       => $token,
         ], 'Login successful.');
     }
@@ -107,7 +213,6 @@ class AuthController extends Controller
             'last_name'   => $user->last_name,
             'email'       => $user->email,
             'role'        => $user->role,
-            'profile_url' => $user->profile_url,
         ], 'Token is valid.');
     }
 

@@ -5,6 +5,7 @@ import "../style.css";
 import Button from "../../../components/Button";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/AuthContext";
 
 const LEVEL_OPTIONS = [
   { value: "", label: "-- Select level --" },
@@ -55,6 +56,9 @@ const normalizeDateForInput = (value) => {
 };
 
 const JobInfo = () => {
+  const { user } = useAuthContext();
+  const isAdmin = user?.role === "admin";
+
   const [jobDetails, setJobDetails] = useState({
     title: "", employment_type: "", hiring_date: "",
     employment_status: "", work_location: "", employee_level: "",
@@ -71,8 +75,9 @@ const JobInfo = () => {
       });
       if (response.success) toast.success("Job details saved!");
       else toast.error("Failed to save changes.");
-    } catch {
-      toast.error("Failed to save changes.");
+    } catch (error) {
+      const errorMsg = error?.response?.data?.message || "Failed to save changes.";
+      toast.error(errorMsg);
     } finally {
       setSaving(false);
     }
@@ -103,21 +108,23 @@ const JobInfo = () => {
           <p className="profile-card-title">Job Information</p>
           <div className="input-grid">
             <Input type="text" label="Job Title" placeholder="e.g. Software Developer"
-              value={jobDetails.title} onChange={set("title")} />
+              value={jobDetails.title} onChange={set("title")} readonly={!isAdmin} />
             <Select label="Work Location" value={jobDetails.work_location}
-              onChange={set("work_location")} options={LOCATION_OPTIONS} />
+              onChange={set("work_location")} options={LOCATION_OPTIONS} disabled={!isAdmin} />
             <Select label="Employment Type" value={jobDetails.employment_type}
-              onChange={set("employment_type")} options={TYPE_OPTIONS} />
+              onChange={set("employment_type")} options={TYPE_OPTIONS} disabled={!isAdmin} />
             <Select label="Employee Level" value={jobDetails.employee_level}
-              onChange={set("employee_level")} options={LEVEL_OPTIONS} />
+              onChange={set("employee_level")} options={LEVEL_OPTIONS} disabled={!isAdmin} />
             <Input type="date" label="Date of Hiring"
-              value={jobDetails.hiring_date} onChange={set("hiring_date")} />
+              value={jobDetails.hiring_date} onChange={set("hiring_date")} readonly={!isAdmin} />
             <Select label="Employment Status" value={jobDetails.employment_status}
-              onChange={set("employment_status")} options={STATUS_OPTIONS} />
+              onChange={set("employment_status")} options={STATUS_OPTIONS} disabled={!isAdmin} />
           </div>
-          <div className="form-actions">
-            <Button text={saving ? "Saving..." : "Save Changes"} onClick={updateJobDetails} />
-          </div>
+          {isAdmin && (
+            <div className="form-actions">
+              <Button text={saving ? "Saving..." : "Save Changes"} onClick={updateJobDetails} />
+            </div>
+          )}
         </div>
       </div>
     </div>

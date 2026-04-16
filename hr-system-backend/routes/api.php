@@ -23,6 +23,7 @@ use App\Http\Controllers\User\UserController as AdminUserController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\AttendanceSettingController;
+use App\Http\Controllers\TaxController;
 
 Route::get('/health', fn() => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
 
@@ -51,9 +52,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/validate-token', [AuthController::class, 'validateToken']);
         Route::get('/directory/users', [AuthController::class, 'getDirectoryUsers']);
 
-        // Profile
-        Route::get('/profile/photo', [UserController::class, 'getImageUrl']);
-        Route::post('/profile/photo', [UserController::class, 'uploadProfilePhoto']);
+        // Profile (read-only for non-admins)
         Route::put('/profile/job-details', [UserController::class, 'updateJobDetails']);
         Route::get('/profile/job-details', [UserController::class, 'getUserJobDetails']);
         Route::put('/profile/basic-info', [UserController::class, 'updateUserBasicInfo']);
@@ -105,6 +104,9 @@ Route::prefix('v1')->group(function () {
             // Leave approval
             Route::put('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'updateLeaveRequest']);
 
+            // Payroll (manager/admin view)
+            Route::get('/payroll', [PayrollController::class, 'getPayrolls']);
+
             // Tasks & Projects (managers can manage)
             Route::apiResource('tasks', TaskController::class);
             Route::apiResource('projects', ProjectController::class);
@@ -127,6 +129,11 @@ Route::prefix('v1')->group(function () {
             Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
             Route::get('/users/{user}/courses', [AdminUserController::class, 'userCourses']);
 
+            // User Profile Management (Admin can edit any user)
+            Route::get('/users/{id}/profile', [AuthController::class, 'getUserFullProfile']);
+            Route::put('/users/{id}/basic-info', [AuthController::class, 'updateUserBasicInfo']);
+            Route::put('/users/{id}/job-details', [AuthController::class, 'updateUserJobDetails']);
+
             // Attendance (full access)
             Route::get('/attendance/search', [AttendanceController::class, 'getUserByName']);
             Route::get('/attendance/all', [AttendanceController::class, 'getAllUsersAttendance']);
@@ -145,10 +152,15 @@ Route::prefix('v1')->group(function () {
             Route::get('/payroll', [PayrollController::class, 'getPayrolls']);
             Route::put('/payroll/{payroll}', [PayrollController::class, 'update']);
             Route::post('/payroll/generate', [PayrollController::class, 'generate']);
+            Route::post('/payroll/recalculate/{payroll}', [PayrollController::class, 'recalculate']);
 
             // Insurance
             Route::get('/insurances', [InsuranceController::class, 'getInsurances']);
             Route::put('/insurances/{insurance}', [InsuranceController::class, 'updatePlan']);
+
+            // Tax
+            Route::get('/taxes', [TaxController::class, 'index']);
+            Route::put('/taxes/{tax}', [TaxController::class, 'update']);
 
             // Courses
             Route::apiResource('courses', CourseController::class);

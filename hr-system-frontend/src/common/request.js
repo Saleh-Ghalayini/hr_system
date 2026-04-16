@@ -25,6 +25,13 @@ export const request = async ({ method, path, data, params, headers }) => {
         });
         return response.data;
     } catch (error) {
+        console.error("Request error:", {
+            url: baseApi + path,
+            method,
+            status: error.response?.status,
+            data: error.response?.data,
+            message: error.message
+        });
         if (error.response?.status === 401) {
             const url = error.config?.url || '';
             if (!url.includes('guest/login')) {

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Icon } from '@iconify/react';
 import './style.css';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { request } from '../../common/request';
 import { useAuthContext } from '../../context/AuthContext';
 
 const formatTitle = (pathname) => {
@@ -13,9 +12,10 @@ const formatTitle = (pathname) => {
         .join(' ');
 };
 
+const getInitials = (first, last) =>
+    `${first?.[0] ?? ""}${last?.[0] ?? ""}`.toUpperCase();
+
 const NavBar = () => {
-    const ImageBaseUrl = import.meta.env.VITE_Image_Base_URL;
-    const [profile_url, setProfile] = useState('/logo.png');
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [showNotifModal, setShowNotifModal] = useState(false);
     const profileRef = useRef(null);
@@ -23,17 +23,6 @@ const NavBar = () => {
     const location = useLocation();
     const title = formatTitle(location.pathname);
     const { user, logout } = useAuthContext();
-
-    const getUrl = async () => {
-        try {
-            const response = await request({ method: 'GET', path: 'profile/photo' });
-            if (response.success && response.data?.photo_url) {
-                setProfile(ImageBaseUrl + response.data.photo_url);
-            }
-        } catch {
-            // Keep default avatar
-        }
-    };
 
     // Close profile menu when clicking outside
     useEffect(() => {
@@ -53,17 +42,6 @@ const NavBar = () => {
         document.addEventListener('keydown', handleEsc);
         return () => document.removeEventListener('keydown', handleEsc);
     }, [showNotifModal]);
-
-    useEffect(() => {
-        getUrl();
-    }, []);
-
-    // Refresh avatar when user uploads a new photo from BasicInfo
-    useEffect(() => {
-        const onPhotoUpdate = (e) => setProfile(e.detail || '/logo.png');
-        window.addEventListener('photo-updated', onPhotoUpdate);
-        return () => window.removeEventListener('photo-updated', onPhotoUpdate);
-    }, []);
 
     const handleSettings = () => {
         setShowProfileMenu(false);
@@ -85,25 +63,19 @@ const NavBar = () => {
             <nav>
                 <div className="nav-title poppins">{title}</div>
                 <div className="profile-section">
-                    {/* Profile avatar — opens dropdown */}
                     <div className="profile-menu-wrapper" ref={profileRef}>
-                        <img
-                            src={profile_url}
-                            alt="Profile"
-                            className="nav-avatar"
+                        <div
+                            className="nav-avatar nav-avatar-initials"
                             onClick={() => setShowProfileMenu((v) => !v)}
-                            onError={(e) => { e.target.src = '/logo.png'; }}
-                        />
+                        >
+                            {getInitials(user?.first_name, user?.last_name)}
+                        </div>
                         {showProfileMenu && (
                             <div className="profile-dropdown">
-                                {/* User info header */}
                                 <div className="profile-dropdown-header">
-                                    <img
-                                        src={profile_url}
-                                        alt="Profile"
-                                        className="profile-dropdown-avatar"
-                                        onError={(e) => { e.target.src = '/logo.png'; }}
-                                    />
+                                    <div className="profile-dropdown-avatar profile-dropdown-initials">
+                                        {getInitials(user?.first_name, user?.last_name)}
+                                    </div>
                                     <div className="profile-dropdown-info">
                                         <span className="profile-dropdown-name">
                                             {user?.first_name} {user?.last_name}
@@ -114,7 +86,6 @@ const NavBar = () => {
 
                                 <div className="profile-dropdown-divider" />
 
-                                {/* Actions */}
                                 <div className="profile-dropdown-items">
                                     <button className="profile-dropdown-item" onClick={handleSettings}>
                                         <Icon icon="mdi:cog-outline" width="17" height="17" />
@@ -140,7 +111,6 @@ const NavBar = () => {
                 </div>
             </nav>
 
-            {/* Centered notification modal */}
             {showNotifModal && (
                 <div className="notif-modal-overlay" onClick={() => setShowNotifModal(false)}>
                     <div className="notif-modal" onClick={(e) => e.stopPropagation()}>
