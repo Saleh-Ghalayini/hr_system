@@ -15,19 +15,19 @@ class LeaveBalanceSeeder extends Seeder
 
         $now = now();
 
-        // Balances use leave type names as keys (annual=15, sick=15, casual=10, pto=10, other=5)
+        // Balances use leave type names as keys (annual=15, sick=15, pto=10, maternity=60, paternity=30)
         // Values represent remaining days
         $balances = [
-            1  => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 10, 'other' => 5],  // Admin — full
-            2  => ['annual' => 12, 'sick' => 13, 'casual' =>  8, 'pto' => 8,  'other' => 5],  // Sara
-            3  => ['annual' => 10, 'sick' => 11, 'casual' =>  7, 'pto' => 7,  'other' => 4],  // Hassan
-            4  => ['annual' => 13, 'sick' => 15, 'casual' =>  9, 'pto' => 9,  'other' => 5],  // Lara
-            5  => ['annual' => 14, 'sick' => 14, 'casual' => 10, 'pto' => 9,  'other' => 5],  // Omar
-            6  => ['annual' =>  9, 'sick' => 12, 'casual' =>  6, 'pto' => 6,  'other' => 3],  // Nour
-            7  => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 10, 'other' => 5],  // Karim — new intern
-            8  => ['annual' => 11, 'sick' => 15, 'casual' =>  8, 'pto' => 8,  'other' => 5],  // Maya
-            9  => ['annual' => 13, 'sick' => 13, 'casual' =>  9, 'pto' => 8,  'other' => 4],  // Ali
-            10 => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 10, 'other' => 5],  // Rima — new intern
+            1  => ['annual' => 15, 'sick' => 15, 'pto' => 10, 'maternity' => 60, 'paternity' => 30],  // Admin — full
+            2  => ['annual' => 12, 'sick' => 13, 'pto' => 8,  'maternity' => 60, 'paternity' => 30],  // Sara
+            3  => ['annual' => 10, 'sick' => 11, 'pto' => 7,  'maternity' => 60, 'paternity' => 30],  // Hassan
+            4  => ['annual' => 13, 'sick' => 15, 'pto' => 9,  'maternity' => 60, 'paternity' => 30],  // Lara
+            5  => ['annual' => 14, 'sick' => 14, 'pto' => 9,  'maternity' => 60, 'paternity' => 30],  // Omar
+            6  => ['annual' =>  9, 'sick' => 12, 'pto' => 6,  'maternity' => 60, 'paternity' => 30],  // Nour
+            7  => ['annual' => 15, 'sick' => 15, 'pto' => 10, 'maternity' => 60, 'paternity' => 30],  // Karim — new intern
+            8  => ['annual' => 11, 'sick' => 15, 'pto' => 8,  'maternity' => 60, 'paternity' => 30],  // Maya
+            9  => ['annual' => 13, 'sick' => 13, 'pto' => 8,  'maternity' => 60, 'paternity' => 30],  // Ali
+            10 => ['annual' => 15, 'sick' => 15, 'pto' => 10, 'maternity' => 60, 'paternity' => 30],  // Rima — new intern
         ];
 
         // The UserObserver already creates one leave_balance per user on registration.

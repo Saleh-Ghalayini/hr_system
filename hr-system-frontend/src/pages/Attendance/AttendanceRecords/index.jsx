@@ -1,11 +1,11 @@
 import Table from "../../../components/Table";
 import "./style.css";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { request } from "../../../common/request";
 import { toast } from 'react-toastify';
 import { useAuthContext } from "../../../context/AuthContext";
 
-const STATUS_OPTIONS = ["On-time", "Late"];
+const STATUS_OPTIONS = ["On-time", "Late", "Absent"];
 
 const DATE_PRESETS = [
     { label: "Today", getValue: () => { const d = fmt(new Date()); return [d, d]; } },
@@ -36,7 +36,7 @@ const AttendanceRecords = () => {
     const [selectedStatuses, setSelectedStatuses] = useState([]);
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     const [presetValue, setPresetValue] = useState("");
-    const [attendance, setAttendance] = useState([]);
+    const [records, setRecords] = useState([]);
     const [allNames, setAllNames] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -142,71 +142,69 @@ const AttendanceRecords = () => {
                         {item.check_out ? (formatLocStatus(item.loc_out_status, 'Out', item.id) || <div>Out: --</div>) : <div>Out: --</div>}
                     </div>
                 ),
-                status: item.time_in_status || "--",
+                status: item.time_in_status || item.status || "--",
                 "hours worked": fmtHours(item.working_hours),
             };
         });
     };
 
-    const fetchAttendance = useCallback(async (page = 1, filters = {}) => {
+    const fetchAttendance = useCallback(async (page = 1) => {
         setLoading(true);
         try {
-            const params = {};
-            if (isAdmin) params.page = page;
-            if (isAdmin && filters.names?.length === 1) params.full_name = filters.names[0];
-            if (filters.start_date) params.start_date = filters.start_date;
-            if (filters.end_date) params.end_date = filters.end_date;
-            if (isAdmin && filters.statuses?.length === 1) params.status = filters.statuses[0];
+            const params = { page };
+            if (isAdmin && selectedNames.length === 1) params.full_name = selectedNames[0];
+            if (start_date) params.start_date = start_date;
+            if (end_date) params.end_date = end_date;
+            if (isAdmin && selectedStatuses.length === 1) params.status = selectedStatuses[0];
 
             const path = isAdmin ? "admin/attendance/all" : "attendance/my";
             const response = await request({ method: "GET", path, params });
-            const raw = Array.isArray(response.data) ? response.data : (response.data?.data ?? []);
 
+            // Handle paginated response
+            let raw = [];
+            let pageInfo = { current_page: 1, last_page: 1 };
+            
+            if (response?.data) {
+                // Paginated response structure
+                if (Array.isArray(response.data.data)) {
+                    raw = response.data.data;
+                    pageInfo = {
+                        current_page: response.data.current_page || 1,
+                        last_page: response.data.last_page || 1,
+                    };
+                } else if (Array.isArray(response.data)) {
+                    raw = response.data;
+                }
+            } else if (Array.isArray(response)) {
+                raw = response;
+            }
+
+            setRecords(raw);
+            setCurrentPage(pageInfo.current_page);
+            setTotalPages(pageInfo.last_page);
+            
             // Extract unique names for the name picker
-            if (isAdmin) {
+            if (isAdmin && raw.length > 0) {
                 const names = [...new Set(raw.map(r => r.full_name).filter(Boolean))].sort();
-                if (names.length > 0 && allNames.length === 0) setAllNames(names);
-            }
-
-            // Client-side filtering for cases not covered by backend params.
-            let filtered = raw;
-            if (isAdmin && filters.names?.length > 1) {
-                filtered = raw.filter(r => filters.names.includes(r.full_name));
-            }
-            if (filters.statuses?.length > 1 || !isAdmin) {
-                filtered = filtered.filter(r =>
-                    filters.statuses?.length ? filters.statuses.includes(r.time_in_status) : true
-                );
-            }
-
-            const sorted = [...filtered].sort((a, b) => {
-                const aDate = String(a?.date || "").split("T")[0];
-                const bDate = String(b?.date || "").split("T")[0];
-                const aDateTime = new Date(`${aDate}T${a?.check_in || "00:00:00"}`);
-                const bDateTime = new Date(`${bDate}T${b?.check_in || "00:00:00"}`);
-                return bDateTime - aDateTime;
-            });
-
-            setAttendance(transformRecords(sorted));
-            if (isAdmin) {
-                setTotalPages(response.data?.last_page ?? 1);
-                setCurrentPage(page);
-            } else {
-                setTotalPages(1);
-                setCurrentPage(1);
+                if (names.length > 0) setAllNames(names);
             }
         } catch {
             toast.error("Failed to load attendance records.");
         } finally {
             setLoading(false);
         }
-    }, [allNames.length, isAdmin]);
+    }, [isAdmin, selectedNames, start_date, end_date, selectedStatuses]);
 
     useEffect(() => {
-        fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+        fetchAttendance(1);
     }, [fetchAttendance]);
 
     const handleReview = async (id, statusType, newValue) => {
+        // Skip review for absent records (they don't have real IDs)
+        if (String(id).startsWith('absent_')) {
+            toast.info("Cannot review absent records.");
+            return;
+        }
         try {
             await request({
                 method: "PUT",
@@ -214,7 +212,7 @@ const AttendanceRecords = () => {
                 data: { [statusType]: newValue },
             });
             toast.success("Location status updated successfully");
-            fetchAttendance(currentPage, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+            fetchAttendance(currentPage);
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to update status");
         }
@@ -222,7 +220,7 @@ const AttendanceRecords = () => {
 
     const handleFilter = (e) => {
         if (e) e.preventDefault();
-        fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+        fetchAttendance(1);
     };
 
     const handleClearFilters = (e) => {
@@ -232,13 +230,14 @@ const AttendanceRecords = () => {
         setSelectedNames([]);
         setSelectedStatuses([]);
         setPresetValue("");
-        fetchAttendance(1, { names: [], start_date: "", end_date: "", statuses: [] });
+        fetchAttendance(1);
     };
 
     const handleKeyDown = (e) => { if (e.key === "Enter") handleFilter(); };
 
     const handlePageChange = (page) => {
-        fetchAttendance(page, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+        fetchAttendance(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const toggleStatus = (status) => {
@@ -265,6 +264,20 @@ const AttendanceRecords = () => {
         }
     };
 
+    // Client-side filter for multiple selection
+    const filteredRecords = useMemo(() => {
+        let filtered = records;
+        if (isAdmin && selectedNames.length > 1) {
+            filtered = filtered.filter(r => selectedNames.includes(r.full_name));
+        }
+        if (selectedStatuses.length > 1) {
+            filtered = filtered.filter(r => selectedStatuses.includes(r.time_in_status || r.status));
+        }
+        return filtered;
+    }, [records, isAdmin, selectedNames, selectedStatuses]);
+
+    const attendance = useMemo(() => transformRecords(filteredRecords), [filteredRecords]);
+
     const checkInOut = async (e) => {
         if (e) {
             e.preventDefault();
@@ -284,7 +297,7 @@ const AttendanceRecords = () => {
             });
             toast.success(is_checked_in ? "Checked out!" : "Checked in!");
             setIsCheckedIn(!is_checked_in);
-            fetchAttendance(1, { names: selectedNames, start_date, end_date, statuses: selectedStatuses });
+            fetchAttendance(1);
         } catch (error) {
             if ((error?.response?.status === 422) && !hasCoordinates) {
                 toast.error("Location is required by attendance settings. Enable geolocation and try again.");

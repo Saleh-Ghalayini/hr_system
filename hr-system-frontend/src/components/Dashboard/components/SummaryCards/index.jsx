@@ -15,34 +15,32 @@ const KpiCard = ({ icon, label, value, sub, accent }) => (
   </div>
 );
 
-const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, payroll }) => {
-  const totalEmployees = users?.length ?? 0;
+const SummaryCards = ({ stats, recentLeaves, recentCourses, recentEnrollments, attendanceToday }) => {
+  const totalEmployees = stats?.total_users ?? 0;
+  const pendingLeaves = stats?.pending_leaves ?? 0;
+  const totalCourses = stats?.total_courses ?? 0;
+  const activeEnrollments = stats?.active_enrollments ?? 0;
+  const presentToday = stats?.today_checked_in ?? 0;
+  const payrollCount = stats?.payroll_this_month ?? 0;
 
-  const pendingLeaves = (leaves ?? []).filter(l => l?.status === 'pending').length;
-  const approvedLeaves = (leaves ?? []).filter(l => l?.status === 'approved').length;
-
-  const totalCourses = (courses ?? []).length;
-  const completedEnrollments = (enrollments ?? []).filter(e => e?.status === 'completed').length;
-  const totalEnrollments = (enrollments ?? []).length;
+  // Calculate course completion from recent enrollments sample
+  const completedEnrollments = (recentEnrollments ?? []).filter(e => e?.status === 'completed').length;
+  const totalEnrollments = (recentEnrollments ?? []).length;
   const completionRate = totalEnrollments > 0
     ? Math.round((completedEnrollments / totalEnrollments) * 100)
     : 0;
 
-  // Today's attendance
-  const presentToday = (attendanceToday ?? []).length;
+  // Calculate attendance rate
   const lateToday = (attendanceToday ?? []).filter(a => a?.time_in_status === 'Late').length;
   const attendanceRate = totalEmployees > 0
     ? Math.round((presentToday / totalEmployees) * 100)
     : 0;
 
-  // Current month payroll total — month stored as "March 2026" (F Y format)
-  const thisMonthLabel = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const monthPayroll = (payroll ?? [])
-    .filter(p => p?.month === thisMonthLabel)
-    .reduce((sum, p) => sum + Number(p?.total ?? 0), 0);
-  const payrollDisplay = monthPayroll > 0
-    ? `$${monthPayroll.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
-    : '—';
+  // Calculate approved leaves from recent data (approximate)
+  const approvedLeaves = (recentLeaves ?? []).filter(l => l?.status === 'approved').length;
+
+  // Monthly payroll display
+  const payrollDisplay = payrollCount > 0 ? `${payrollCount} records` : '—';
 
   return (
     <div className="kpi-row">
@@ -50,7 +48,7 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
         icon="mdi:account-group-outline"
         label="Total Employees"
         value={totalEmployees}
-        sub={`${users?.filter(u => u?.role === 'user').length ?? 0} employees · ${users?.filter(u => u?.role === 'manager').length ?? 0} managers`}
+        sub={`${stats?.active_employees ?? 0} active employees`}
         accent="#142f5a"
       />
       <KpiCard
@@ -64,21 +62,21 @@ const SummaryCards = ({ users, leaves, courses, enrollments, attendanceToday, pa
         icon="mdi:clock-outline"
         label="Pending Leaves"
         value={pendingLeaves}
-        sub={`${approvedLeaves} approved this period`}
+        sub={`${approvedLeaves} approved in recent requests`}
         accent="#d39c1d"
       />
       <KpiCard
         icon="mdi:school-outline"
         label="Course Completion"
         value={`${completionRate}%`}
-        sub={`${completedEnrollments} of ${totalEnrollments} enrollments · ${totalCourses} courses`}
+        sub={`${activeEnrollments} active enrollments · ${totalCourses} courses`}
         accent="#7c3aed"
       />
       <KpiCard
         icon="mdi:cash-multiple"
         label="Monthly Payroll"
         value={payrollDisplay}
-        sub={`${(payroll ?? []).filter(p => p?.month === thisMonthLabel).length} records this month`}
+        sub={`${payrollCount} records this month`}
         accent="#0891b2"
       />
     </div>

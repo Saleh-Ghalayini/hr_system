@@ -28,11 +28,6 @@ export const SUBNAV_CONFIG = {
     { text: "Attendance Reports", link: "attendance-reports", roles: ["admin"] },
     { text: "Settings", link: "settings", roles: ["admin"] },
   ],
-  "/reports": [
-    { text: "Salary Reports", link: "salary-reports" },
-    { text: "Payment History", link: "payment-history" },
-    { text: "Tax Settings", link: "tax-settings" },
-  ],
   "/profile": [
     { text: "Basic Info", link: "basicinfo" },
     { text: "Job Details", link: "jobdetails" },

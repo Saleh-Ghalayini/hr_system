@@ -79,7 +79,21 @@ class AttendanceController extends Controller
 
     public function getAllUsersAttendance(DateRangeRequest $request)
     {
-        $records = $this->attendanceService->getAllUsersAttendance($request->validated());
+        $filters = $request->validated();
+        
+        // If filtering by "Absent", return absent records
+        if (!empty($filters['status']) && $filters['status'] === 'Absent') {
+            $absentRecords = $this->attendanceService->getAbsentRecords($filters);
+            return $this->success([
+                'data' => $absentRecords,
+                'current_page' => 1,
+                'last_page' => 1,
+                'total' => count($absentRecords),
+            ]);
+        }
+        
+        // Otherwise, return paginated attendance records
+        $records = $this->attendanceService->getAllUsersAttendance($filters);
 
         return $this->success($records);
     }

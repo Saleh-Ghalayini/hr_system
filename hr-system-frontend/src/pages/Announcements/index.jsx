@@ -18,7 +18,7 @@ const AnnouncementCard = ({ item, isAdmin, onEdit, onDelete }) => {
   const { icon, color } = TYPE_ICONS[item.type] ?? TYPE_ICONS.info;
   return (
     <div className={`announcement-card type-${item.type} ${item.is_pinned ? "pinned" : ""}`}>
-      {item.is_pinned && <span className="pin-badge"><Icon icon="mdi:pin" width="14" /> Pinned</span>}
+      {item.is_pinned && <span className="pin-badge"><Icon icon="mdi:pin" width="14" /></span>}
       <div className="ann-card-header">
         <div className="ann-type-icon" style={{ color }}>
           <Icon icon={icon} width="22" />

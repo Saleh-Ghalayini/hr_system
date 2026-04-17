@@ -35,7 +35,6 @@ const TYPE_OPTIONS = [
 const STATUS_OPTIONS = [
   { value: "", label: "-- Select status --" },
   { value: "active", label: "Active" },
-  { value: "on_leave", label: "On Leave" },
   { value: "terminated", label: "Terminated" },
 ];
 
@@ -74,11 +73,16 @@ const EmployeeDirectory = () => {
   const [saving, setSaving] = useState(false);
   const [loadingEdit, setLoadingEdit] = useState(false);
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchEmployees = useCallback(async (searchQuery = "") => {
     setLoading(true);
     try {
-      const res = await request({ method: "GET", path: "directory/users" });
-      setEmployees(Array.isArray(res.data) ? res.data : (res.data?.data ?? []));
+      // Use server-side search if provided
+      const path = searchQuery ? `directory/users?search=${encodeURIComponent(searchQuery)}` : "directory/users";
+      const res = await request({ method: "GET", path });
+      
+      // Handle paginated response
+      const data = res.data?.data ?? res.data ?? [];
+      setEmployees(Array.isArray(data) ? data : []);
     } catch {
       toast.error("Failed to load employee directory.");
     } finally {
@@ -89,6 +93,14 @@ const EmployeeDirectory = () => {
   useEffect(() => {
     fetchEmployees();
   }, [fetchEmployees]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchEmployees(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, fetchEmployees]);
 
   const positions = ["All", ...Array.from(new Set(employees.map((e) => e.position).filter(Boolean))).sort()];
 

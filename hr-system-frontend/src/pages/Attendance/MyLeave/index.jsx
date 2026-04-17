@@ -3,30 +3,12 @@ import { Icon } from "@iconify/react";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 import "./style.css";
-
-const LEAVE_TYPES = [
-  { value: "annual",      label: "Annual Leave",      icon: "mdi:beach",                   color: "#0369a1" },
-  { value: "sick",        label: "Sick Leave",         icon: "mdi:medical-bag",             color: "#d62525" },
-  { value: "casual",      label: "Casual Leave",       icon: "mdi:coffee-outline",          color: "#6b7280" },
-  { value: "pto",         label: "PTO (Paid Time Off)", icon: "mdi:umbrella-beach-outline", color: "#28eea7" },
-  { value: "unpaid",      label: "Unpaid Leave",       icon: "mdi:currency-usd-off",        color: "#d39c1d" },
+                {["unpaid"].map((key) => {
   { value: "maternity",   label: "Maternity Leave",    icon: "mdi:baby-carriage",           color: "#a855f7" },
   { value: "paternity",   label: "Paternity Leave",    icon: "mdi:human-male-child",        color: "#3b82f6" },
-  { value: "bereavement", label: "Bereavement Leave",  icon: "mdi:candle",                  color: "#78716c" },
-  { value: "other",       label: "Other",              icon: "mdi:dots-horizontal-circle",  color: "#9ca3af" },
-];
-
-const getLocalYmd = (date = new Date()) => {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
+                {["unpaid"].map((key) => {
   return `${y}-${m}-${d}`;
-};
-
-const formatDate = (value) => {
-  if (!value) return "—";
-
-  const ymd = String(value).split("T")[0];
+                {["unpaid"].map((key) => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
     return value;
   }
@@ -163,7 +145,7 @@ const MyLeave = () => {
                   </div>
                 ))}
                 {/* Show balance-exempt types */}
-                {["unpaid", "maternity", "paternity", "bereavement"].map((key) => {
+                {["unpaid"].map((key) => {
                   if (balance?.[key] !== undefined) return null;
                   const type = LEAVE_TYPES.find((t) => t.value === key);
                   return (
@@ -177,7 +159,7 @@ const MyLeave = () => {
                 })}
               </div>
               <p className="balance-note">
-                <Icon icon="mdi:information-outline" width="14" /> Unpaid, maternity, paternity, and bereavement leaves are not deducted from your balance.
+                <Icon icon="mdi:information-outline" width="14" /> Unpaid leave is not deducted from your balance.
               </p>
             </>
           )}
@@ -203,7 +185,7 @@ const MyLeave = () => {
                   >
                     <Icon icon={t.icon} width="20" style={{ color: t.color }} />
                     <span>{t.label}</span>
-                    {["unpaid","maternity","paternity","bereavement"].includes(t.value) && (
+                    {["unpaid"].includes(t.value) && (
                       <span className="no-deduct-tag">no deduction</span>
                     )}
                   </button>

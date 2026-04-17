@@ -18,9 +18,9 @@ class LeaveService
     private const FALLBACK_TRACKED_BALANCES = [
         'annual' => 15,
         'sick' => 15,
-        'casual' => 10,
         'pto' => 10,
-        'other' => 5,
+        'maternity' => 60,
+        'paternity' => 30,
     ];
 
     public function calculateDays(string $startDate, string $endDate): int
@@ -29,7 +29,7 @@ class LeaveService
     }
 
     /** Leave types that do NOT deduct from balance (fallback). */
-    private const FALLBACK_BALANCE_EXEMPT = ['unpaid', 'maternity', 'paternity', 'bereavement'];
+    private const FALLBACK_BALANCE_EXEMPT = ['unpaid'];
 
     private function getPolicy(): array
     {

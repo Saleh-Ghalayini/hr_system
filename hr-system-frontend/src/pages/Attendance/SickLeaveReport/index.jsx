@@ -77,16 +77,20 @@ const SickLeaveReport = () => {
       </div>
 
       <div className="sick-filters">
-        <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="From date" />
-        <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="To date" />
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
-        <button className="primary-btn" onClick={() => fetchReport(1)}>Filter</button>
-        <button className="secondary-btn" onClick={() => { setStartDate(""); setEndDate(""); setStatus(""); }}>Reset</button>
+        <div className="sick-filter-inputs">
+          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} placeholder="From date" />
+          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} placeholder="To date" />
+          <select value={status} onChange={(e) => setStatus(e.target.value)}>
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div className="sick-filter-actions">
+          <button className="primary-btn" onClick={() => fetchReport(1)}>Filter</button>
+          <button className="secondary-btn" onClick={() => { setStartDate(""); setEndDate(""); setStatus(""); }}>Reset</button>
+        </div>
       </div>
 
       <Table

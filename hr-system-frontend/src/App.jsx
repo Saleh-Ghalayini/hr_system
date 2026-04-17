@@ -20,7 +20,6 @@ const TrainingLayout = lazy(() => import("./pages/Training/Layout"));
 const Payroll = lazy(() => import("./pages/Payroll"));
 const Performance = lazy(() => import("./pages/Performance"));
 const Onboarding = lazy(() => import("./pages/Onboarding"));
-const Reports = lazy(() => import("./pages/Reports"));
 const Profile = lazy(() => import("./pages/profile"));
 
 // Lazy loaded — leaf pages (existing)
@@ -42,9 +41,6 @@ const AttendanceReports = lazy(() => import("./pages/Attendance/AttendanceReport
 const NewHire = lazy(() => import("./pages/Onboarding/NewHire"));
 const Documents = lazy(() => import("./pages/Onboarding/Documents"));
 const Checklist = lazy(() => import("./pages/Onboarding/Checklist"));
-const SalaryReports = lazy(() => import("./pages/Reports/SalaryReports"));
-const PaymentHistory = lazy(() => import("./pages/Reports/PaymentHistory"));
-const TaxSettings = lazy(() => import("./pages/Reports/TaxSettings"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy loaded — NEW pages
@@ -190,26 +186,6 @@ function App() {
                   </RoleRoute>
                 )}
               />
-            </Route>
-
-            {/* Reports */}
-            <Route path="reports/*" element={<Reports />}>
-              <Route index element={<Navigate to="salary-reports" replace />} />
-              <Route path="salary-reports" element={
-                <RoleRoute allowedRoles={["admin", "manager"]}>
-                  <SalaryReports />
-                </RoleRoute>
-              } />
-              <Route path="payment-history" element={
-                <RoleRoute allowedRoles={["admin", "manager"]}>
-                  <PaymentHistory />
-                </RoleRoute>
-              } />
-              <Route path="tax-settings" element={
-                <RoleRoute allowedRoles={["admin"]}>
-                  <TaxSettings />
-                </RoleRoute>
-              } />
             </Route>
 
             {/* NEW standalone pages */}

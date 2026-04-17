@@ -4,6 +4,8 @@ import Table from "../../../components/Table";
 import { toast } from "react-toastify";
 import "./style.css";
 
+const PAGE_SIZE = 20;
+
 const fmtHours = (h) => {
     const num = parseFloat(h);
     if (isNaN(num) || num <= 0) return "--";
@@ -85,10 +87,21 @@ const AttendanceReports = () => {
                 params,
             });
 
-            const data = response.data?.data ?? response.data ?? [];
+            // Handle paginated response
+            let data = [];
+            if (response?.data) {
+                if (Array.isArray(response.data.data)) {
+                    data = response.data.data;
+                    setCurrentPage(response.data.current_page || 1);
+                    setTotalPages(response.data.last_page || 1);
+                } else if (Array.isArray(response.data)) {
+                    data = response.data;
+                }
+            } else if (Array.isArray(response)) {
+                data = response;
+            }
+            
             setRecords(data);
-            setCurrentPage(response.data?.current_page ?? 1);
-            setTotalPages(response.data?.last_page ?? 1);
         } catch {
             toast.error("Failed to load attendance data.");
         } finally {
@@ -101,7 +114,6 @@ const AttendanceReports = () => {
     }, [monthFilter, nameFilter]);
 
     const handlePageChange = useCallback((page) => {
-        setCurrentPage(page);
         fetchData(page);
         window.scrollTo({ top: 0, behavior: "smooth" });
     }, [fetchData]);
@@ -114,20 +126,22 @@ const AttendanceReports = () => {
         setMonthFilter(value);
     }, []);
 
+    // Extract unique employees from records
     const employees = useMemo(() => {
         const set = new Set(records.map(r => r.full_name).filter(Boolean));
         return Array.from(set).sort();
     }, [records]);
 
+    // Extract unique months from records
     const months = useMemo(() => {
         const set = new Set(records.map(r => r.date ? String(r.date).split("T")[0].slice(0, 7) : null).filter(Boolean));
         return Array.from(set).sort().reverse();
     }, [records]);
 
+    // Client-side filter
     const filtered = useMemo(() => {
-        let data = records;
-        if (nameFilter !== "all") data = data.filter(r => r.full_name === nameFilter);
-        return data;
+        if (nameFilter === "all") return records;
+        return records.filter(r => r.full_name === nameFilter);
     }, [records, nameFilter]);
 
     const stats = useMemo(() => {

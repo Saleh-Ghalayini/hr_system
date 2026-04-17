@@ -106,12 +106,73 @@ export const prepareEnrollmentData = (enrollments) => {
 };
 
 // ── Attendance Trend Line (last 7 weeks) ──────────────────────────────────────
+// New API format: [{date, time_in_status, count}] (aggregated)
+// Legacy format: [{date, time_in_status}] (individual records)
 export const prepareAttendanceTrendData = (trend) => {
   if (!Array.isArray(trend) || trend.length === 0) {
     return { labels: [], datasets: [] };
   }
 
-  // Group by ISO week (Mon–Sun)
+  // Check if data is in new aggregated format (has 'count' field)
+  const isAggregated = trend[0]?.count !== undefined;
+
+  if (isAggregated) {
+    // New format: [{date, time_in_status, count}]
+    // Group by week
+    const weekMap = {};
+    trend.forEach(rec => {
+      const d = new Date(rec.date);
+      // Get Monday of the week
+      const day = d.getDay() || 7;
+      const mon = new Date(d);
+      mon.setDate(d.getDate() - day + 1);
+      const key = mon.toISOString().slice(0, 10);
+      if (!weekMap[key]) weekMap[key] = { present: 0, late: 0 };
+      if (rec.time_in_status === 'On-time') {
+        weekMap[key].present += rec.count;
+      } else if (rec.time_in_status === 'Late') {
+        weekMap[key].late += rec.count;
+      }
+    });
+
+    const weeks = Object.keys(weekMap).sort().slice(-7);
+    const labels = weeks.map(w => {
+      const d = new Date(w);
+      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+    });
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: 'Present',
+          data: weeks.map(w => weekMap[w].present),
+          borderColor: GRN,
+          backgroundColor: alpha(GRN, 0.12),
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: GRN,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        },
+        {
+          label: 'Late',
+          data: weeks.map(w => weekMap[w].late),
+          borderColor: AMB,
+          backgroundColor: alpha(AMB, 0.10),
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: AMB,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+        },
+      ],
+    };
+  }
+
+  // Legacy format: [{date, time_in_status}] (individual records)
   const weekMap = {};
   trend.forEach(rec => {
     const d = new Date(rec.date);

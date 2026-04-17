@@ -11,7 +11,7 @@ class UpdateJobDetailsRequest extends BaseFormRequest
         return [
             'title'             => 'sometimes|string|max:255',
             'employment_type'   => 'sometimes|in:full_time,part_time,contract,internship',
-            'employment_status' => 'sometimes|in:active,on_leave,terminated',
+            'employment_status' => 'sometimes|in:active,terminated',
             'employee_level'    => 'sometimes|string|max:100',
             'work_location'     => 'sometimes|in:on_site,remote,hybrid',
             'hiring_date'       => 'sometimes|date',

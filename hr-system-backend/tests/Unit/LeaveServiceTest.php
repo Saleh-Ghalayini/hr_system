@@ -44,7 +44,7 @@ class LeaveServiceTest extends TestCase
     public function test_validate_balance_returns_null_when_balance_is_sufficient(): void
     {
         $balance          = new LeaveBalance();
-        $balance->balances = ['annual' => 10, 'sick' => 5, 'casual' => 3, 'other' => 2];
+        $balance->balances = ['annual' => 10, 'sick' => 5, 'pto' => 3, 'maternity' => 60, 'paternity' => 30];
 
         $result = $this->service->validateBalance($balance, 'annual', 5);
 
@@ -54,7 +54,7 @@ class LeaveServiceTest extends TestCase
     public function test_validate_balance_returns_null_when_balance_exactly_matches_request(): void
     {
         $balance          = new LeaveBalance();
-        $balance->balances = ['annual' => 3, 'sick' => 0, 'casual' => 0, 'other' => 0];
+        $balance->balances = ['annual' => 3, 'sick' => 0, 'pto' => 0, 'maternity' => 60, 'paternity' => 30];
 
         $result = $this->service->validateBalance($balance, 'annual', 3);
 
@@ -64,7 +64,7 @@ class LeaveServiceTest extends TestCase
     public function test_validate_balance_returns_error_string_when_insufficient(): void
     {
         $balance          = new LeaveBalance();
-        $balance->balances = ['annual' => 2, 'sick' => 5, 'casual' => 3, 'other' => 2];
+        $balance->balances = ['annual' => 2, 'sick' => 5, 'pto' => 3, 'maternity' => 60, 'paternity' => 30];
 
         $result = $this->service->validateBalance($balance, 'annual', 5);
 
@@ -75,7 +75,7 @@ class LeaveServiceTest extends TestCase
     public function test_validate_balance_returns_error_when_balance_is_zero(): void
     {
         $balance          = new LeaveBalance();
-        $balance->balances = ['annual' => 0, 'sick' => 5, 'casual' => 3, 'other' => 2];
+        $balance->balances = ['annual' => 0, 'sick' => 5, 'pto' => 3, 'maternity' => 60, 'paternity' => 30];
 
         $result = $this->service->validateBalance($balance, 'annual', 1);
 

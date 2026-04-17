@@ -398,14 +398,6 @@ const LeaveRequests = () => {
                             <span>Sick</span>
                             <strong>{leaveBalance.balances?.sick}</strong>
                           </div>
-                          <div className="balance-item">
-                            <span>Casual</span>
-                            <strong>{leaveBalance.balances?.casual}</strong>
-                          </div>
-                          <div className="balance-item">
-                            <span>Other</span>
-                            <strong>{leaveBalance.balances?.other}</strong>
-                          </div>
                         </div>
                       </div>
                     )}

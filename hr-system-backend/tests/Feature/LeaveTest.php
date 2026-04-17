@@ -72,7 +72,7 @@ class LeaveTest extends TestCase
 
         // Set balance to 0 for annual leave
         LeaveBalance::where('user_id', $user->id)->update([
-            'balances' => ['annual' => 0, 'sick' => 15, 'casual' => 10, 'other' => 5],
+            'balances' => ['annual' => 0, 'sick' => 15, 'pto' => 10, 'maternity' => 60, 'paternity' => 30],
         ]);
 
         $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
@@ -91,7 +91,7 @@ class LeaveTest extends TestCase
         $user = $this->createUser();
 
         LeaveBalance::where('user_id', $user->id)->update([
-            'balances' => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 3, 'other' => 5],
+            'balances' => ['annual' => 15, 'sick' => 15, 'pto' => 3, 'maternity' => 60, 'paternity' => 30],
         ]);
 
         $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
@@ -273,7 +273,7 @@ class LeaveTest extends TestCase
         $user    = $this->createUser(['role' => 'user', 'manager_id' => $manager->id]);
 
         LeaveBalance::where('user_id', $user->id)->update([
-            'balances' => ['annual' => 15, 'sick' => 15, 'casual' => 10, 'pto' => 4, 'other' => 5],
+            'balances' => ['annual' => 15, 'sick' => 15, 'pto' => 4, 'maternity' => 60, 'paternity' => 30],
         ]);
 
         $leave = LeaveRequest::create([

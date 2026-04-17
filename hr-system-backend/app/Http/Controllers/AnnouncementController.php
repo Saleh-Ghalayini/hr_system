@@ -55,8 +55,15 @@ class AnnouncementController extends Controller
             'is_pinned'    => 'boolean',
             'target_role'  => 'nullable|in:all,employee,manager,admin',
             'published_at' => 'nullable|date',
-            'expires_at'   => 'nullable|date|after:published_at',
+            'expires_at'   => 'nullable|date',
         ]);
+
+        // Validate expires_at is after published_at only when both are provided
+        if (!empty($data['expires_at']) && !empty($data['published_at'])) {
+            if (strtotime($data['expires_at']) <= strtotime($data['published_at'])) {
+                return $this->validationError(['expires_at' => ['Expiration date must be after the publish date.']]);
+            }
+        }
 
         $announcement = Announcement::create([
             ...$data,
@@ -81,6 +88,13 @@ class AnnouncementController extends Controller
             'published_at' => 'nullable|date',
             'expires_at'   => 'nullable|date',
         ]);
+
+        // Validate expires_at is after published_at only when both are provided
+        if (!empty($data['expires_at']) && !empty($data['published_at'])) {
+            if (strtotime($data['expires_at']) <= strtotime($data['published_at'])) {
+                return $this->validationError(['expires_at' => ['Expiration date must be after the publish date.']]);
+            }
+        }
 
         $announcement->update($data);
 

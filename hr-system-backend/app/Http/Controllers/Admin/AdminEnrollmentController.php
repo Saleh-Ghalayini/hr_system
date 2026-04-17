@@ -7,6 +7,7 @@ use App\Services\EnrollmentService;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Enrollment\StoreEnrollmentRequest;
 use App\Http\Requests\Enrollment\UpdateEnrollmentRequest;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class AdminEnrollmentController extends Controller
@@ -15,14 +16,26 @@ class AdminEnrollmentController extends Controller
 
     public function __construct(private EnrollmentService $enrollmentService) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $enrollments = Enrollment::with([
+        $query = Enrollment::with([
             'user:id,first_name,last_name,email',
             'course:id,course_name,duration_hours',
-        ])->orderByDesc('created_at')->paginate(200);
+        ])->orderByDesc('created_at');
 
-        return $this->success($enrollments);
+        if ($status = $request->query('status')) {
+            $query->where('status', $status);
+        }
+
+        if ($userId = $request->query('user_id')) {
+            $query->where('user_id', $userId);
+        }
+
+        if ($courseId = $request->query('course_id')) {
+            $query->where('course_id', $courseId);
+        }
+
+        return $this->success($query->paginate(50));
     }
 
     public function store(StoreEnrollmentRequest $request)

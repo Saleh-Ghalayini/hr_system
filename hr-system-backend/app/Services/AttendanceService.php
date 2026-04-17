@@ -21,7 +21,6 @@ class AttendanceService
             return false;
         }
 
-        // Treat 0,0 as an unconfigured geofence to avoid forcing manual reviews.
         return !((float) $lat === 0.0 && (float) $lon === 0.0);
     }
 
@@ -30,7 +29,6 @@ class AttendanceService
         try {
             return AttendanceSetting::current();
         } catch (\Throwable $e) {
-            // Keep service usable in isolated unit tests where DB is not bootstrapped.
             return null;
         }
     }
@@ -217,7 +215,10 @@ class AttendanceService
         ];
     }
 
-    public function getAllUsersAttendance(array $filters): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    /**
+     * Get paginated attendance records for all users
+     */
+    public function getAllUsersAttendance(array $filters): \Illuminate\Pagination\LengthAwarePaginator
     {
         $query = Attendance::query();
         $this->applyDateFilters($query, $filters);
@@ -226,11 +227,65 @@ class AttendanceService
             $query->where('full_name', 'like', '%' . $filters['full_name'] . '%');
         }
 
-        if (!empty($filters['status'])) {
+        if (!empty($filters['status']) && $filters['status'] !== 'Absent') {
             $query->where('time_in_status', $filters['status']);
         }
 
         return $query->orderByDesc('date')->orderByDesc('check_in')->paginate(20);
+    }
+
+    /**
+     * Get absent records for a date range (lightweight, for stats/filtering)
+     */
+    public function getAbsentRecords(array $filters): array
+    {
+        $startDate = $filters['start_date'] ?? now()->startOfMonth()->toDateString();
+        $endDate = $filters['end_date'] ?? now()->toDateString();
+
+        // Get active employees with indexed query
+        $employees = User::select('id', 'first_name', 'last_name')
+            ->whereHas('jobDetail', fn($q) => $q->where('employment_status', 'active'))
+            ->get()
+            ->keyBy('id');
+
+        // Get all attendance records for the date range in one query with indexed filter
+        $presentRecords = Attendance::whereBetween('date', [$startDate, $endDate])
+            ->select('user_id', 'date')
+            ->get()
+            ->groupBy(fn($r) => $r->user_id . '|' . $r->date)
+            ->keys()
+            ->flip();
+
+        $absentRecords = [];
+        $current = \Carbon\Carbon::parse($startDate);
+        $end = \Carbon\Carbon::parse($endDate);
+
+        while ($current->lte($end)) {
+            if (!$current->isWeekend()) {
+                $dateStr = $current->toDateString();
+                foreach ($employees as $emp) {
+                    $key = $emp->id . '|' . $dateStr;
+                    if (!$presentRecords->has($key)) {
+                        $absentRecords[] = [
+                            'id' => 'absent_' . $emp->id . '_' . $dateStr,
+                            'user_id' => $emp->id,
+                            'full_name' => trim($emp->first_name . ' ' . $emp->last_name),
+                            'date' => $dateStr,
+                            'check_in' => null,
+                            'check_out' => null,
+                            'status' => 'Absent',
+                            'time_in_status' => 'Absent',
+                            'working_hours' => null,
+                            'loc_in_status' => null,
+                            'loc_out_status' => null,
+                        ];
+                    }
+                }
+            }
+            $current->addDay();
+        }
+
+        return $absentRecords;
     }
 
     public function findUserByName(string $firstName, string $lastName): ?User

@@ -25,7 +25,6 @@ const TYPE_OPTIONS = [
 const STATUS_OPTIONS = [
   { value: "", label: "-- Select status --" },
   { value: "active", label: "Active" },
-  { value: "on_leave", label: "On Leave" },
   { value: "terminated", label: "Terminated" },
 ];
 

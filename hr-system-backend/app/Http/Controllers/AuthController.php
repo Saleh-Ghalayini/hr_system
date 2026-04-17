@@ -24,9 +24,9 @@ class AuthController extends Controller
         return $this->success($users);
     }
 
-    public function getDirectoryUsers()
+    public function getDirectoryUsers(Request $request)
     {
-        $users = User::with('manager:id,first_name,last_name')
+        $query = User::with('manager:id,first_name,last_name')
             ->select(
                 'id',
                 'first_name',
@@ -41,8 +41,17 @@ class AuthController extends Controller
                 'manager_id'
             )
             ->orderBy('first_name')
-            ->orderBy('last_name')
-            ->get();
+            ->orderBy('last_name');
+
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name', 'like', "%$search%")
+                    ->orWhere('last_name', 'like', "%$search%")
+                    ->orWhere('email', 'like', "%$search%");
+            });
+        }
+
+        $users = $query->paginate(50);
 
         return $this->success($users);
     }
@@ -156,7 +165,7 @@ class AuthController extends Controller
             'employment_type'   => 'sometimes|in:full_time,part_time,contract,internship',
             'employee_level'    => 'sometimes|in:junior,mid-senior,senior',
             'work_location'     => 'sometimes|in:on_site,remote,hybrid',
-            'employment_status'=> 'sometimes|in:active,on_leave,terminated',
+            'employment_status'=> 'sometimes|in:active,terminated',
             'hiring_date'       => 'sometimes|date',
         ]);
 
@@ -174,6 +183,13 @@ class AuthController extends Controller
         }
 
         $user = Auth::user();
+
+        // Block terminated employees from logging in
+        $jobDetail = $user->jobDetail;
+        if ($jobDetail && $jobDetail->employment_status === 'terminated') {
+            Auth::logout();
+            return $this->error('Your account has been terminated. Please contact HR.', 403);
+        }
 
         return $this->success([
             'id'          => $user->id,

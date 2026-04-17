@@ -13,13 +13,10 @@ class LeaveSettingsTest extends TestCase
         $types = [
             ['name' => 'annual', 'max_days' => 15, 'is_balance_exempt' => false],
             ['name' => 'sick', 'max_days' => 15, 'is_balance_exempt' => false],
-            ['name' => 'casual', 'max_days' => 10, 'is_balance_exempt' => false],
             ['name' => 'pto', 'max_days' => 10, 'is_balance_exempt' => false],
             ['name' => 'unpaid', 'max_days' => 0, 'is_balance_exempt' => true],
-            ['name' => 'maternity', 'max_days' => 0, 'is_balance_exempt' => true],
-            ['name' => 'paternity', 'max_days' => 0, 'is_balance_exempt' => true],
-            ['name' => 'bereavement', 'max_days' => 0, 'is_balance_exempt' => true],
-            ['name' => 'other', 'max_days' => 5, 'is_balance_exempt' => false],
+            ['name' => 'maternity', 'max_days' => 60, 'is_balance_exempt' => false],
+            ['name' => 'paternity', 'max_days' => 30, 'is_balance_exempt' => false],
         ];
 
         foreach ($types as $type) {
@@ -50,7 +47,7 @@ class LeaveSettingsTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('success', true)
-            ->assertJsonCount(9, 'data.types')
+            ->assertJsonCount(6, 'data.types')
             ->assertJsonStructure([
                 'data' => [
                     'types' => [
@@ -70,13 +67,10 @@ class LeaveSettingsTest extends TestCase
             'types' => [
                 ['name' => 'annual', 'max_days' => 20, 'is_balance_exempt' => false],
                 ['name' => 'sick', 'max_days' => 15, 'is_balance_exempt' => false],
-                ['name' => 'casual', 'max_days' => 10, 'is_balance_exempt' => false],
                 ['name' => 'pto', 'max_days' => 10, 'is_balance_exempt' => false],
                 ['name' => 'unpaid', 'max_days' => 0, 'is_balance_exempt' => true],
-                ['name' => 'maternity', 'max_days' => 0, 'is_balance_exempt' => true],
-                ['name' => 'paternity', 'max_days' => 0, 'is_balance_exempt' => true],
-                ['name' => 'bereavement', 'max_days' => 0, 'is_balance_exempt' => true],
-                ['name' => 'other', 'max_days' => 5, 'is_balance_exempt' => false],
+                ['name' => 'maternity', 'max_days' => 60, 'is_balance_exempt' => false],
+                ['name' => 'paternity', 'max_days' => 30, 'is_balance_exempt' => false],
             ],
         ]);
 
@@ -113,7 +107,7 @@ class LeaveSettingsTest extends TestCase
         ]);
 
         LeaveBalance::query()->where('user_id', $user->id)->update([
-            'balances' => ['annual' => 0, 'sick' => 15, 'casual' => 10, 'pto' => 10, 'other' => 5],
+            'balances' => ['annual' => 0, 'sick' => 15, 'pto' => 10, 'maternity' => 60, 'paternity' => 30],
         ]);
 
         $response = $this->actingAsJwt($user)->postJson('/api/v1/leave/requests', [
