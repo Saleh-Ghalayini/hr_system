@@ -54,7 +54,7 @@ return new class extends Migration
             $table->text('comment')->nullable();
             $table->enum('relationship', ['colleague', 'direct_report', 'cross_functional', 'client'])->default('colleague');
             $table->timestamps();
-            
+
             $table->unique(['reviewer_id', 'reviewed_id', 'type_id', 'review_cycle_id'], 'unique_peer_review');
         });
 
