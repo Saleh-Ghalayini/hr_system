@@ -24,6 +24,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\AttendanceSettingController;
 use App\Http\Controllers\TaxController;
+use App\Http\Controllers\OnboardingController;
 
 Route::get('/health', fn() => response()->json(['status' => 'ok', 'timestamp' => now()->toIso8601String()]));
 
@@ -240,6 +241,36 @@ Route::prefix('v1')->group(function () {
             Route::post('/regulations/{regulation}/requirements', [RegulationController::class, 'storeRequirement']);
             Route::put('/regulations/{regulation}/requirements/{requirement}', [RegulationController::class, 'updateRequirement']);
             Route::delete('/regulations/{regulation}/requirements/{requirement}', [RegulationController::class, 'destroyRequirement']);
+
+            // Onboarding Management (Admin)
+            Route::prefix('onboarding')->group(function () {
+                // Document templates
+                Route::get('/documents/templates', [OnboardingController::class, 'getDocumentTemplates']);
+                Route::post('/documents/templates', [OnboardingController::class, 'createDocumentTemplate']);
+                Route::put('/documents/templates/{id}', [OnboardingController::class, 'updateDocumentTemplate']);
+                Route::delete('/documents/templates/{id}', [OnboardingController::class, 'deleteDocumentTemplate']);
+
+                // Checklist templates
+                Route::get('/checklist/templates', [OnboardingController::class, 'getChecklistTemplates']);
+                Route::post('/checklist/templates', [OnboardingController::class, 'createChecklistTemplate']);
+                Route::put('/checklist/templates/{id}', [OnboardingController::class, 'updateChecklistTemplate']);
+                Route::delete('/checklist/templates/{id}', [OnboardingController::class, 'deleteChecklistTemplate']);
+
+                // All users progress
+                Route::get('/users/progress', [OnboardingController::class, 'getAllUsersProgress']);
+                Route::get('/users/{user}/progress', [OnboardingController::class, 'getUserProgress']);
+                Route::put('/users/{user}/documents/{document}/approve', [OnboardingController::class, 'approveDocument']);
+                Route::put('/users/{user}/checklist/{item}/approve', [OnboardingController::class, 'approveChecklistItem']);
+                Route::put('/users/{user}/complete', [OnboardingController::class, 'markOnboardingComplete']);
+            });
+        });
+
+        // User Onboarding (All authenticated users)
+        Route::prefix('onboarding')->group(function () {
+            Route::get('/my', [OnboardingController::class, 'getMyOnboardingProgress']);
+            Route::post('/documents/upload', [OnboardingController::class, 'uploadDocument']);
+            Route::post('/checklist/toggle', [OnboardingController::class, 'toggleChecklistItem']);
+            Route::post('/checklist/untoggle', [OnboardingController::class, 'untoggleChecklistItem']);
         });
     });
 });

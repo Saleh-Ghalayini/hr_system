@@ -161,4 +161,20 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Announcement::class, 'author_id');
     }
+
+    // Onboarding relationships
+    public function onboardingDocuments(): HasMany
+    {
+        return $this->hasMany(UserOnboardingDocument::class);
+    }
+
+    public function onboardingChecklistProgress(): HasMany
+    {
+        return $this->hasMany(UserOnboardingChecklist::class);
+    }
+
+    public function onboardingStatus(): HasOne
+    {
+        return $this->hasOne(UserOnboardingStatus::class);
+    }
 }

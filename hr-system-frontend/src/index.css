@@ -37,6 +37,11 @@ textarea {
   font-family: inherit;
 }
 
+/* Prevent option rows inheriting custom select background chevrons. */
+select option {
+  background-image: none;
+}
+
 .primary-bg {
   background-color: #142F5A;
 }

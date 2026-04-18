@@ -43,6 +43,9 @@ const AttendanceReports = lazy(() => import("./pages/Attendance/AttendanceReport
 const NewHire = lazy(() => import("./pages/Onboarding/NewHire"));
 const Documents = lazy(() => import("./pages/Onboarding/Documents"));
 const Checklist = lazy(() => import("./pages/Onboarding/Checklist"));
+const AdminOnboarding = lazy(() => import("./pages/Onboarding/AdminOnboarding"));
+const EmployeeOverview = lazy(() => import("./pages/Onboarding/EmployeeOverview"));
+const UserOnboardingDetail = lazy(() => import("./pages/Onboarding/UserOnboardingDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy loaded — NEW pages
@@ -132,13 +135,27 @@ function App() {
 
             {/* Onboarding */}
             <Route path="onboarding/*" element={<Onboarding />}>
+              {/* Employee onboarding routes */}
+              <Route path="my" element={<EmployeeOverview />} />
+              <Route path="documents" element={<Documents />} />
+              <Route path="checklist" element={<Checklist />} />
+
+              {/* Admin onboarding routes */}
+              <Route path="management" element={
+                <RoleRoute allowedRoles={["admin"]}>
+                  <AdminOnboarding />
+                </RoleRoute>
+              } />
               <Route path="new-hires" element={
                 <RoleRoute allowedRoles={["admin"]}>
                   <NewHire />
                 </RoleRoute>
               } />
-              <Route path="documents" element={<Documents />} />
-              <Route path="checklist" element={<Checklist />} />
+              <Route path="user/:userId" element={
+                <RoleRoute allowedRoles={["admin"]}>
+                  <UserOnboardingDetail />
+                </RoleRoute>
+              } />
             </Route>
 
             {/* Performance */}

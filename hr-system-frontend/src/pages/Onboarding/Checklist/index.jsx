@@ -1,45 +1,109 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
+import { request } from "../../../common/request";
+import { toast } from "react-toastify";
 import "./style.css";
 
-const CHECKLIST_ITEMS = [
-    { id: 1, category: "Day 1", label: "Receive company badge and access cards" },
-    { id: 2, category: "Day 1", label: "Set up workstation and equipment" },
-    { id: 3, category: "Day 1", label: "Complete HR paperwork and contracts" },
-    { id: 4, category: "Day 1", label: "Meet team members and direct manager" },
-    { id: 5, category: "Week 1", label: "Complete security and compliance training" },
-    { id: 6, category: "Week 1", label: "Review company policies and handbook" },
-    { id: 7, category: "Week 1", label: "Set up email and required software accounts" },
-    { id: 8, category: "Week 1", label: "Schedule 1-on-1 with manager" },
-    { id: 9, category: "Month 1", label: "Complete role-specific training" },
-    { id: 10, category: "Month 1", label: "Submit first performance check-in" },
-    { id: 11, category: "Month 1", label: "Confirm payroll and benefits enrollment" },
-];
-
-const CATEGORIES = ["Day 1", "Week 1", "Month 1"];
-const STORAGE_KEY = "hr_onboarding_checklist";
-
-const loadChecked = () => {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        return saved ? JSON.parse(saved) : {};
-    } catch { return {}; }
-};
-
 const Checklist = () => {
-    const [checked, setChecked] = useState(loadChecked);
+    const [checklist, setChecklist] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState(null);
 
-    const toggle = (id) => {
-        setChecked(prev => {
-            const next = { ...prev, [id]: !prev[id] };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-            return next;
-        });
+    useEffect(() => {
+        fetchChecklist();
+    }, []);
+
+    const fetchChecklist = async () => {
+        try {
+            setLoading(true);
+            const response = await request({ method: "GET", path: "onboarding/my" });
+            if (response.success && response.data) {
+                setChecklist(response.data.checklist || []);
+            }
+        } catch (error) {
+            console.error('Failed to fetch checklist:', error);
+            toast.error("Failed to load checklist.");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const total = CHECKLIST_ITEMS.length;
-    const done = Object.values(checked).filter(Boolean).length;
-    const pct = Math.round((done / total) * 100);
+    // Handle checkbox toggle
+    // If item is completed (checked), clicking should uncheck it
+    // If item is not completed (unchecked), clicking should check it
+    const handleToggle = async (item) => {
+        const willCheck = !item.is_completed; // true if we're checking, false if unchecking
+        const action = willCheck ? 'completing' : 'uncompleting';
+        
+        setProcessingId(item.id);
+        
+        try {
+            const endpoint = willCheck 
+                ? "onboarding/checklist/toggle"
+                : "onboarding/checklist/untoggle";
+            
+            const response = await request({
+                method: "POST",
+                path: endpoint,
+                data: { checklist_item_id: item.id },
+            });
+
+            if (response.success) {
+                // Update local state immediately
+                setChecklist(prev => prev.map(i => 
+                    i.id === item.id 
+                        ? { 
+                            ...i, 
+                            is_completed: willCheck,
+                            completed_at: willCheck ? new Date().toISOString() : null
+                          } 
+                        : i
+                ));
+                
+                toast.success(
+                    willCheck 
+                        ? `"${item.label}" marked as complete!` 
+                        : `"${item.label}" unchecked`
+                );
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to update task");
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    // Calculate stats
+    const total = checklist.length;
+    const completed = checklist.filter(i => i.is_completed).length;
+    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    // Group items by category
+    const categories = {};
+    checklist.forEach(item => {
+        const cat = item.category || 'Other';
+        if (!categories[cat]) {
+            categories[cat] = [];
+        }
+        categories[cat].push(item);
+    });
+
+    const categoryOrder = ["Day 1", "Week 1", "Month 1"];
+
+    if (loading) {
+        return (
+            <div className="checklist-page">
+                <div className="checklist-header">
+                    <Icon icon="mdi:clipboard-check" width="24" height="24" />
+                    <h2>Onboarding Checklist</h2>
+                </div>
+                <div className="loading-state">
+                    <div className="spinner"></div>
+                    <p>Loading checklist...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="checklist-page">
@@ -48,33 +112,78 @@ const Checklist = () => {
                 <h2>Onboarding Checklist</h2>
             </div>
 
+            {/* Progress Card */}
             <div className="checklist-progress-card">
                 <div className="checklist-progress-info">
-                    <span>{done} of {total} tasks completed</span>
-                    <span className="pct">{pct}%</span>
+                    <span>{completed} of {total} tasks completed</span>
+                    <span className="pct">{percentage}%</span>
                 </div>
                 <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${pct}%` }} />
+                    <div 
+                        className="progress-fill" 
+                        style={{ width: `${percentage}%` }} 
+                    />
                 </div>
             </div>
 
-            {CATEGORIES.map(cat => (
-                <div key={cat} className="checklist-section">
-                    <h3 className="checklist-category">{cat}</h3>
-                    <div className="checklist-items">
-                        {CHECKLIST_ITEMS.filter(i => i.category === cat).map(item => (
-                            <label key={item.id} className={`checklist-item ${checked[item.id] ? "done" : ""}`}>
-                                <input
-                                    type="checkbox"
-                                    checked={!!checked[item.id]}
-                                    onChange={() => toggle(item.id)}
-                                />
-                                <span>{item.label}</span>
-                            </label>
-                        ))}
+            {/* Category Sections */}
+            {categoryOrder.map(cat => {
+                const items = categories[cat];
+                if (!items || items.length === 0) return null;
+                
+                return (
+                    <div key={cat} className="checklist-section">
+                        <h3 className="checklist-category">{cat}</h3>
+                        <div className="checklist-items">
+                            {items.map(item => {
+                                const isProcessing = processingId === item.id;
+                                
+                                return (
+                                    <div 
+                                        key={item.id} 
+                                        className={`checklist-item ${item.is_completed ? 'done' : ''} ${isProcessing ? 'processing' : ''}`}
+                                    >
+                                        {/* Custom checkbox */}
+                                        <div 
+                                            className={`checkbox-wrapper ${isProcessing ? 'loading' : ''}`}
+                                            onClick={() => !isProcessing && handleToggle(item)}
+                                        >
+                                            {isProcessing ? (
+                                                <div className="mini-spinner"></div>
+                                            ) : (
+                                                <div className={`custom-checkbox ${item.is_completed ? 'checked' : ''}`}>
+                                                    {item.is_completed && (
+                                                        <Icon icon="mdi:check" width="14" height="14" />
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Label */}
+                                        <span className="item-label">{item.label}</span>
+                                        
+                                        {/* Completion date */}
+                                        {item.completed_at && (
+                                            <span className="completed-date">
+                                                {new Date(item.completed_at).toLocaleDateString()}
+                                            </span>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
+                );
+            })}
+
+            {/* Empty State */}
+            {checklist.length === 0 && (
+                <div className="empty-state">
+                    <Icon icon="mdi:clipboard-outline" width="48" height="48" />
+                    <p>No checklist items configured yet.</p>
+                    <p className="hint">HR administrators will set up onboarding tasks for you.</p>
                 </div>
-            ))}
+            )}
         </div>
     );
 };

@@ -290,7 +290,7 @@ const LeaveRequests = () => {
             onClick={() => setStatusDropdownOpen(o => !o)}
           >
             {statusLabel}
-            <span className="dropdown-arrow">{statusDropdownOpen ? "▲" : "▼"}</span>
+            <span className={`dropdown-arrow${statusDropdownOpen ? " open" : ""}`} aria-hidden="true" />
           </button>
           {statusDropdownOpen && (
             <div className="status-dropdown-menu">

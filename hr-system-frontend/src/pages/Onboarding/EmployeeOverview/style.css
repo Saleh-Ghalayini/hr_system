@@ -1,0 +1,402 @@
+.overview-page {
+    padding: 32px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.overview-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    color: #142f5a;
+}
+
+.overview-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+}
+
+.overview-header .complete-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: auto;
+}
+
+/* Overall Progress Card */
+.overall-progress-card {
+    display: flex;
+    gap: 32px;
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    margin-bottom: 24px;
+}
+
+.progress-circle-container {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.progress-ring {
+    width: 140px;
+    height: 140px;
+    transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+    stroke: #e5e7eb;
+}
+
+.progress-ring-fill {
+    stroke: linear-gradient(135deg, #142f5a, #28eea7);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.6s ease;
+}
+
+.progress-circle-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.progress-value {
+    display: block;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+}
+
+.progress-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+.progress-details {
+    flex: 1;
+}
+
+.progress-details h3 {
+    margin: 0 0 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    font-family: 'Poppins', sans-serif;
+}
+
+.progress-subtitle {
+    margin: 0 0 20px;
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.5;
+}
+
+.mini-stats {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.mini-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.mini-stat svg {
+    color: #142f5a;
+}
+
+.mini-stat div {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #142f5a;
+    font-family: 'Poppins', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.7rem;
+    color: #6b7280;
+}
+
+.started-date {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.action-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.action-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border-color: #cce0f5;
+    transform: translateY(-2px);
+}
+
+.action-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.action-icon.docs {
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    color: #f57c00;
+}
+
+.action-icon.checklist {
+    background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+    color: #2e7d32;
+}
+
+.action-info {
+    flex: 1;
+}
+
+.action-info h4 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    font-family: 'Poppins', sans-serif;
+}
+
+.action-info p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+.action-arrow {
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+/* Status Cards */
+.status-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.status-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.status-card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-count {
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+}
+
+.status-label {
+    font-size: 0.7rem;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.status-card.approved {
+    border-left: 3px solid #2e7d32;
+}
+.status-card.approved svg {
+    color: #2e7d32;
+}
+.status-card.approved .status-count {
+    color: #2e7d32;
+}
+
+.status-card.pending {
+    border-left: 3px solid #f57c00;
+}
+.status-card.pending svg {
+    color: #f57c00;
+}
+.status-card.pending .status-count {
+    color: #f57c00;
+}
+
+.status-card.rejected {
+    border-left: 3px solid #c62828;
+}
+.status-card.rejected svg {
+    color: #c62828;
+}
+.status-card.rejected .status-count {
+    color: #c62828;
+}
+
+.status-card.missing {
+    border-left: 3px solid #9ca3af;
+}
+.status-card.missing svg {
+    color: #9ca3af;
+}
+.status-card.missing .status-count {
+    color: #9ca3af;
+}
+
+/* Requirements Summary */
+.requirements-summary {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.requirements-summary h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #374151;
+    font-family: 'Poppins', sans-serif;
+}
+
+.requirements-summary h3 svg {
+    color: #142f5a;
+}
+
+.req-progress-bar {
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.req-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #142f5a, #28eea7);
+    border-radius: 99px;
+    transition: width 0.4s ease;
+}
+
+.requirements-summary p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    gap: 16px;
+}
+
+.loading-state .spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e5e7eb;
+    border-top-color: #142f5a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+    color: #6b7280;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .overview-page {
+        padding: 20px 16px;
+    }
+
+    .overall-progress-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .mini-stats {
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .status-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .status-cards {
+        grid-template-columns: 1fr;
+    }
+}

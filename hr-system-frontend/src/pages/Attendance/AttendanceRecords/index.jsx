@@ -36,6 +36,7 @@ const AttendanceRecords = () => {
     const [selectedStatuses, setSelectedStatuses] = useState([]);
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     const [presetValue, setPresetValue] = useState("");
+    const [presetDropdownOpen, setPresetDropdownOpen] = useState(false);
     const [records, setRecords] = useState([]);
     const [allNames, setAllNames] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -316,12 +317,21 @@ const AttendanceRecords = () => {
             <div className="filter-container">
                 {/* Date range with presets */}
                 <div className="filter-row">
-                    <select className="preset-select" onChange={applyPreset} value={presetValue}>
-                        <option value="" disabled>Quick Select...</option>
-                        {DATE_PRESETS.map(p => (
-                            <option key={p.label} value={p.label}>{p.label}</option>
-                        ))}
-                    </select>
+                    <div className="preset-select-wrap">
+                        <select
+                            className="preset-select"
+                            onChange={applyPreset}
+                            onFocus={() => setPresetDropdownOpen(true)}
+                            onBlur={() => setPresetDropdownOpen(false)}
+                            value={presetValue}
+                        >
+                            <option value="" disabled>Quick Select...</option>
+                            {DATE_PRESETS.map(p => (
+                                <option key={p.label} value={p.label}>{p.label}</option>
+                            ))}
+                        </select>
+                        <span className={`dropdown-arrow${presetDropdownOpen ? " open" : ""}`} aria-hidden="true" />
+                    </div>
                     <div className="date-range">
                         <input className="filter-date-input" type="date" value={start_date}
                             onChange={(e) => setStartDate(e.target.value)} onKeyDown={handleKeyDown} />
@@ -337,7 +347,7 @@ const AttendanceRecords = () => {
                         <div className="multi-dropdown" ref={nameRef}>
                             <button className="multi-dropdown-btn" onClick={() => setNameDropdownOpen(o => !o)} type="button">
                                 {nameLabel}
-                                <span className="dropdown-arrow">{nameDropdownOpen ? "\u25B2" : "\u25BC"}</span>
+                                <span className={`dropdown-arrow${nameDropdownOpen ? " open" : ""}`} aria-hidden="true" />
                             </button>
                             {nameDropdownOpen && (
                                 <div className="multi-dropdown-menu name-menu">
@@ -358,7 +368,7 @@ const AttendanceRecords = () => {
                     <div className="multi-dropdown" ref={statusRef}>
                         <button className="multi-dropdown-btn" onClick={() => setStatusDropdownOpen(o => !o)} type="button">
                             {statusLabel}
-                            <span className="dropdown-arrow">{statusDropdownOpen ? "\u25B2" : "\u25BC"}</span>
+                            <span className={`dropdown-arrow${statusDropdownOpen ? " open" : ""}`} aria-hidden="true" />
                         </button>
                         {statusDropdownOpen && (
                             <div className="multi-dropdown-menu">

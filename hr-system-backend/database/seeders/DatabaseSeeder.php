@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(JobDetailSeeder::class);
         $this->call(PayrollSeeder::class);
         $this->call(LeaveBalanceSeeder::class);
+        $this->call(OnboardingSeeder::class);
         $this->call(LeaveRequestSeeder::class);
         $this->call(AttendanceSeeder::class);
         $this->call(PerformanceSeeder::class);

@@ -64,6 +64,8 @@ const AttendanceReports = () => {
     const [loading, setLoading] = useState(true);
     const [monthFilter, setMonthFilter] = useState("all");
     const [nameFilter, setNameFilter] = useState("all");
+    const [employeeOptions, setEmployeeOptions] = useState([]);
+    const [monthOptions, setMonthOptions] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
 
@@ -102,6 +104,23 @@ const AttendanceReports = () => {
             }
             
             setRecords(data);
+
+            // Keep filter options stable so selecting a filter does not collapse choices.
+            const namesFromResponse = [...new Set(data.map(r => r.full_name).filter(Boolean))];
+            if (namesFromResponse.length > 0) {
+                setEmployeeOptions((prev) => Array.from(new Set([...prev, ...namesFromResponse])).sort());
+            }
+
+            const monthsFromResponse = [
+                ...new Set(
+                    data
+                        .map(r => (r.date ? String(r.date).split("T")[0].slice(0, 7) : null))
+                        .filter(Boolean)
+                ),
+            ];
+            if (monthsFromResponse.length > 0) {
+                setMonthOptions((prev) => Array.from(new Set([...prev, ...monthsFromResponse])).sort().reverse());
+            }
         } catch {
             toast.error("Failed to load attendance data.");
         } finally {
@@ -111,7 +130,7 @@ const AttendanceReports = () => {
 
     useEffect(() => {
         fetchData(1);
-    }, [monthFilter, nameFilter]);
+    }, [fetchData]);
 
     const handlePageChange = useCallback((page) => {
         fetchData(page);
@@ -126,17 +145,8 @@ const AttendanceReports = () => {
         setMonthFilter(value);
     }, []);
 
-    // Extract unique employees from records
-    const employees = useMemo(() => {
-        const set = new Set(records.map(r => r.full_name).filter(Boolean));
-        return Array.from(set).sort();
-    }, [records]);
-
-    // Extract unique months from records
-    const months = useMemo(() => {
-        const set = new Set(records.map(r => r.date ? String(r.date).split("T")[0].slice(0, 7) : null).filter(Boolean));
-        return Array.from(set).sort().reverse();
-    }, [records]);
+    const employees = employeeOptions;
+    const months = monthOptions;
 
     // Client-side filter
     const filtered = useMemo(() => {
@@ -185,7 +195,7 @@ const AttendanceReports = () => {
                     </select>
                     <select className="att-select" value={monthFilter} onChange={(e) => handleMonthFilterChange(e.target.value)}>
                         <option value="all">All Months</option>
-                        {employees.length > 0 && months.map(m => (
+                        {months.map(m => (
                             <option key={m} value={m}>
                                 {new Date(m + "-01").toLocaleDateString("en-US", { month: "long", year: "numeric" })}
                             </option>

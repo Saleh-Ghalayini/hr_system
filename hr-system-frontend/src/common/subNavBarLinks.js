@@ -10,6 +10,7 @@ export const SUBNAV_CONFIG = {
     { text: "Insurance & Tax", link: "insandtax", roles: ["admin", "manager"] },
   ],
   "/onboarding": [
+    { text: "Management", link: "management", roles: ["admin"] },
     { text: "New Hires", link: "new-hires", roles: ["admin"] },
     { text: "Documents", link: "documents" },
     { text: "Checklist", link: "checklist" },
