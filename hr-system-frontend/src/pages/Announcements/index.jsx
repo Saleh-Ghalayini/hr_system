@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { request } from "../../common/request";
 import { toast } from "react-toastify";
+import useInitialPageLoader from "../../hooks/useInitialPageLoader";
 import "./style.css";
 
 const TYPE_ICONS = {
@@ -53,6 +54,7 @@ const AnnouncementCard = ({ item, isAdmin, onEdit, onDelete }) => {
 const Announcements = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showInitialLoader = useInitialPageLoader(loading);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -160,7 +162,7 @@ const Announcements = () => {
         ))}
       </div>
 
-      {loading ? (
+      {showInitialLoader ? (
         <div className="ann-loading"><div className="loading-spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="ann-empty">

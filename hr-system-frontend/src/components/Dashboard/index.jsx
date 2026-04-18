@@ -55,7 +55,9 @@ const Dashboard = () => {
   const stats = summary?.stats ?? {};
 
   // For charts that need full data, we'll use the stats counts where needed
-  const totalEmployees = stats?.total_users ?? 0;
+  const totalEmployees = stats?.total_employees ?? stats?.total_users ?? 0;
+  const activeEmployees = stats?.active_employees ?? totalEmployees;
+  const terminatedEmployees = stats?.terminated_employees ?? 0;
 
   // Recent data for charts (limited to recent records)
   const recentLeaves = summary?.recent_leaves ?? [];
@@ -119,7 +121,7 @@ const Dashboard = () => {
         <div className="dash-widget">
           {loading
             ? <div className="dash-chart-card"><SectionSpinner /></div>
-            : <AttendanceWidget attendanceToday={attendanceToday} totalEmployees={totalEmployees} />
+            : <AttendanceWidget attendanceToday={attendanceToday} totalEmployees={activeEmployees} />
           }
         </div>
         <div className="dash-chart-card">
@@ -138,12 +140,12 @@ const Dashboard = () => {
             {loading ? <SectionSpinner /> : (
               <Chart
                 data={{
-                  labels: ['Active', 'Inactive'],
+                  labels: ['Active', 'Terminated'],
                   datasets: [{
                     label: 'Employees',
-                    data: [stats?.active_employees ?? 0, totalEmployees - (stats?.active_employees ?? 0)],
-                    backgroundColor: ['#069855', '#d39c1d'],
-                    borderColor: ['#069855', '#d39c1d'],
+                    data: [activeEmployees, Math.max(0, terminatedEmployees)],
+                    backgroundColor: ['#069855', '#d62525'],
+                    borderColor: ['#069855', '#d62525'],
                     borderWidth: 2,
                   }],
                 }}

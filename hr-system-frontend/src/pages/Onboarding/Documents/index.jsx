@@ -8,7 +8,7 @@ const DOCUMENT_TYPES = [
     { icon: "mdi:briefcase", label: "Previous Employment Letters", status: "optional" },
     { icon: "mdi:file-sign", label: "Signed Contract", status: "required" },
     { icon: "mdi:bank", label: "Bank Account Details", status: "required" },
-    { icon: "mdi:camera", label: "Profile Photo", status: "required" },
+    { icon: "mdi:file-account", label: "CV", status: "required" },
 ];
 
 const Documents = () => {

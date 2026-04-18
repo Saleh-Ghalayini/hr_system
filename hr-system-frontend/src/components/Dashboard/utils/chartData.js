@@ -113,6 +113,16 @@ export const prepareAttendanceTrendData = (trend) => {
     return { labels: [], datasets: [] };
   }
 
+  const normalizeStatus = (value) => String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[_\s-]/g, '');
+  const isLateStatus = (value) => normalizeStatus(value) === 'late';
+  const isOnTimeStatus = (value) => {
+    const normalized = normalizeStatus(value);
+    return normalized === 'ontime' || normalized === 'present';
+  };
+
   // Check if data is in new aggregated format (has 'count' field)
   const isAggregated = trend[0]?.count !== undefined;
 
@@ -128,9 +138,9 @@ export const prepareAttendanceTrendData = (trend) => {
       mon.setDate(d.getDate() - day + 1);
       const key = mon.toISOString().slice(0, 10);
       if (!weekMap[key]) weekMap[key] = { present: 0, late: 0 };
-      if (rec.time_in_status === 'On-time') {
+      if (isOnTimeStatus(rec.time_in_status)) {
         weekMap[key].present += rec.count;
-      } else if (rec.time_in_status === 'Late') {
+      } else if (isLateStatus(rec.time_in_status)) {
         weekMap[key].late += rec.count;
       }
     });
@@ -182,8 +192,12 @@ export const prepareAttendanceTrendData = (trend) => {
     mon.setDate(d.getDate() - day + 1);
     const key = mon.toISOString().slice(0, 10);
     if (!weekMap[key]) weekMap[key] = { present: 0, late: 0 };
-    weekMap[key].present++;
-    if (rec.time_in_status === 'Late') weekMap[key].late++;
+    if (isOnTimeStatus(rec.time_in_status)) {
+      weekMap[key].present++;
+    }
+    if (isLateStatus(rec.time_in_status)) {
+      weekMap[key].late++;
+    }
   });
 
   const weeks = Object.keys(weekMap).sort().slice(-7);

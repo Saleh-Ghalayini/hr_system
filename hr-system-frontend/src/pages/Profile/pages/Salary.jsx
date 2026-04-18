@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "../style.css";
 import { request } from "../../../common/request";
+import useInitialPageLoader from "../../../hooks/useInitialPageLoader";
 
 const Salary = () => {
   const [payroll, setPayroll] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const showInitialLoader = useInitialPageLoader(loading);
 
   useEffect(() => {
     const fetchPayroll = async () => {
@@ -31,7 +33,7 @@ const Salary = () => {
   const taxAmount = base > 0 ? ((base * taxRate) / 100).toFixed(2) : null;
   const net = base > 0 ? (base - (base * taxRate) / 100 - insuranceCost).toFixed(2) : null;
 
-  if (loading) return <div className="loading-spinner" />;
+  if (showInitialLoader) return <div className="loading-spinner" />;
 
   if (error) return (
     <div className="profilebody">

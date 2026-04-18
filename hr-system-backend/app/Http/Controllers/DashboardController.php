@@ -19,22 +19,27 @@ class DashboardController extends Controller
     {
         $today      = now()->toDateString();
         $trendStart = now()->subDays(34)->toDateString();
-        $thisMonth  = now()->format('F Y');
+        $thisMonthLabel = now()->format('F Y');
+        $thisMonthYmd   = now()->format('Y-m');
 
         // Cache key includes today's date so it auto-invalidates at midnight
         $cacheKey = 'dashboard_summary_' . $today;
 
-        $data = Cache::remember($cacheKey, 120, function () use ($today, $trendStart, $thisMonth) {
+        $data = Cache::remember($cacheKey, 120, function () use ($today, $trendStart, $thisMonthLabel, $thisMonthYmd) {
             return [
                 // Only fetch counts for large tables - not full records
                 'stats' => [
                     'total_users' => User::count(),
+                    'total_employees' => User::whereHas('jobDetail')->count(),
                     'active_employees' => User::whereHas('jobDetail', fn($q) => $q->where('employment_status', 'active'))->count(),
+                    'terminated_employees' => User::whereHas('jobDetail', fn($q) => $q->where('employment_status', 'terminated'))->count(),
                     'pending_leaves' => LeaveRequest::where('status', 'pending')->count(),
                     'total_courses' => Course::count(),
                     'active_enrollments' => Enrollment::whereIn('status', ['enrolled', 'in_progress'])->count(),
                     'today_checked_in' => Attendance::whereDate('date', $today)->count(),
-                    'payroll_this_month' => Payroll::where('month', $thisMonth)->count(),
+                    'payroll_this_month' => Payroll::where('month', $thisMonthYmd)
+                        ->orWhere('month', $thisMonthLabel)
+                        ->count(),
                 ],
 
                 // Only fetch latest few records for preview
@@ -66,7 +71,8 @@ class DashboardController extends Controller
                     ->get(),
 
                 'recent_payroll' => Payroll::with('user:id,first_name,last_name')
-                    ->where('month', $thisMonth)
+                    ->where('month', $thisMonthYmd)
+                    ->orWhere('month', $thisMonthLabel)
                     ->limit(10)
                     ->get(['id', 'user_id', 'fullname', 'month', 'total']),
             ];

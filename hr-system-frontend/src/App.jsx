@@ -31,6 +31,8 @@ const BasicInfo = lazy(() => import("./pages/Profile/pages/BasicInfo"));
 const Salary = lazy(() => import("./pages/Profile/pages/Salary"));
 const EmpPerfo = lazy(() => import("./pages/Performance/pages/EmpPerfo"));
 const EmpRate = lazy(() => import("./pages/Performance/pages/EmpRate"));
+const Goals = lazy(() => import("./pages/Performance/pages/Goals"));
+const PeerReview = lazy(() => import("./pages/Performance/pages/PeerReview"));
 const AdminRate = lazy(() => import("./pages/Performance/pages/AdminRate"));
 const AdminAverage = lazy(() => import("./pages/Performance/pages/AdminAverage"));
 const Salaries = lazy(() => import("./pages/Payroll/Salaries"));
@@ -144,6 +146,8 @@ function App() {
               <Route index element={<Navigate to="performance-reviews" replace />} />
               <Route path="performance-reviews" element={<EmpPerfo />} />
               <Route path="employee-ratings" element={<EmpRate />} />
+              <Route path="goals" element={<Goals />} />
+              <Route path="peer-reviews" element={<PeerReview />} />
               <Route path="rate-employee" element={
                 <RoleRoute allowedRoles={["admin", "manager"]}>
                   <AdminRate />

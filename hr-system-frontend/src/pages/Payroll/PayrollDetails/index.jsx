@@ -100,33 +100,44 @@ const PayrollDetails = () => {
       setTotalPages(paginationInfo.last_page);
       setCurrentPage(page);
 
-      setPayrolls(raw.map((p) => ({
-        id: p.id,
-        user_id: p.user_id,
-        month: formatMonth(p.month),
-        fullname: p.fullname,
-        position: p.position,
-        base: Number(p.base_salary?.salary || 0).toFixed(2),
-        overtime: (Number(p.overtime_hours ?? 0) * (Number(p.base_salary?.salary ?? 0) / 160) * Number(p.overtime_rate ?? 1.5)).toFixed(2),
-        bonus: Number(p.bonus ?? 0).toFixed(2),
-        allowances: Number(p.allowances ?? 0).toFixed(2),
-        deductions_col: Number(p.deductions ?? 0).toFixed(2),
-        total: Number(p.total ?? 0).toFixed(2),
-        status_col: <StatusBadge status={p.status ?? "draft"} />,
-        // Store original RAW values for editing
-        _bonus: Number(p.bonus ?? 0),
-        _allowances: Number(p.allowances ?? 0),
-        _overtime_hours: Number(p.overtime_hours ?? 0),
-        _overtime_rate: Number(p.overtime_rate ?? 1.5),
-        _base_salary: Number(p.base_salary?.salary ?? 0),
-        _insurance_cost: Number(p.insurance?.cost ?? 0),
-        _tax_rate: Number(p.tax?.rate ?? 0),
-        _extra_leaves: Number(p.extra_leaves ?? 0),
-        _deductions: Number(p.deductions ?? 0),
-        _notes: p.notes ?? "",
-        _status: p.status ?? "draft",
-        ...(isAdmin ? { actions: <button className="edit-payroll-btn" onClick={() => openEdit(p)}>Edit</button> } : {}),
-      })));
+      setPayrolls(raw.map((p) => {
+        const mapped = {
+          id: p.id,
+          user_id: p.user_id,
+          month: formatMonth(p.month),
+          fullname: p.fullname,
+          position: p.position,
+          base: Number(p.base_salary?.salary || 0).toFixed(2),
+          overtime: (Number(p.overtime_hours ?? 0) * (Number(p.base_salary?.salary ?? 0) / 160) * Number(p.overtime_rate ?? 1.5)).toFixed(2),
+          bonus: Number(p.bonus ?? 0).toFixed(2),
+          allowances: Number(p.allowances ?? 0).toFixed(2),
+          deductions_col: Number(p.deductions ?? 0).toFixed(2),
+          total: Number(p.total ?? 0).toFixed(2),
+          status_col: <StatusBadge status={p.status ?? "draft"} />,
+          // Store original RAW values for editing
+          _bonus: Number(p.bonus ?? 0),
+          _allowances: Number(p.allowances ?? 0),
+          _overtime_hours: Number(p.overtime_hours ?? 0),
+          _overtime_rate: Number(p.overtime_rate ?? 1.5),
+          _base_salary: Number(p.base_salary?.salary ?? 0),
+          _insurance_cost: Number(p.insurance?.cost ?? 0),
+          _tax_rate: Number(p.tax?.rate ?? 0),
+          _extra_leaves: Number(p.extra_leaves ?? 0),
+          _deductions: Number(p.deductions ?? 0),
+          _notes: p.notes ?? "",
+          _status: p.status ?? "draft",
+        };
+
+        if (isAdmin) {
+          mapped.actions = (
+            <button className="edit-payroll-btn" onClick={() => openEdit(mapped)}>
+              Edit
+            </button>
+          );
+        }
+
+        return mapped;
+      }));
     } catch (err) {
       console.error("Payroll fetch error:", err);
       const errorMsg = err.response?.data?.message || err.response?.data?.error || "Failed to load payroll records.";

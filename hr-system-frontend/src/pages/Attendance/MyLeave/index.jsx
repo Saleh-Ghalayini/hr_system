@@ -3,16 +3,28 @@ import { Icon } from "@iconify/react";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
 import "./style.css";
-                {["unpaid"].map((key) => {
-  { value: "maternity",   label: "Maternity Leave",    icon: "mdi:baby-carriage",           color: "#a855f7" },
-  { value: "paternity",   label: "Paternity Leave",    icon: "mdi:human-male-child",        color: "#3b82f6" },
-                {["unpaid"].map((key) => {
-  return `${y}-${m}-${d}`;
-                {["unpaid"].map((key) => {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) {
-    return value;
-  }
 
+const LEAVE_TYPES = [
+  { value: "annual", label: "Annual Leave", icon: "mdi:calendar-check", color: "#16a34a" },
+  { value: "sick", label: "Sick Leave", icon: "mdi:emoticon-sick", color: "#ef4444" },
+  { value: "pto", label: "PTO", icon: "mdi:beach", color: "#f59e0b" },
+  { value: "maternity", label: "Maternity Leave", icon: "mdi:baby-carriage", color: "#a855f7" },
+  { value: "paternity", label: "Paternity Leave", icon: "mdi:human-male-child", color: "#3b82f6" },
+  { value: "unpaid", label: "Unpaid Leave", icon: "mdi:cash-off", color: "#6b7280" },
+];
+
+const getLocalYmd = () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const d = String(now.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const formatDate = (value) => {
+  if (!value) return "";
+  const ymd = String(value).slice(0, 10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return value;
   const [year, month, day] = ymd.split("-").map(Number);
   const localDate = new Date(year, month - 1, day);
   return localDate.toLocaleDateString("en-GB", {

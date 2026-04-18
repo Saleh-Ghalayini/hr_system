@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
+import useInitialPageLoader from "../../../hooks/useInitialPageLoader";
 import "./styles.css";
 
 const InsuranceAndTax = () => {
@@ -13,6 +14,7 @@ const InsuranceAndTax = () => {
   const [value, setValue] = useState("");
   const [label, setLabel] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const showInitialLoader = useInitialPageLoader(loading);
 
   const fetchData = useCallback(async () => {
     try {
@@ -126,7 +128,7 @@ const InsuranceAndTax = () => {
   const totalDeduction = insuranceData.reduce((sum, ins) => sum + (parseFloat(ins.cost) || 0), 0);
   const highestTaxRate = taxes.length > 0 ? Math.max(...taxes.map(t => parseFloat(t.rate) || 0)) : 0;
 
-  if (loading) {
+  if (showInitialLoader) {
     return (
       <div className="ins-tax-page">
         <div className="ins-tax-header">

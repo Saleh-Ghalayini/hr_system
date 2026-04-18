@@ -3,6 +3,7 @@ import { Icon } from "@iconify/react";
 import { request } from "../../common/request";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../context/AuthContext";
+import useInitialPageLoader from "../../hooks/useInitialPageLoader";
 import "./style.css";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
@@ -19,6 +20,7 @@ const Holidays = () => {
   const { user } = useAuthContext();
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showInitialLoader = useInitialPageLoader(loading);
   const isAdmin = user?.role === "admin";
   const [year, setYear] = useState(new Date().getFullYear());
   const [filter, setFilter] = useState("all");
@@ -132,7 +134,7 @@ const Holidays = () => {
         ))}
       </div>
 
-      {loading ? (
+      {showInitialLoader ? (
         <div className="holidays-loading"><div className="loading-spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="holidays-empty">

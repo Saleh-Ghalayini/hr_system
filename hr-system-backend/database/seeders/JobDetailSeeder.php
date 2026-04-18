@@ -13,25 +13,26 @@ class JobDetailSeeder extends Seeder
 
         $now = now();
 
-        // user_id => [title, employment_type, employment_status, employee_level, work_location, hiring_date]
+        // user_id => [title, department, employment_type, employment_status, employee_level, work_location, hiring_date]
         $details = [
-            1  => ['Chief Executive Officer',      'full_time', 'active',    'executive', 'on_site', '2018-01-01'],
-            2  => ['Senior Product Manager',        'full_time', 'active',    'senior',    'hybrid',  '2020-03-15'],
-            3  => ['Junior Software Engineer',      'full_time', 'active',    'junior',    'remote',  '2022-06-01'],
-            4  => ['Senior UX Designer',            'full_time', 'active',    'senior',    'hybrid',  '2021-09-10'],
-            5  => ['Junior Data Analyst',           'full_time', 'active',    'junior',    'on_site', '2023-01-20'],
-            6  => ['Junior Frontend Developer',     'full_time', 'active',    'junior',    'remote',  '2023-04-05'],
-            7  => ['Software Engineering Intern',   'internship','active',    'intern',    'on_site', '2025-09-01'],
-            8  => ['Senior Operations Manager',     'full_time', 'active',    'senior',    'hybrid',  '2019-07-22'],
-            9  => ['Junior Backend Developer',      'full_time', 'active',    'junior',    'remote',  '2023-08-14'],
-            10 => ['HR Intern',                     'internship','active',    'intern',    'on_site', '2025-10-01'],
+            1  => ['Chief Executive Officer',       'Executive',          'full_time', 'active',    'executive', 'on_site', '2018-01-01'],
+            2  => ['Senior Product Manager',        'Engineering',        'full_time', 'active',    'senior',    'hybrid',  '2020-03-15'],
+            3  => ['Junior Software Engineer',      'Engineering',        'full_time', 'active',    'junior',    'remote',  '2022-06-01'],
+            4  => ['Senior UX Designer',            'Design',             'full_time', 'active',    'senior',    'hybrid',  '2021-09-10'],
+            5  => ['Junior Data Analyst',           'Analytics',          'full_time', 'active',    'junior',    'on_site', '2023-01-20'],
+            6  => ['Junior Frontend Developer',    'Engineering',        'full_time', 'active',    'junior',    'remote',  '2023-04-05'],
+            7  => ['Software Engineering Intern',  'Engineering',        'internship','active',    'intern',    'on_site', '2025-09-01'],
+            8  => ['Senior Operations Manager',   'Operations',         'full_time', 'active',    'senior',    'hybrid',  '2019-07-22'],
+            9  => ['Junior Backend Developer',     'Engineering',       'full_time', 'active',    'junior',    'remote',  '2023-08-14'],
+            10 => ['HR Intern',                    'Human Resources',    'internship','active',    'intern',    'on_site', '2025-10-01'],
         ];
 
         $rows = [];
-        foreach ($details as $userId => [$title, $type, $status, $level, $location, $hireDate]) {
+        foreach ($details as $userId => [$title, $department, $type, $status, $level, $location, $hireDate]) {
             $rows[] = [
                 'user_id'           => $userId,
                 'title'             => $title,
+                'department'        => $department,
                 'employment_type'   => $type,
                 'employment_status' => $status,
                 'employee_level'    => $level,

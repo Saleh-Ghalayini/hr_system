@@ -7,6 +7,7 @@ import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Button from "../../components/Button";
 import { useAuthContext } from "../../context/AuthContext";
+import useInitialPageLoader from "../../hooks/useInitialPageLoader";
 
 const getInitials = (first, last) =>
   `${first?.[0] ?? ""}${last?.[0] ?? ""}`.toUpperCase();
@@ -62,6 +63,7 @@ const EmployeeDirectory = () => {
 
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showInitialLoader = useInitialPageLoader(loading);
   const [search, setSearch] = useState("");
   const [posFilter, setPosFilter] = useState("All");
   const [selected, setSelected] = useState(null);
@@ -241,7 +243,7 @@ const EmployeeDirectory = () => {
         </div>
       </div>
 
-      {loading ? (
+      {showInitialLoader ? (
         <div className="dir-loading"><div className="loading-spinner" /></div>
       ) : filtered.length === 0 ? (
         <div className="dir-empty">
@@ -288,7 +290,6 @@ const EmployeeDirectory = () => {
             {loadingEdit ? (
               <div className="dir-loading">
                 <div className="loading-spinner" />
-                <p>Loading...</p>
               </div>
             ) : isEditing ? (
               <div className="edit-profile-form">

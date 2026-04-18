@@ -85,9 +85,31 @@ Route::prefix('v1')->group(function () {
 
         // Performance (self-rate team, view own ratings)
         Route::get('/performance/types', [PerformanceController::class, 'getTypes']);
+        Route::get('/performance/cycles', [PerformanceController::class, 'getCycles']);
+        Route::get('/performance/cycles/active', [PerformanceController::class, 'getActiveCycle']);
         Route::post('/performance/rate-team', [PerformanceController::class, 'rateTeam']);
         Route::get('/performance/my-rate', [PerformanceController::class, 'getEmployeRate']);
         Route::get('/performance/my-team-rate', [PerformanceController::class, 'getLastTeamRate']);
+
+        // Self Assessment
+        Route::post('/performance/self-assessment', [PerformanceController::class, 'submitSelfAssessment']);
+        Route::get('/performance/self-assessment', [PerformanceController::class, 'getSelfAssessment']);
+
+        // Peer Reviews (360-degree feedback)
+        Route::post('/performance/peer-review', [PerformanceController::class, 'submitPeerReview']);
+        Route::get('/performance/peer-reviews/received', [PerformanceController::class, 'getPeerReviewsReceived']);
+        Route::get('/performance/peer-reviews/given', [PerformanceController::class, 'getPeerReviewsGiven']);
+        Route::get('/performance/peers', [PerformanceController::class, 'getPotentialPeers']);
+
+        // Goals
+        Route::post('/performance/goals', [PerformanceController::class, 'createGoal']);
+        Route::get('/performance/goals', [PerformanceController::class, 'getGoals']);
+        Route::put('/performance/goals/{id}/progress', [PerformanceController::class, 'updateGoalProgress']);
+        Route::delete('/performance/goals/{id}', [PerformanceController::class, 'deleteGoal']);
+
+        // Performance Report & Summary
+        Route::get('/performance/report', [PerformanceController::class, 'getReport']);
+        Route::get('/performance/summary', [PerformanceController::class, 'getSummary']);
 
         // ─────────────────────────────────────────────────────────────
         // MANAGER + ADMIN
@@ -100,6 +122,9 @@ Route::prefix('v1')->group(function () {
             // Rate employees (managers rate their reports)
             Route::get('/performance/average', [PerformanceController::class, 'getAverageRate']);
             Route::post('/performance/rate-employee', [PerformanceController::class, 'rateEmployee']);
+
+            // Department overview
+            Route::get('/performance/department-overview', [PerformanceController::class, 'getDepartmentOverview']);
 
             // Leave approval
             Route::put('/leave/requests/{leaveRequest}', [LeaveRequestController::class, 'updateLeaveRequest']);
@@ -197,6 +222,17 @@ Route::prefix('v1')->group(function () {
             Route::post('/holidays', [HolidayController::class, 'store']);
             Route::put('/holidays/{holiday}', [HolidayController::class, 'update']);
             Route::delete('/holidays/{holiday}', [HolidayController::class, 'destroy']);
+
+            // Performance Cycles (admin CRUD)
+            Route::post('/performance/cycles', [PerformanceController::class, 'createCycle']);
+            Route::put('/performance/cycles/{id}', [PerformanceController::class, 'updateCycle']);
+
+            // Department overview (admin)
+            Route::get('/performance/department-overview', [PerformanceController::class, 'getDepartmentOverview']);
+
+            // Employee Summary & Finalize Review
+            Route::get('/performance/employee/{id}/summary', [PerformanceController::class, 'getEmployeeSummary']);
+            Route::post('/performance/employee/{id}/finalize', [PerformanceController::class, 'finalizeReview']);
 
             // Regulations
             Route::apiResource('regulations', RegulationController::class);

@@ -1,12 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { request, getToken } from "../common/request";
+import { request, getToken, resetUnauthorizedState } from "../common/request";
 
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(getToken);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    resetUnauthorizedState();
+    setToken(null);
+    setUser(null);
+    navigate("/login", { replace: true });
+  }, [navigate]);
 
   const login = async (email, password, rememberMe = false) => {
     try {
@@ -25,6 +34,7 @@ export const useAuth = () => {
           sessionStorage.setItem("token", tok);
           localStorage.removeItem("token");
         }
+        resetUnauthorizedState();
         setToken(tok);
         setUser(data.data.user ?? data.data);
         navigate("/dashboard");
@@ -38,13 +48,14 @@ export const useAuth = () => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
-    navigate("/login");
-  };
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      logout();
+    };
+
+    window.addEventListener("auth:unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("auth:unauthorized", handleUnauthorized);
+  }, [logout]);
 
   useEffect(() => {
     const verifyAuth = async () => {
@@ -71,7 +82,7 @@ export const useAuth = () => {
     } else {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, logout]);
 
   return { user, token, loading, login, logout };
 };

@@ -4,10 +4,17 @@ import StatusField from "../StatusField";
 import Pagination from "../Pagination";
 
 const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
+  const rows = Array.isArray(data) ? data : [];
+  const hasRows = rows.length > 0;
+  const showBlockingLoader = loading && !hasRows;
+  const showOverlayLoader = loading && hasRows;
+
   return (
-    <div className={styles.tableContainer}>
-      {loading ? (
-        <div className="loading-spinner" />
+    <div className={`${styles.tableContainer} ${showOverlayLoader ? styles.isLoading : ""}`}>
+      {showBlockingLoader ? (
+        <div className={styles.loadingWrap}>
+          <div className="loading-spinner" />
+        </div>
       ) : (
         <>
           <table className={styles.dataTable}>
@@ -21,7 +28,7 @@ const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
               </tr>
             </thead>
             <tbody className="table-animate-rows">
-              {data.length === 0 ? (
+              {rows.length === 0 ? (
                 <tr>
                   <td
                     colSpan={headers.length}
@@ -32,7 +39,7 @@ const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
                   </td>
                 </tr>
               ) : (
-                data.map((row, index) => (
+                rows.map((row, index) => (
                   <tr key={row.id ?? index} className={styles.tableRow}>
                     {headers.map((header) => {
                       if (typeof header.render === "function") {
@@ -71,6 +78,11 @@ const Table = ({ headers, data, loading, emptyMessage, pagination }) => {
               totalPages={pagination.totalPages}
               onPageChange={pagination.onPageChange}
             />
+          )}
+          {showOverlayLoader && (
+            <div className={styles.loadingOverlay} aria-hidden="true">
+              <div className="loading-spinner" />
+            </div>
           )}
         </>
       )}

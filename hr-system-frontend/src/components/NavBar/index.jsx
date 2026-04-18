@@ -48,11 +48,6 @@ const NavBar = () => {
         navigation('/profile/basicinfo');
     };
 
-    const handleNotifications = () => {
-        setShowProfileMenu(false);
-        setShowNotifModal(true);
-    };
-
     const handleLogout = () => {
         setShowProfileMenu(false);
         logout();
@@ -90,10 +85,6 @@ const NavBar = () => {
                                     <button className="profile-dropdown-item" onClick={handleSettings}>
                                         <Icon icon="mdi:cog-outline" width="17" height="17" />
                                         <span>Settings</span>
-                                    </button>
-                                    <button className="profile-dropdown-item" onClick={handleNotifications}>
-                                        <Icon icon="mdi:bell-outline" width="16" height="16" />
-                                        <span>Notifications</span>
                                     </button>
                                 </div>
 

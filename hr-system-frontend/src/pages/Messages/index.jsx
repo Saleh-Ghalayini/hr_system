@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Icon } from "@iconify/react";
 import { request } from "../../common/request";
 import { toast } from "react-toastify";
+import useInitialPageLoader from "../../hooks/useInitialPageLoader";
 import "./style.css";
 
 const Messages = () => {
   const [activeTab, setActiveTab] = useState("inbox");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const showInitialLoader = useInitialPageLoader(loading);
   const [selectedMsg, setSelectedMsg] = useState(null);
   const [showCompose, setShowCompose] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
@@ -173,7 +175,7 @@ const Messages = () => {
         </div>
 
         <div className="message-list">
-          {loading ? (
+          {showInitialLoader ? (
             <div className="messages-loading"><div className="loading-spinner" /></div>
           ) : messages.length === 0 ? (
             <div className="messages-empty">

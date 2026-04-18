@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { request } from "../../../common/request";
 import { toast } from "react-toastify";
+import useInitialPageLoader from "../../../hooks/useInitialPageLoader";
 import "./style.css";
 
 const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
@@ -22,6 +23,7 @@ const AttendanceSettings = () => {
     allow_remote_checkin: false,
     working_days: ["Monday","Tuesday","Wednesday","Thursday","Friday"],
   });
+  const showInitialLoader = useInitialPageLoader(loading);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -119,7 +121,7 @@ const AttendanceSettings = () => {
     } finally { setSaving(false); }
   };
 
-  if (loading) return <div className="att-settings-loading"><div className="loading-spinner" /></div>;
+  if (showInitialLoader) return <div className="att-settings-loading"><div className="loading-spinner" /></div>;
 
   return (
     <div className="att-settings-container">

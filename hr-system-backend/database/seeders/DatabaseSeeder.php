@@ -13,6 +13,7 @@ class DatabaseSeeder extends Seeder
         $this->call(BaseSalarySeeder::class);
         $this->call(TaxSeeder::class);
         $this->call(PerformanceTypeSeeder::class);
+        $this->call(PerformanceReviewCycleSeeder::class);
         $this->call(LeaveTypeSeeder::class);
 
         // ── 2. Users (depend on insurances) ───────────────────────────
@@ -25,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(LeaveRequestSeeder::class);
         $this->call(AttendanceSeeder::class);
         $this->call(PerformanceSeeder::class);
+        $this->call(EnhancedPerformanceSeeder::class);
 
         // ── 4. Courses → Enrollments ──────────────────────────────────
         $this->call(CourseSeeder::class);

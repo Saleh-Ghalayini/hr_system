@@ -16,11 +16,12 @@ const KpiCard = ({ icon, label, value, sub, accent }) => (
 );
 
 const SummaryCards = ({ stats, recentLeaves, recentCourses, recentEnrollments, attendanceToday }) => {
-  const totalEmployees = stats?.total_users ?? 0;
+  const totalEmployees = stats?.total_employees ?? stats?.total_users ?? 0;
   const pendingLeaves = stats?.pending_leaves ?? 0;
   const totalCourses = stats?.total_courses ?? 0;
   const activeEnrollments = stats?.active_enrollments ?? 0;
   const presentToday = stats?.today_checked_in ?? 0;
+  const terminatedEmployees = stats?.terminated_employees ?? 0;
   const payrollCount = stats?.payroll_this_month ?? 0;
 
   // Calculate course completion from recent enrollments sample
@@ -32,8 +33,8 @@ const SummaryCards = ({ stats, recentLeaves, recentCourses, recentEnrollments, a
 
   // Calculate attendance rate
   const lateToday = (attendanceToday ?? []).filter(a => a?.time_in_status === 'Late').length;
-  const attendanceRate = totalEmployees > 0
-    ? Math.round((presentToday / totalEmployees) * 100)
+  const attendanceRate = (stats?.active_employees ?? totalEmployees) > 0
+    ? Math.round((presentToday / (stats?.active_employees ?? totalEmployees)) * 100)
     : 0;
 
   // Calculate approved leaves from recent data (approximate)
@@ -48,7 +49,7 @@ const SummaryCards = ({ stats, recentLeaves, recentCourses, recentEnrollments, a
         icon="mdi:account-group-outline"
         label="Total Employees"
         value={totalEmployees}
-        sub={`${stats?.active_employees ?? 0} active employees`}
+        sub={`${stats?.active_employees ?? 0} active · ${terminatedEmployees} terminated`}
         accent="#142f5a"
       />
       <KpiCard
