@@ -1,66 +1,166 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HR System — Backend
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Laravel 12 REST API for the HR Management System
+> **Last Updated:** 2026-04-18
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Laravel 12 REST API providing JWT-authenticated endpoints for:
+- Attendance tracking with geolocation (Haversine formula)
+- Payroll with overtime/bonus/deductions (auto-recalculated on tax/insurance changes)
+- Leave management (9 leave types, half-day support, balance-exempt)
+- Performance evaluation (self-assessment, peer reviews, goals, review cycles, manager finalization)
+- Training & enrollments with progress tracking
+- Onboarding (document templates, checklist items, user progress, file uploads)
+- Recruitment (job openings, candidates, applications)
+- Projects & tasks with activity logs
+- Regulations & compliance tracking
+- Internal messaging (threaded inbox/sent)
+- Announcements (typed, pinned, role-targeted, scheduled)
+- Holidays (public/company, recurring)
+- Admin dashboard summary
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Quick Start
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```sh
+cd hr-system-backend
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+php artisan migrate:fresh --seed
+php artisan serve
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **API Base:** `http://127.0.0.1:8000/api`
+- **Health Check:** `GET /api/health`
+- **Version:** `v1` (prefix all routes with `/api/v1/`)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Authentication
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+JWT via Laravel Sanctum. All routes except `/guest/*` require:
 
-### Premium Partners
+```
+Authorization: Bearer {token}
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Login returns: `{ success: true, data: { id, first_name, last_name, email, role, token } }`
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Seeded Test Accounts
 
-## Code of Conduct
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@hr.com | SecurePass123 |
+| Manager | manager@hr.com | SecurePass123 |
+| Employee | maya@hr.com | SecurePass123 |
+| Employee | hassan@email.com | SecurePass123 |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+All 10 seeded users share the password `SecurePass123`.
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Key Architecture
 
-## License
+| Pattern | Implementation |
+|---|---|
+| Response format | `ApiResponse` trait (`success()`, `error()`, `notFound()`, etc.) |
+| Validation | 25+ Form Request classes (zero inline validation) |
+| Business logic | 7 Service classes (AttendanceService, LeaveService, etc.) |
+| Auth hooks | `UserObserver` (Payroll + LeaveBalance auto-create), `TaxObserver`, `InsuranceObserver` |
+| Task audit | `TaskObserver` logs all field changes to `task_activity_logs` |
+| RBAC | AdminMiddleware (admin-only), ManagerMiddleware (manager + admin) |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## Key Endpoints
+
+| Group | Route Prefix | Auth |
+|---|---|---|
+| Guest | `/guest/` | None |
+| Auth | `/` | Bearer |
+| Attendance | `/attendance/` | Bearer |
+| Leave | `/leave/` | Bearer |
+| Performance | `/performance/` | Bearer |
+| Messages | `/messages/` | Bearer |
+| Onboarding | `/onboarding/` | Bearer |
+| Admin | `/admin/` | Bearer + Admin |
+| Admin Payroll | `/admin/payroll/` | Bearer + Admin |
+| Admin Performance | `/admin/performance/` | Bearer + Admin |
+| Admin Onboarding | `/admin/onboarding/` | Bearer + Admin |
+
+See `docs/api-endpoints.md` for the full API reference.
+
+---
+
+## Testing
+
+```sh
+php artisan test
+# or
+./vendor/bin/phpunit
+```
+
+82+ tests covering: Auth, Attendance, Leave, Payroll, Training, LeaveService, AttendanceService.
+
+---
+
+## Database
+
+- **Driver:** MySQL (SQLite for development)
+- **Migrations:** 28 migration files
+- **Seeders:** 17 idempotent seeders (safe for `migrate:fresh --seed` and `db:seed`)
+- **Schema:** See `docs/db-schema.md`
+
+---
+
+## Environment Variables
+
+| Variable | Description |
+|---|---|
+| `APP_KEY` | Laravel app key |
+| `JWT_SECRET` | JWT authentication secret |
+| `DB_CONNECTION` | mysql or sqlite |
+| `COMPANY_LAT` | Company latitude for geofence |
+| `COMPANY_LON` | Company longitude for geofence |
+| `MAIL_MAILER` | Mail driver (log, smtp, etc.) |
+
+---
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   ├── Controllers/        (21 controllers)
+│   ├── Middleware/         (AdminMiddleware, ManagerMiddleware)
+│   └── Requests/           (25+ Form Request classes)
+├── Models/                 (35+ Eloquent models)
+├── Services/               (7 service classes)
+├── Observers/              (UserObserver, TaskObserver, etc.)
+├── Traits/                 (ApiResponse)
+└── Providers/
+database/
+├── migrations/             (28 migrations)
+└── seeders/                (17 seeders)
+routes/
+├── api.php                  (all API routes)
+└── web.php
+tests/
+├── Feature/                (54 tests)
+└── Unit/                   (28 tests)
+```
+
+---
+
+## API Documentation
+
+Full endpoint reference: `docs/api-endpoints.md`
+Database schema: `docs/db-schema.md`
+Progress log: `docs/progress.md`

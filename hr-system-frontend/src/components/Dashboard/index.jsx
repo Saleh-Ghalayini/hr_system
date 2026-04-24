@@ -51,13 +51,26 @@ const Dashboard = () => {
 
   const base = getChartOptions();
 
+  const toCount = (value) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+  };
+
   // Extract stats and recent data from optimized API response
   const stats = summary?.stats ?? {};
 
   // For charts that need full data, we'll use the stats counts where needed
-  const totalEmployees = stats?.total_employees ?? stats?.total_users ?? 0;
-  const activeEmployees = stats?.active_employees ?? totalEmployees;
-  const terminatedEmployees = stats?.terminated_employees ?? 0;
+  const totalEmployees = toCount(stats?.total_employees ?? stats?.total_users);
+  let activeEmployees = toCount(stats?.active_employees);
+  let terminatedEmployees = toCount(stats?.terminated_employees);
+
+  // If segmented status values are missing but total employees exists,
+  // default the total to active to avoid rendering an empty doughnut.
+  if (activeEmployees + terminatedEmployees === 0 && totalEmployees > 0) {
+    activeEmployees = totalEmployees;
+  }
+
+  const hasEmployeeOverviewData = activeEmployees + terminatedEmployees > 0;
 
   // Recent data for charts (limited to recent records)
   const recentLeaves = summary?.recent_leaves ?? [];
@@ -137,7 +150,7 @@ const Dashboard = () => {
         <div className="dash-chart-card">
           <h3 className="dash-chart-title">Employee Overview</h3>
           <div className="dash-chart-wrap">
-            {loading ? <SectionSpinner /> : (
+            {loading ? <SectionSpinner /> : hasEmployeeOverviewData ? (
               <Chart
                 data={{
                   labels: ['Active', 'Terminated'],
@@ -153,6 +166,8 @@ const Dashboard = () => {
                 type="doughnut"
                 bare
               />
+            ) : (
+              <div className="dash-chart-empty">No employee status data available.</div>
             )}
           </div>
         </div>

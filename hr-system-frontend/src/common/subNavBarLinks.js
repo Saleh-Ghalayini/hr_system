@@ -12,8 +12,9 @@ export const SUBNAV_CONFIG = {
   "/onboarding": [
     { text: "Management", link: "management", roles: ["admin"] },
     { text: "New Hires", link: "new-hires", roles: ["admin"] },
-    { text: "Documents", link: "documents" },
-    { text: "Checklist", link: "checklist" },
+    { text: "My Onboarding", link: "my", roles: ["user", "manager"] },
+    { text: "Documents", link: "documents", roles: ["user", "manager"] },
+    { text: "Checklist", link: "checklist", roles: ["user", "manager"] },
   ],
   "/performance": [
     { text: "Performance Reviews", link: "performance-reviews" },

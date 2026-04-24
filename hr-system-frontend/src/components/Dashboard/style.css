@@ -79,6 +79,17 @@
   flex: 1;
 }
 
+.dash-chart-empty {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 0 12px;
+  color: #64748b;
+  font-family: 'Lato', sans-serif;
+  font-size: 0.92rem;
+}
+
 .dash-chart-wrap--tall {
   height: 220px;
 }

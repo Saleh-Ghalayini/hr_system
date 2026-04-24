@@ -1,145 +1,210 @@
-# HR-System
+# HR System
 
-## Summary
-The **HR-System** is an integrated Human Resource Management and Onboarding platform designed to streamline HR processes using **React** for the frontend and **Laravel** for the backend. This system provides features such as employee management, attendance tracking, payroll integration, performance management, and an AI Agent for intelligent HR assistance. The project is structured into multiple modules, each handled by different team members to ensure efficient and seamless HR functionalities.
+> **Repository:** `hr-system/` monorepo — Laravel 12 backend + React 19 frontend
+> **Last Updated:** 2026-04-18
 
-## Key Features
-- **Employee Management**: Full CRUD operations for employee profiles, including registration and updates.
-- **Attendance Tracking**: Clock in/out system with geolocation verification for accurate time tracking.
-- **Leave Management**: System to manage leave requests, approvals, and tracking.
-- **Payroll Integration**: Automated salary processing, deductions, and tax calculations.
-- **Recruitment and Onboarding**: Candidate tracking system with onboarding checklist functionalities.
-- **Performance Management**: Regular appraisals, feedback, and goal tracking.
-- **Document Management**: Secure repository for employee contracts, certifications, and important documents.
-- **Training and Development**: Training portal with course catalog management, enrollments, and completion-based certificate eligibility.
-- **Benefits Management**: Management of health plans, retirement options, and perks.
-- **Compliance and Reporting**: Regulatory compliance tracking and automated reporting.
-- **Task Assignment and Project Tracking**: Internal task management for HR-related projects.
-- **Dashboard Analytics**: Interactive dashboards for visualizing key HR metrics and KPIs.
+---
 
+## Overview
 
-## Installation
+A full-stack **Human Resource Management System** built with a Laravel 12 REST API and React 19 SPA. Covers attendance tracking (with geolocation), payroll, training & certifications, performance evaluation (360-degree, goals, cycles), leave management (9 leave types), onboarding (document templates + checklist tracking), recruitment, project/task management, internal messaging, announcements, and holidays.
+
+---
+
+## Technology Stack
+
+### Backend
+| Concern | Technology |
+|---|---|
+| Framework | Laravel 12 |
+| Language | PHP ^8.2 |
+| Authentication | JWT (`php-open-source-saver/jwt-auth ^2.8`) |
+| Database | MySQL (SQLite for dev) |
+| Testing | PHPUnit ^11.5 |
+| Code Style | Laravel Pint |
+
+### Frontend
+| Concern | Technology |
+|---|---|
+| Framework | React 19 |
+| Build Tool | Vite 6 |
+| Routing | react-router-dom ^7 |
+| HTTP Client | Axios ^1.8 |
+| UI Components | Custom CSS + Material UI components |
+| Charts | Chart.js ^4 + react-chartjs-2 |
+| Icons | Iconify ^5 (`mdi:` prefix) |
+| Notifications | react-toastify ^11 |
+
+---
+
+## Project Structure
+
+```
+hr-system/
+├── hr-system-backend/          # Laravel 12 REST API
+│   ├── app/
+│   │   ├── Http/Controllers/   # 21 controllers
+│   │   ├── Http/Middleware/     # AdminMiddleware, ManagerMiddleware
+│   │   ├── Http/Requests/       # 25+ Form Request classes
+│   │   ├── Models/             # 35+ Eloquent models
+│   │   ├── Services/           # 7 service classes
+│   │   ├── Observers/          # UserObserver, TaskObserver
+│   │   ├── Traits/             # ApiResponse
+│   │   └── Providers/
+│   ├── database/
+│   │   ├── migrations/          # 28 migrations
+│   │   └── seeders/            # 17 idempotent seeders
+│   ├── routes/api.php
+│   └── tests/                   # 82+ tests (feature + unit)
+│
+├── hr-system-frontend/          # React 19 SPA
+│   └── src/
+│       ├── pages/               # 12 sections, lazy loaded
+│       ├── components/          # 15+ reusable components
+│       ├── context/             # AuthContext
+│       ├── hooks/               # useAuth, useCourses, useUsers, useLeaves
+│       ├── common/              # request.js (401 interceptor)
+│       └── services/            # dashboardService.js
+│
+├── docs/                        # Project documentation
+└── HR_System_Presentation.pptx
+```
+
+---
+
+## Features
+
+### Core Modules
+
+| Module | Description |
+|---|---|
+| **Dashboard** | Admin-only summary with charts (Bar, Doughnut, Line, Radar) |
+| **Attendance** | Check-in/out with GPS, location review, reports, settings |
+| **Leave** | 9 leave types, half-day support, manager approval, sick leave reports |
+| **Payroll** | Salary list, payroll details (overtime/bonus/deductions), generate by month |
+| **Performance** | Self-assessment, peer reviews (360°), goals, review cycles, manager ratings |
+| **Training** | Course catalog, enrollments, self-service My Learning with progress tracking |
+| **Profile** | Basic info (photo upload), job details, salary history |
+| **Onboarding** | Document templates, checklist items, employee upload/approval flow, admin overview |
+| **Recruitment** | Job openings, candidates (CV upload), applications |
+| **Projects & Tasks** | Project management with task activity logs |
+| **Regulations** | Compliance tracking with requirements |
+| **Messages** | Inbox/sent, threaded reply, mark-read, delete |
+| **Announcements** | Pinned/typed, role-targeted, scheduled with expiry |
+| **Holidays** | Year-based calendar, public/company, recurring support |
+| **Directory** | Employee grid with search, position filter, profile modal |
+
+---
+
+## Setup
+
 ### Prerequisites
-Ensure you have the following installed on your system:
-- **Node.js** & npm
-- **PHP** & Composer
-- **Laravel** framework
-- **MySQL** database
-- **Git**
+- PHP ^8.2 + Composer
+- Node.js ^18 + npm
+- MySQL (or SQLite for dev)
 
-### Steps
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-repo/HR-System.git
-   ```
-2. Navigate into the project directory:
-   ```sh
-   cd HR-System
-   ```
-3. Install backend dependencies:
-   ```sh
-   cd hr-system-backend
-   composer install
-   ```
-4. Configure environment variables:
-   ```sh
-   cp .env.example .env
-   php artisan key:generate
-   ```
-   Update the `.env` file with database credentials.
-5. Run database migrations:
-   ```sh
-   php artisan migrate --seed
-   ```
-6. Start the Laravel server:
-   ```sh
-   php artisan serve
-   ```
-7. Install frontend dependencies:
-   ```sh
-   cd ../frontend
-   npm install
-   ```
-8. Start the React development server:
-   ```sh
-   npm run dev
-   ```
+### Backend
 
-The system should now be running on `http://127.0.0.1:8000` for the frontend and `http://localhost:5173/` for the backend.
-
-## Contributing
-If you'd like to contribute to this project, please follow the standard GitHub workflow:
-- Fork the repository
-- Create a new branch
-- Commit your changes
-- Open a pull request
-
-## 📂 Project Root (HR-System)
+```sh
+cd hr-system-backend
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret          # if not auto-generated
+php artisan migrate:fresh --seed
+php artisan serve
 ```
-HR-System/
-├── backend/                   # Laravel Backend
-│   ├── app/                   # Application Logic
-│   │   ├── Models/            # Eloquent Models
-│   │   ├── Http/
-│   │   │   ├── Controllers/   # Controllers
-│   │   │   ├── Middleware/    # Middleware
-│   │   │   ├── Observer/      # Observers
-│   │   │   ├── Provider/      # Service Providers
-│   ├── database/              # Database Files
-│   │   ├── migrations/        # Database Migrations
-│   │   ├── seeders/           # Database Seeders
-│   ├── routes/                # API Routes
-│   │   ├── api.php            # API Endpoints
-│   │   ├── web.php            # Web Routes
-│   ├── config/                # Configuration Files
-│   ├── storage/               # Storage (logs, uploads, etc.)
-│   ├── public/                # Public Assets (profile pics, docs)
-│   ├── tests/                 # Tests
-│   ├── composer.json          # PHP Dependencies
-│   ├── artisan                # Artisan CLI
-│
-├── frontend/                   # React Frontend
-│   ├── src/
-│   │   ├── components/         # Reusable UI Components
-│   │   ├── pages/              # Page Components
-│   │   ├── hooks/              # Custom Hooks
-│   │   ├── common/             # Common Components
-│   │   ├── context/            # Global Context API
-│   │   ├── services/           # API Calls (Axios)
-│   │   ├── utils/              # Utility Functions
-│   │   ├── assets/             # Images, Icons, Styles
-│   │   ├── App.jsx             # Main App Component
-│   │   ├── main.jsx            # Entry Point
-│   │   ├── layout.jsx          # Layout Component
-│   ├── public/                 # Public Files
-│   ├── package.json            # JavaScript Dependencies
-│   ├── vite.config.js          # Vite Configuration
-│
-├── docs/                       # Documentation
-├── MT-Notes/                   # Notes for projects  
-├── README.md                   # Project Documentation
-├── .gitignore                  # Git Ignore File
-├── .env                        # Environment Variables
 
+- **Health check:** `GET /api/health`
+- **Base URL:** `http://127.0.0.1:8000/api/v1`
+
+### Frontend
+
+```sh
+cd hr-system-frontend
+npm install
+npm run dev
 ```
-##  ER Diagram(HR-System)
 
-<img src="hr-system-frontend\src\assets\images\ER1.png" width="600">
-<img src="hr-system-frontend\src\assets\images\ER.png" width="600">
+- **Dev URL:** `http://localhost:5173`
+- **API Base URL:** Set via `VITE_Base_API` in `.env` (e.g. `http://127.0.0.1:8000/api`)
+
+---
+
+## Seeded Test Accounts
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@hr.com | SecurePass123 |
+| Manager | manager@hr.com | SecurePass123 |
+| Employee | maya@hr.com | SecurePass123 |
+| Employee | hassan@email.com | SecurePass123 |
+
+All 10 seeded users share the password `SecurePass123`.
+
+---
+
+## Key Architecture Patterns
+
+- **ApiResponse trait** — standardized `success()`, `error()`, `notFound()`, etc.
+- **Service layer** — business logic separated from controllers (AttendanceService, LeaveService, InsuranceService, PerformanceService, JobApplicationService, EnrollmentService, ProfileService)
+- **Observers** — `UserObserver` auto-creates Payroll + LeaveBalance on signup; `TaskObserver` logs activity
+- **JWT auth** with `throttle:5,1` rate limiting on login; 60 min TTL, 20160 min refresh
+- **RBAC** — 4 levels: guest, authenticated, manager, admin
+- **401 interceptor** in `request.js` auto-redirects to login
+- **Geolocation attendance** — Haversine formula with configurable radius, optional enforcement, remote check-in support
+- **Performance engine** — self-assessment, peer reviews (360°), goals, review cycles, manager/adverage ratings, department overview, manager finalization
+
+---
+
+## Database Schema
+
+39 tables across 10 domains: Core, HR & Compensation, Leave, Attendance, Performance, Learning & Development, Recruitment, Projects & Tasks, Compliance, Internal Comms & Calendar, Onboarding, System & Audit.
+
+See `docs/db-schema.md` for the full schema reference.
+
+---
 
 ## API Documentation
-   ```sh
-   https://documenter.getpostman.com/view/33828343/2sAYkLmc1N
-   ```
+
+See `docs/api-endpoints.md` for the complete API reference (base URL, auth headers, all endpoint groups, request/response examples).
+
+---
 
 ## Documentation Quick Links
 
-- docs/attendance-changelog.md
-- docs/api-endpoints.md
-- docs/db-schema.md
-- docs/progress.md
-- docs/project-review.md
+| Document | Description |
+|---|---|
+| `docs/api-endpoints.md` | Full API endpoint reference |
+| `docs/db-schema.md` | Database schema with relationships |
+| `docs/hr_system_erd.html` | Interactive ER diagram (Mermaid) |
+| `docs/progress.md` | Phase-by-phase development log |
+| `docs/project-review.md` | Project overview, security, code quality |
+| `docs/project-audit.md` | Issue tracker across 6 audit sessions |
+| `docs/page-by-page-validation.md` | Live API validation per frontend page |
+| `docs/attendance-changelog.md` | Attendance implementation details |
+| `docs/training-feature-audit.md` | Training module audit |
+
+---
+
+## Verification Checklist
+
+- [ ] `php artisan migrate:fresh --seed` passes
+- [ ] `npm run build` passes
+- [ ] Backend tests pass (`php artisan test`)
+- [ ] No rogue colors, console.logs, or hardcoded API URLs
+- [ ] ErrorBoundary + 404 + lazy loading + 401 interceptor in place
+- [ ] Responsive @media queries on all pages
+- [ ] All icons standardized to `mdi:` prefix
+- [ ] All seeders idempotent
+
+---
+
+## ER Diagram
+
+Interactive ER diagram (Mermaid): [`docs/hr_system_erd.html`](docs/hr_system_erd.html)
+
+---
 
 ## License
-This project is licensed under the **MIT License**.
 
+MIT
