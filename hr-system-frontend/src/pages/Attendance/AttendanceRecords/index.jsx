@@ -31,6 +31,7 @@ const AttendanceRecords = () => {
     const [is_checked_in, setIsCheckedIn] = useState(false);
     const [selectedNames, setSelectedNames] = useState([]);
     const [nameDropdownOpen, setNameDropdownOpen] = useState(false);
+    const [employeeSearch, setEmployeeSearch] = useState("");
     const [start_date, setStartDate] = useState("");
     const [end_date, setEndDate] = useState("");
     const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -231,6 +232,7 @@ const AttendanceRecords = () => {
         setSelectedNames([]);
         setSelectedStatuses([]);
         setPresetValue("");
+        setEmployeeSearch("");
         fetchAttendance(1);
     };
 
@@ -351,14 +353,34 @@ const AttendanceRecords = () => {
                             </button>
                             {nameDropdownOpen && (
                                 <div className="multi-dropdown-menu name-menu">
+                                    <div className="name-search-wrapper">
+                                        <input
+                                            type="text"
+                                            className="name-search-input"
+                                            placeholder="Search employees..."
+                                            value={employeeSearch}
+                                            onChange={(e) => setEmployeeSearch(e.target.value)}
+                                            onClick={(e) => e.stopPropagation()}
+                                        />
+                                    </div>
                                     {allNames.length === 0 ? (
                                         <div className="dropdown-empty">No employees loaded</div>
-                                    ) : allNames.map(n => (
-                                        <label key={n} className="dropdown-option">
-                                            <input type="checkbox" checked={selectedNames.includes(n)} onChange={() => toggleName(n)} />
-                                            {n}
-                                        </label>
-                                    ))}
+                                    ) : (
+                                        (() => {
+                                            const filteredNames = allNames.filter(n => 
+                                                n.toLowerCase().includes(employeeSearch.toLowerCase())
+                                            );
+                                            if (filteredNames.length === 0) {
+                                                return <div className="dropdown-empty">No matching employees</div>;
+                                            }
+                                            return filteredNames.map(n => (
+                                                <label key={n} className="dropdown-option">
+                                                    <input type="checkbox" checked={selectedNames.includes(n)} onChange={() => toggleName(n)} />
+                                                    {n}
+                                                </label>
+                                            ));
+                                        })()
+                                    )}
                                 </div>
                             )}
                         </div>
